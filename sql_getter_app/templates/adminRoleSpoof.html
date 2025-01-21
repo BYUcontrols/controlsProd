@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+{% block title %}
+Main Page
+{% endblock %}
+
+{% block name %}
+{{userN}}
+{% endblock %}
+
+{% block role %}
+{{role}}
+{% endblock %}
+
+{% block loggedIn %}
+{{loggedIn}}
+{% endblock %}
+
+{% block content %}
+
+<script>
+    function newRole(sel) {
+        console.log(sel.options[sel.selectedIndex].text, sel.value);
+        location.replace(`/adminLevelSpoof/${sel.value}/${sel.options[sel.selectedIndex].text}`)
+    }
+</script>
+
+<div class='errorBox'>
+<h1>Admin Role Tester</h1>
+<p>To test the sites permissions handling: select a new role from the dropdown to temporarily (and superficially) change your account to that role.</p>
+<select onChange="newRole(this)"><option selected></option>{{ optionsHtml | safe }}</select>
+</div>
+
+
+
+{% endblock %}

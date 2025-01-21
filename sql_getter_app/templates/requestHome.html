@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<h1 class ='title' id='title'>Service Requests</h1>
+
+<div id='displayTable' class='tableContainer'>
+    <div id='tableFunctions' class="tableFunctions"></div>
+    <table id='table'>
+        {{body|safe}}
+    </table>
+</div>
+
+<div id='inputNew' class='inputNew'></div>
+{% endblock %}

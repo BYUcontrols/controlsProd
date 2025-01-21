@@ -1,0 +1,185 @@
+<!-- This document is the outer template for our site: it contains the header/footer and imports all the requisite scripts -->
+<!-- Pull the version string from collection.py -->
+<!DOCTYPE html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<html>
+    <!-- here we import all the js and css -->
+    <head>
+        <meta charset="utf-8" />
+        <title>{{title|safe}}</title>
+        <!-- BYU theme components these come from https://webcomponents.byu.edu/ -->
+        <script async src="https://cdn.byu.edu/byu-theme-components/experimental/user-info/byu-theme-components.min.js"></script>
+        <link rel="stylesheet" media="screen" href="https://cdn.byu.edu/byu-theme-components/experimental/user-info/byu-theme-components.min.css" media="all">
+        <!-- Our css style sheets and the favicon (little icon in the tab) -->
+        <link rel="stylesheet" media="screen" type="text/css" href="{{ url_for('static', filename='css/site.css') }}?version={{versionString}}" />
+        <link rel="icon" href="{{ url_for('static', filename='images/favicon.ico') }}?version={{versionString}}"/>
+        <!-- Our Javascript files -->
+        <script src="{{ url_for('static', filename='initialize.js') }}?version={{versionString}}"></script>
+        <script src="{{ url_for('static', filename='tableFunctions.js') }}?version={{versionString}}"></script>
+        <script src="{{ url_for('static', filename='newItem.js') }}?version={{versionString}}"></script>
+        <script src="{{ url_for('static', filename='publish.js') }}?version={{versionString}}"></script>
+        <script src="{{ url_for('static', filename='audit.js') }}?version={{versionString}}"></script>
+        <script src="{{ url_for('static', filename='linkedElements.js') }}?version={{versionString}}"></script>
+        <script src="{{ url_for('static', filename='quickLook.js') }}?version={{versionString}}"></script>
+        <script src="{{ url_for('static', filename='pagination.js') }}?version={{versionString}}"></script>
+        <script src="{{ url_for('static', filename='print.js') }}?version={{versionString}}"></script>
+        <script src="{{ url_for('static', filename='filter.js') }}?version={{versionString}}"></script>
+        <script src="{{ url_for('static', filename='engines/rowEngine.js') }}?version={{versionString}}"></script>
+        <script src="{{ url_for('static', filename='engines/cellEngine.js') }}?version={{versionString}}"></script>
+        <script src="{{ url_for('static', filename='engines/dataFields.js') }}?version={{versionString}}"></script>
+        <script src="{{ url_for('static', filename='sortBy.js') }}?version={{versionString}}"></script>
+
+        <!-- Javascript for service requests -->
+        <script src="{{ url_for('static', filename='serviceRequests/srMain.js') }}?version={{versionString}}"></script>
+        <script src="{{ url_for('static', filename='serviceRequests/srItems.js') }}?version={{versionString}}"></script>
+        <script src="{{ url_for('static', filename='serviceRequests/srNotes.js') }}?version={{versionString}}"></script>
+        <script src="{{ url_for('static', filename='serviceRequests/srRequestor.js') }}?version={{versionString}}"></script>
+        <script src="{{ url_for('static', filename='serviceRequests/printSr.js') }}?version={{versionString}}"></script>
+
+        <!-- javascript for testing -->
+        {% if 'true' in testing %}
+        <script src="{{ url_for('static', filename='testing/testHTMLReq.js') }}?version={{versionString}}"></script>
+        <script src="{{ url_for('static', filename='testing/testFramework.js') }}?version={{versionString}}"></script>
+        <script src="{{ url_for('static', filename='testing/testStartup.js') }}?version={{versionString}}"></script>
+        <script src="{{ url_for('static', filename='testing/otherTesting.js') }}?version={{versionString}}"></script>
+        <script src="{{ url_for('static', filename='testing/rowEngineTesting.js') }}?version={{versionString}}"></script>
+        <script src="{{ url_for('static', filename='testing/sinon-9.2.4.js') }}?version={{versionString}}"></script>
+        {% endif %}
+
+        <!-- define the color scheme for the site based on of the database is in production or not -->
+        {% if production %}
+        <style>
+            :root {
+                --contrastColor: #B49E50;
+                --otherColor: #002f5d;
+                --backgroundColor: #85C2BB;
+            }
+        </style>
+        {% else %}
+        <style>
+            :root {
+                --contrastColor: #AD9D8E;
+                --otherColor: #888A8A;
+                --backgroundColor: #DE817B;
+            }
+        </style>
+        {% endif %}
+
+        
+    </head>
+    <!-- runs the javascript startup function when the body loads ( the page onload string is passed in the javascript )-->
+    
+    <body onload='{{pageOnLoadFunction|safe}}' id='body' style='height:100%'>
+    
+        <div class='containing-element'>
+            <!-- The BYU header -->
+            <byu-header style='z-index: 5;'>
+                <span slot="site-title" onclick="window.location='/'" style='cursor: pointer'>HVAC Controls{% if not production %} (development site){% endif %}</span>
+                <byu-user-info slot="user" login-url="/login">
+                    <!-- user info from the template -->
+                    {% if userN is defined %}
+                    <a slot="logout" href="/logout">Sign Out</a>
+                    <span slot="user-name" id=username>{% block name %}{% endblock %} - {{role}}</span>
+                    {% else %}
+                    <a slot="login" href="/login">Login</a>
+                    {% endif %}
+                </byu-user-info>
+                <!-- menus, they pull from the menuObject ( created by menuCreation.py/getMenuForRole() ) 
+                    and parse the object using a macro (google 'jinja macros') -->
+                <!-- documentation about how the html is formatted can be found at https://webcomponents.byu.edu/ -->
+                {% import 'menu_options.html' as options %}
+                <byu-menu slot="nav" active-selector=".is-active">
+                    <!-- ###################### DROPDOWN MENUS #########################-->
+                    {% for menu in menuObject %}
+                    <div class="dropdown">
+                        <!-- put a checkbox here to support our mobile menus (so that a tap on the <label> will check the box and the css can
+                            make the menu visible based on if the checkbox is checked or not) -->
+                        <input type='checkbox' name='menuRadio' id='{{ loop.index0 }}' onclick="mobileMenuClick(this)" class="dropdown-checkbox"> 
+                        <label for='{{ loop.index0 }}' class='dropdown-btn'>{{ menu.name }}</label>
+                        <div class="dropdown-child">
+                            <!-- this macro creates the html for the menu based on the options provided -->
+                            {{ options.menuCreator(menu.options) }}
+                        </div>
+                    </div>
+                    {% endfor %}
+
+            </byu-header>
+            <!-- page-content class from the byu theme and contains all the content ( if not the footer wouldn't stay on the bottom ) -->
+            <div class='page-content'>
+
+                {% block content %}
+                {% endblock %}
+
+            </div>
+            <!-- BYU footer, documentation can be found at  https://webcomponents.byu.edu/  -->
+            <byu-footer>
+                <byu-footer-column>
+                    <span slot="header">Contact</span>
+                    <p>
+                        BYU HVAC Controls
+                        <br> Version: {{versionString}}
+                        <br> Isaac Cutler & Joe Housley
+                        <br> Air Conditioning Shop
+                        <br> Brewster Building
+                        <br> Photo credit (GoogleEarth)
+                        {% if not production %}
+                        <br> <br> CSS mode for menu
+                        <br> 1. Non mobile wide
+                        <br> 2. skinny
+                        <br> 3. mobile wide
+                        <p class='foo foo1'>1</p> 
+                        <p class='foo foo2'>2</p>
+                        <p class='foo foo3'>3</p>
+                        {% endif %}
+                    </p>
+                    <byu-footer-action-button>
+                        <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ&list=PLahKLy8pQdCM0SiXNn3EfGIXX19QGzUG3" slot="actiontext">Contact Us</a>
+                    </byu-footer-action-button>
+                </byu-footer-column>
+                <byu-footer-column>
+                    <span slot="header">Suggestions</span>
+                    <p>
+                        This website is still in development if you would like to make a suggestion or report an error fill out our form
+                        {% if not production %}
+                        <br> <br> CSS mode for service request
+                        <br> 1. wide
+                        <br> 2. skinny
+                        <p class='foo fii1'>1</p> 
+                        <p class='foo fii2'>2</p>
+                        {% endif %}
+                    </p>
+                    <byu-footer-action-button>
+                        <a href="https://forms.gle/rCQEtSvcD6F48KVTA" slot="actiontext">Suggestion Form</a>
+                    </byu-footer-action-button>
+                </byu-footer-column>
+                <byu-footer-column>
+                    <span slot="header">Site Map</span>
+                    <p>
+                        Click here to go to a list of all the pages on our site
+                        <br> Please use a modern version of Chrome, Edge, or Firefox. Internet Explorer will not work with this site.
+                    </p>
+                    <byu-footer-action-button>
+                        <a href="{{url_for('navigationPages.siteMap')}}" slot="actiontext">Map</a>
+                    </byu-footer-action-button>
+                </byu-footer-column>
+                {% if not production %}
+                <byu-footer-column>
+                    <span slot="header">A Tool</span>
+                    <p>
+                        Superficial logout tool (log out of the site but not out of byu)
+                    </p>
+                    <byu-footer-action-button>
+                        <a href="{{url_for('auth.superficialLogout')}}" slot="actiontext">Logout</a>
+                    </byu-footer-action-button>
+                </byu-footer-column>
+
+                {% endif %}
+            </byu-footer>
+        </div>
+        <!-- Create a place where the loading graphics can reside -->
+        <div id='loaders'></div>
+        <!-- Create a place where the unobtrusive alerts can reside (and stack) -->
+        <div id='unobtrusiveAlerts' class='alertContainer'></div>
+    </body>
+    
+</html>

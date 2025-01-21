@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+{% block title %}
+Main Page
+{% endblock %}
+
+{% block name %}
+{{userN}}
+{% endblock %}
+
+{% block role %}
+{{role}}
+{% endblock %}
+
+{% block loggedIn %}
+{{loggedIn}}
+{% endblock %}
+
+{% import 'menu_options.html' as options %}
+{% block content %}
+<script>
+    testLogin = {{loggedIn|tojson}};
+</script>
+
+{% for menu in menuObject %}
+<h1 class='navPageTitle'>{{ menu.name }}</h1>
+<UL>
+    {{ options.menuCreator(menu.options, 'navOption', '<LI class=\'navBullet\'>', '</LI>') }}
+</UL>
+{% endfor %}
+
+{% endblock %}

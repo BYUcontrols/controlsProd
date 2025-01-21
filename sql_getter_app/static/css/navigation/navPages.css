@@ -1,0 +1,16 @@
+/************* navigation pages *************/
+.navPageTitle {
+    margin: 15px;
+    font-family: 'HCo Ringside Narrow SSm';
+}
+
+.navBullet {
+    list-style-type: disclosure-closed;
+    color: #002e5d;
+}
+
+.navOption {
+    font-family: 'HCo Ringside Narrow SSm';
+    font-size: 20px;
+    color: black;
+}

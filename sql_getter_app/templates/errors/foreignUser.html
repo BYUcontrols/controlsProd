@@ -1,0 +1,16 @@
+{% extends "errors/errorLayout.html" %}
+{% block title %}Unauthorized{% endblock %}
+
+
+{% block content %}
+  <h1>Foreign User</h1>
+  <p>It looks like you aren't on our
+list of authorized Users!<br>
+If you think there has been
+a mistake please contact us<br>
+at the BYU AC controls shop <br><br>
+Your current byu Id is: '{{byuId}}'
+</p>
+<button class='BYUbuttonWhite' onclick='window.location="/logout"'>Log Out</button>
+<button class='BYUbuttonWhite' onclick='window.location="/superficialLogout"' title="Click here once someone in the shop adds your user name!" >Try Again</button>
+{% endblock %}

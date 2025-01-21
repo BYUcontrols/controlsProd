@@ -1,0 +1,10 @@
+<!-- here lies a function that turns a list of options (from menuCreation.py/getMenuForRole()) into a list of html links-->
+
+<!-- Arguments are for the class of the link and strings to go before and after the link -->
+
+<!-- menu creation -->
+{% macro menuCreator(data, class='navbar-item', pre='', post='') -%}
+    {% for option in data %} <!-- loop through the options-->
+    {{ pre|safe }}<a href="{{ url_for(option.func) }}" class="{{ class }}" title="{% if option.sqlName %}{{option.sqlName | safe }}{% endif %}">{{ option.displayName | safe }}</a>{{ post|safe }}
+    {% endfor %}
+{%- endmacro %}

@@ -1,0 +1,46 @@
+<!-- This is the template called when we want to display a table
+It extends layout.html (it will fill in the values of layout.html)
+-->
+
+{% extends "layout.html" %}
+
+{% block name %}
+{{userN}}
+{% endblock %}
+
+<!-- fills in the content for the page -->
+{% block content %}
+<!-- Here we pass data to the javascript about the table by attaching them to the window object
+the curly brackets are places that the template will fill with the arguments of render_template() -->
+<script>
+    // we sanitize the data by passing it through JSON (a standard for converting objects to strings and vice versa)
+    window.tableName = JSON.parse('{{tableName|tojson}}');
+    window.links = JSON.parse('{{linkedColData|tojson}}');
+    window.uneditableColumns = JSON.parse('{{uneditableColumns|tojson}}');
+    window.permissionsObject = JSON.parse('{{permissionsObject|tojson}}');
+    window.columnTypes = JSON.parse('{{columnTypes|tojson}}');
+    window.tableColumnArray = JSON.parse('{{columns|tojson}}');
+    window.linkedChildrenExist = JSON.parse('{{linkedChildrenExist|tojson}}');
+    window.userIdNumber = JSON.parse('{{userId|tojson}}');
+</script>
+<!-- This is for testing and is harmless -->
+<p id='demo'></p>
+<!-- The title for the table -->
+<h1 class ='title' id='title'> {{mask|safe}} </h1>
+<!-- an optional message about the table -->
+<h2 class='tableMessage'>{% if message %}{{message|safe}}{% endif %}</h2>
+<!-- The container for the table and tableFunctions -->
+<div id='displayTable' class='tableContainer'>
+    <!-- The place that the javascript will fill in with the table functions -->
+    <div id='tableFunctions' class="tableFunctions"></div>
+    <!-- the actual table wrapped in a nice snuggly div-->
+    <div class='tableWrapper'>
+        <table id='table' class='printThis'>
+            <!-- passing the table html as a string -->
+            {{body|safe}}
+        </table>
+    </div>
+</div>
+<!-- a container to put the new items menu -->
+<div id='inputNew' class='inputNew'></div>
+{% endblock %}

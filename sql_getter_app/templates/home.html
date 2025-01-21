@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+{% block title %}
+Main Page
+{% endblock %}
+
+{% block name %}
+{{userN}}
+{% endblock %}
+
+{% block content %}
+<script>
+    testLogin = {{loggedIn|tojson}};
+</script>
+<div class='homeImage'><h1 class='banner'> Version: {{ versionString }} {% if not production %}(Test Environment){% endif %} </h1></div>
+
+{% endblock %}

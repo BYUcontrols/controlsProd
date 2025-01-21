@@ -1,0 +1,103 @@
+
+/************* Table functions style! *************/
+/* The container for all the table functions */
+.tableFunctions {
+    font-family: 'HCo Ringside Narrow SSm', Arial, sans-serif;
+    margin: 15px; /* Some nice whiespace along the edges of the tableFunctions container */
+}
+/* class for each individual function (container for each function) */
+.tableFunction {
+    margin-right: 15px; /* Give evything beathing room to the right */
+    position: relative; /* That way we can place items inside in a relitive way (the up/down arrow in Sort By for instance) */
+    display: inline-block; /* So that we can define the width and height of everything but also the containers line up and wrap like text */
+    font-size: 16px;
+    margin-bottom: 5px;
+}
+/* place to put content within a .tableFunction (The 'buttons' but that have stuff to interact with inside, so not buttons I guess) */
+.tableFunctionContainer {
+    background-color: var(--otherColor);
+    color: white;
+    border-radius: 4px;
+    vertical-align: middle;
+    line-height: 30px; /* Set the height to 30px (but like the text size is massive, not setting the height. This makes it expand up and down  */
+    padding-left: 10px;
+    padding-right: 10px;
+    display: inline-block; /* To be honest I don't know why we need this here but if we don't have it the 'button' thing is a couple pixels out of line with everything else */
+}
+/* for the little arrow ↧ in Sort By: */
+.accendingButton {
+    font-size: 24px;
+    display: inline;
+    position: absolute; /* So that we can position it absolutly */
+    border: none;  /* get rid of all the trappings */
+    background: none;
+    padding: 0px;
+    color: white; /* text color */
+    cursor: pointer; /* index finger mouse */
+    outline: none;
+}
+
+/************* Displayed Columns style! *************/
+/*
+We do this in a css hover way because the html <select> elements can't have checkboxes within them
+*/
+ /* The container for the display dropdown (similar to tableFunctionContainer) */
+ .displayDropdown {
+    position: relative; /* So that the dropdown-content can be positioned abosulutly within it */
+    display: inline-block;
+}
+ /* Style for the actual button */
+.displayDropbtn {
+    background-color: var(--otherColor);
+    color: white;
+    margin: 0px 0; /* keep the button centered */
+    width: 200px;
+    border-radius: 4px; /* Nice rounded corners */
+    text-align: center;
+    display: inline-block;
+    vertical-align: middle;
+    line-height: 30px;
+    cursor: pointer;
+}
+ /* A container for the content of the dropdown */
+.displayDropdown-content {
+    display: block; /* Give it a defined height */
+    max-height: 0; /* squish it into nothing (so that it disappears) */
+    overflow: hidden; /* Hide the squished content */
+    position: absolute; /* give it an absolute spot that is... */
+    top: 30px; /* 30px below the container (right below the displayBtn) */
+    transition: max-height 1s; /* Transition the height change (so that it slides open) */
+    background-color: var(--contrastColor);
+    width: 200px;
+    z-index: 10;
+    border-radius: 4px; /* give it a noce border */
+}
+ /* The inputs within the displayDropdown-content container */
+.displayDropdown-content input {
+    color: black; /* text color */
+    padding: 12px 16px; /* Set space on top and side */
+    text-decoration: none; /* clear text decoration */
+}
+ /* the displayDropdown-content when the displayDropdown is hovered over */
+.displayDropdown:hover .displayDropdown-content {
+    max-height: 500px; /* let the div expand into view */
+    border-radius: 0 0 4px 4px; /* set the top corners as sharp that way it blends into the button */
+}
+ /* Style for the dropdownBtn while the parent div is hovered over by the mouse  */
+.displayDropdown:hover .displayDropbtn {
+    background-color:  var(--contrastColor); /* color change */
+    color: black; /* text color */
+    border-radius: 4px 4px 0 0; /* Set the bottom corners as sharp that way we blend with the content dropdown */
+    text-decoration: underline; /* underline the text */
+}
+
+/* For the select all option in displayedColumn */
+.selectAllOption {
+    border: var(--otherColor) 2px;
+    border-style: solid hidden solid hidden;
+}
+
+/* for the container that holds the sortSelect and accending button */
+.sortSelectOption {
+    display: inherit;
+}

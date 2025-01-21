@@ -1,0 +1,224 @@
+/************* BYU theme for dropdown menus *************/
+/* this code is copy and pasted from https://webcomponents.byu.edu/byu-menu.html any 
+questions about how to implement the byu theme will be answerd there */
+/* we have modified it (heavily) to have a more mobile friendly */
+
+/* There are three different states that we have to deal with and each one has unique style
+    for the dropdown menus:
+        wide desktop
+        skinny
+        wide mobile
+    the skinny and wide is triggered by the width of the viewport and happends when the byu
+    theme component header shrinks to hide the menu options and replaces it with the 3 bars 
+*/
+
+/* This menu is for non mobile devices */
+/* Here we create a menu where dropdowns appear when you hover over their titles */
+@media (min-width: 800px) and (hover: hover) and (pointer: fine) {
+    /* for css indicator */
+    .foo1 {
+        background-color: hotpink;
+    }
+    /* A class for the div where the entire dropdown sits */
+    .dropdown {
+        position: relative; /* So that the dropdown-child sits directly below the dropdown-btn (not off to the side) */
+        display: inline-block; /* Keeps the dropdown-btns on the same line */
+        z-index: 10;
+        margin-left: 5px; /* spacing */
+        padding-left: 5px;
+    }
+    /* for the label for the checkbox, in otherwords the dropdown button that we see */
+    .dropdown-btn {
+        border: none;
+        color: #002E5D;
+        font-family: 'HCo Ringside Narrow SSm', Arial, sans-serif;
+        font-size: 16px;
+        height: 32px;
+        padding-right: 5px;
+        
+    }
+    /* when the dropdown-btn is hovered by the mouse */
+    .dropdown-btn:hover {
+        background-color: #e6e6e6; /* grey out the btn when it is hovered */
+    }
+    /* when the dropdown is hovered */
+    .dropdown:hover{
+        border-left: 5px solid var(--contrastColor); /* set a line on the left */
+        margin-left: 0px; /* remove the margin (replaced by the border) so that nothing jumps around */
+    }
+    /* for the dropdown options box */
+    .dropdown-child {
+        display: none; /* invisible (normally) */
+        min-width: 200px; /* make sure it is never too small */
+        position: absolute; /* place it where it needs to be */
+        left: -5px;
+        background-color: white;
+        border-left: 5px solid var(--contrastColor); /* a nive gold border line */
+        
+    }
+    /* the <a> elements within the dropdown box (dropdown options) */
+    .dropdown-child a {
+        color: #002e5d;
+        font-size: 16px;
+        padding: 12px;
+        text-decoration: none;
+        display: block;
+    }
+    /* the <a> elements inside the dropdown-child when they are hovered over by the mouse */
+    .dropdown-child a:hover {
+        background-color: #e6e6e6; /* make them grey */
+    }
+    /* When anywhere in the dropdown had the mouse on it the dropdown-child has style... */
+    .dropdown:hover .dropdown-child {
+        display: block; /* make it visible */
+        background-color: white; 
+    }
+    /* for the mobile menu the dropdown-btn s are actually lables for checkboxes but we dont want to see the checkbox
+        so we place it way far away off the page */
+    .dropdown-checkbox {
+        position: absolute;
+	    top: -9999px;
+	    left: -9999px;
+    }
+}
+
+/* This one's for a when the byu theme header stops displaying the options and has the three 'expand' bars */
+/* In this state we want a dropdown that is summoned by the three bars in the byu theme 
+    and has vertically stacked menus that expand when clicked (for mobile devices and desktop) */
+@media (max-width: 800px) {
+    /* for css state indicator */
+    .foo2 {
+        background-color: hotpink;
+    }
+    /* A class for the div where the entire dropdown sits */
+    .dropdown {
+        z-index: 10;
+    }
+    /* for the label for the checkbox, in otherwords the dropdown button that we see */
+    .dropdown-btn {
+        border: none;
+        color: #002E5D;
+        font-family: 'HCo Ringside Narrow SSm', Arial, sans-serif;
+        font-size: 18px;
+        padding: 8px;
+        width: 100%;
+        display: inline-block; /* so the title fills the whole width and clicking on more then just the text triggers the checkbox */
+    }
+    /* for the dropdown options box */
+    .dropdown-child {
+        min-width: 200px;
+        border-left: 5px solid var(--contrastColor); /* set the nice accent line for the menu */
+        max-height: 0; /* squish down the options bx into nothing (so that it can expand slowly and look cool and professional) */
+        overflow: hidden; /* so that when we squish it into nothing we can't see any of the squished stuff */
+    }
+    /* The actual table butons: children of a dropdown-child that are <a> elements (links) */
+    .dropdown-child a {
+        color: #002e5d;
+        font-size: 18px;
+        padding: 8px;
+        padding-left: 16px;
+        background-color: white;
+        text-decoration: none;
+        display: block;
+    }
+    /* the <a> elements inside the dropdown-child when they are hovered over by the mouse */
+    .dropdown-child a:hover {
+        background-color: #e6e6e6; /* grey the option out slightly */
+    }
+    /* style for .dropdown-child elements that share a parent with a checked checkbox (when a dropdown-btn is clicked the style for the option boxes) */
+    .dropdown-checkbox:checked ~ .dropdown-child {
+        background-color: white;
+        max-height: 1000px; /* setting a big max-height un squished the dropdown-child */
+        transition: max-height .5s ease-in; /* this makes the box expand slowly (ish) */
+    }
+    /* style for .dropdown-btn elements that share a parent with a checked checkbox (style for the dropdown-btn when clicked) */
+    .dropdown-checkbox:checked ~ .dropdown-btn {
+        border-left: 5px solid var(--contrastColor); /* a nice asthetic line on the left */
+        padding-left: 5px;
+        background-color: #e6e6e6;
+    }
+    /* for the mobile menu the dropdown-btn s are actually lables for checkboxes but we dont want to see the checkbox
+        so we place it way far away off the page */
+    .dropdown-checkbox {
+        position: absolute;
+	    top: -9999px;
+	    left: -9999px;
+    }
+}
+/* This one's for one a mobile device in landscape ( for when the byu header switches from small to big mode @ 28rem ) */
+/* This is for when the byu theme header is fully expanded in a mobile menu. The desktop menu dosen't work on mobile because 
+    there is no mouse so you can't hover over the dropdown-btns */
+@media (min-width: 800px) and (hover: none) and (pointer: coarse) {
+    /* for css state indicator */
+    .foo3 {
+        background-color: hotpink;
+    }
+    /* A class for the div where the entire dropdown sits */
+    .dropdown {
+        z-index: 10;
+        position: relative; /* So that the dropdown-child sits directly below the dropdown-btn (not off to the side) */
+        display: inline-block; /* Keeps the dropdown-btns on the same line */
+    }
+    /* for the label for the checkbox, in otherwords the dropdown button that we see */
+    .dropdown-btn {
+        border: none;
+        color: #002E5D;
+        font-family: 'HCo Ringside Narrow SSm', Arial, sans-serif;
+        font-size: 18px;
+        padding: 8px;
+        width: 100%;
+        display: inline-block; /* so the title fills the whole width and clicking on more then just the text triggers the checkbox */
+    }
+    /* for the dropdown options box */
+    .dropdown-child {
+        display: none;
+        min-width: 200px;
+        border-left: 5px solid var(--contrastColor); /* set the nice accent line for the menu */
+        position: absolute; /* place the menu in a place attached below the btn and don't let it move around */
+    }
+    /* The actual table butons: children of a dropdown-child that are <a> elements (links) */
+    .dropdown-child a {
+        color: #002e5d;
+        font-size: 18px;
+        padding: 8px;
+        padding-left: 16px;
+        background-color: white;
+        text-decoration: none;
+        display: block;
+    }
+    /* style for active children <a> children of the dropdown-child (when tables and hovered or tabbed) */
+    .dropdown-child a:active {
+        background-color: #e6e6e6; /* grey the background a bit */
+    }
+    /* style for .dropdown-child elements that share a parent with a checked checkbox (when a dropdown-btn is clicked the style for the option boxes) */
+    .dropdown-checkbox:checked ~ .dropdown-child {
+        display: block; /* make the dropdown-child visible to the user */
+        background-color: white;
+    }
+    /* style for .dropdown-btn elements that share a parent with a checked checkbox (style for the dropdown-btn when clicked) */
+    .dropdown-checkbox:checked ~ .dropdown-btn {
+        border-left: 5px solid var(--contrastColor); /* a nice accent line */
+        padding-left: 5px;
+    }
+    /* for the mobile menu the dropdown-btn s are actually lables for checkboxes but we dont want to see the checkbox
+        so we place it way far away off the page */
+    .dropdown-checkbox {
+        position: absolute;
+	    top: -9999px;
+	    left: -9999px;
+    }
+}
+
+
+/* css mode display (indicator boxes for the preceding style states) we have them placed in the footer */
+.foo {
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    outline-color: black;
+    outline-width: 5px;
+    outline-style: dashed;
+    text-align: center;
+    font-size: 10px;
+    font-weight: 1000;
+}

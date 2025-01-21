@@ -1,0 +1,96 @@
+/*  
+    style! Most of the stly is in seperate files in the css folder
+    we will import them here.
+
+           Written by: 
+      Isaac Cutler 12/1/2020
+    Property of the BYU A/C Shop
+*/
+/* Here we will import all the other files */
+@import './miscellaneous/buttons.css?version={{versionString}}';
+@import './miscellaneous/loadingDots.css?version={{versionString}}';
+@import './miscellaneous/popupBoxes.css?version={{versionString}}';
+
+@import './navigation/dropdownMenus.css?version={{versionString}}';
+@import './navigation/home.css?version={{versionString}}';
+@import './navigation/navPages.css?version={{versionString}}';
+
+/* import the correct serReq css file based on how wide the page is*/
+@import './serviceRequests/serReqBig.css?version={{versionString}}' (min-width: 580px);
+@import './serviceRequests/serReqSmall.css?version={{versionString}}' (max-width: 580px);
+
+@import './tables/filterMenu.css?version={{versionString}}';
+@import './tables/generalTable.css?version={{versionString}}';
+@import './tables/inputNew.css?version={{versionString}}';
+@import './tables/optionBtns.css?version={{versionString}}';
+@import './tables/tableFunctions.css?version={{versionString}}';
+
+
+
+/************* site background color *************/
+html, body {
+    /* production -> background-color: var(--backgroundColor); */
+    background-color: var(--backgroundColor);
+    
+    height: 100%;
+}
+
+.site-footer-wrapper {
+    background-color: lightsteelblue !important; 
+}
+
+select {
+    color: var(--otherColor);
+    border-radius: 4px;
+    background-color: white;
+    border-color: var(--otherColor);
+    height: 20px;
+    max-width: 100px;
+}
+
+
+/************* Content containers *************/
+/* Containers to put the page-content in: to make the byu footer stick to the bottom */
+.containing-element {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.page-content {
+    flex-grow: 1;
+}
+
+
+
+/************* Titles!  *************/
+/* for text in the audit/linked/deleted menus */ 
+h1 {
+    display: block;
+}
+/* for the table name*/
+.title {
+    font-family: 'HCo Ringside Narrow SSm', Arial, sans-serif;
+    margin-left: 15px;
+}
+
+
+
+
+/************* error box for the error pages *************/
+.errorBox {
+    width: 40%;
+    min-width: 400px;
+    background-color: var(--otherColor);
+    color: white;
+    font-family: 'HCo Ringside Narrow SSm', Arial, sans-serif;
+    position: inherit;
+    left: 0;
+    right: 0;
+    margin: auto;
+    margin-top: 10%;
+    margin-bottom: 10%;
+    border-radius: 15px;
+    text-align: center;
+    padding: 15px;
+}

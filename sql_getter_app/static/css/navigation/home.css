@@ -1,0 +1,29 @@
+/************* home screen image ****************/
+.homeImage {
+    width: 100vw; /* set div to occupy the whole page */
+    height: 100vh;
+    background-position: center center;  /* cener the background image */
+    background-repeat: no-repeat;  /* make sure we don't try the tile the image in the background */
+    background-size: cover;  /* make sure the background image isn't zoomed in when we crop it (not about that lores) */
+    background-image: url("/static/images/earth2-02.jpeg");  /* tell the div where to find the background image */
+    display: block;  /* so that it will expand to fill everything */
+
+}
+
+/* for the version number in home */
+.banner {
+    font-family: 'HCo Ringside Narrow SSm', Arial, sans-serif;
+    font-size: 40px;
+    color: white;
+    text-align: center;  /* center the text */
+    display: block;  /* make sure it stays put */
+    position: absolute;  /* place it absolutly (relative to it's parent) in the page */
+    margin-left: auto;  /* place it in the center */
+    margin-right: auto;
+    left: 0;  /* no left or right position shify */
+    right: 0;
+    top: 80vh;  /* position us .8 * the window height down the div */
+    width: 450px;
+    background-color: rgb(50, 50, 50, .8);  /* a nice background */
+    border-radius: 20px;  /* gotta love those round corners */
+}

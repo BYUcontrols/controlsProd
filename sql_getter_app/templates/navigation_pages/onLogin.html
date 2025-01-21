@@ -1,0 +1,11 @@
+<h1>Redirecting you back where you were trying to go before you were forced to be logged in again</h1>
+
+<script>
+    // fetch the nextPage stored by the login page right before it redirected the user to the byu login api
+    let nextPage = localStorage.getItem('next');
+    // clean up the next variable
+    localStorage.removeItem('next');
+    // redirect the user to the page they were trying to get to
+    if (nextPage) location.replace(nextPage);
+    else location.replace('/');
+</script>

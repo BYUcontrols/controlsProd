@@ -1,0 +1,43 @@
+/************* Input New Page Style  *************/
+/* goes over the whole input new part of the page */
+.inputNew {
+    margin-left: 30px; /* get some nice whitespace going */
+    margin-top: 30px;
+}
+/* The container that fits inside the grid created at initialize.js/placeInBeautifulRows() and contains a title and input box */
+.inputNewParent {
+    display: grid;
+    grid-template-columns: 40% 60%;  /* create two evenly spaced columns */
+    margin-bottom: 5px;
+}
+/* The spot inside a .inputNewParent where the input box goes */
+.inputDiv {
+    margin-bottom: 5px;
+    margin-right: 10px;
+    /* height: 50px; */
+    font-size: 25px;
+}
+/* The spot inside a .inputNewParent where the title goes */
+.inputNewTitle {
+    font-size: 22px !important;
+    font-family: 'HCo Ringside Narrow SSm', Arial, sans-serif;
+    text-align: right;
+    margin-right: 8px;
+}
+/* Style for the varchar fields in the input areas and editable fields in the table */
+.inputTextArea {
+    width: 95%;
+    height: 95%;
+    resize: vertical;
+}
+/* style for the div that surrounds all the input new fields */
+.inputDaddyDiv {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
+}
+
+/* for the checkboxes in table permissions */
+.tablePermissionsCheckboxes {
+    font-size: 17px;
+    font-family: 'HCo Ringside Narrow SSm';
+}

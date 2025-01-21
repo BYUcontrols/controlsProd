@@ -1,0 +1,258 @@
+/* Css to style the service request window for a WIDE screen */
+.fii1 {
+    background-color: hotpink;
+}
+
+
+.serviceRequestWindow {
+    width: max-content;
+    max-width: 95%;
+    min-width: 500px;
+    height: auto;
+}
+
+.serviceRequestGrid {
+    display: grid;
+    grid-template-columns: [name1] 115px 3px [val1] minmax(50px, 200px) [name2] 115px 3px [val2] minmax(50px, 200px);
+    grid-template-rows: [line1] 20px 10px [line2] 40px 10px [line3] minmax(70px, min-content) 10px [line4] 40px 10px [line5] 40px 10px [line6] 40px 10px [line7] 40px 10px [items] min-content 10px [notes] min-content 10px [requestors] min-content [functions] 50px;
+}
+
+/* style for the generic name fields */
+.srNameField {
+    text-align: right;
+    font-size: 18px;
+    margin-top: 4px;
+}
+/* style for the placement in the grid of all the titles the naming convention is sr+N+# = service request + field Name + field number */
+.srN1 {
+    grid-column: name1; 
+    grid-row: line1;
+}
+
+.srN2 {
+    grid-column: name2;
+    grid-row: line1;
+}
+
+.srN3 {
+    grid-column: name1;
+    grid-row: line2;
+}
+
+.srN4 {
+    grid-column: name2;
+    grid-row: line2;
+}
+
+.srN5 {
+    grid-column: name1;
+    grid-row: line3;
+}
+
+.srN6 {
+    grid-column: name1;
+    grid-row: line4;
+}
+
+.srN7 {
+    grid-column: name2;
+    grid-row: line4;
+}
+
+.srN8 {
+    grid-column: name1;
+    grid-row: line5;
+}
+
+.srN9 {
+    grid-column: name2;
+    grid-row: line5;
+}
+
+.srN10 {
+    grid-column: name1;
+    grid-row: line6;
+}
+
+.srN11 {
+    grid-column: name2;
+    grid-row: line6;
+}
+
+.srN12 {
+    grid-column: name1;
+    grid-row: line7;
+}
+
+.srN13 {
+    grid-column: name2;
+    grid-row: line7;
+}
+
+/* Style for the various service request fields */
+
+.srDataField, .srCompletedDateField {
+    width: 100% !important;
+    height: 100%;
+    margin-left: 0px !important;
+    margin-right: 0px !important;
+    box-sizing: border-box;
+    max-width: none;
+}
+
+.srFieldText {
+    font-size: 18px;
+    margin-top: 4px;
+    margin-left: 3px !important;
+}
+
+/* position classes for the fields: naem format is sr+F+# , service request + field + field number */
+
+.srF1 {
+    grid-column: val1; 
+    grid-row: line1;
+}
+
+.srF2 {
+    grid-column: val2;
+    grid-row: line1;
+}
+
+.srF3 {
+    grid-column: val1;
+    grid-row: line2;
+}
+
+.srF4 {
+    grid-column: val2;
+    grid-row: line2;
+}
+
+.srF5 {
+    grid-column: val1/rightMargin;
+    grid-row: line3;
+}
+
+.srF6 {
+    grid-column: val1;
+    grid-row: line4;
+}
+
+.srF7 {
+    grid-column: val2;
+    grid-row: line4;
+}
+
+.srF8 {
+    grid-column: val1;
+    grid-row: line5;
+}
+
+.srF9 {
+    grid-column: val2;
+    grid-row: line5;
+}
+
+.srF10 {
+    grid-column: val1;
+    grid-row: line6;
+}
+
+.srF11 {
+    grid-column: val2;
+    grid-row: line6;
+}
+
+.srF12 {
+    grid-column: val1;
+    grid-row: line7;
+}
+
+.srF13 {
+    grid-column: val2;
+    grid-row: line7;
+}
+/* has not been added to serReqSmall */
+.srBtnDiv {
+    /* 1/-1 means span all columns */
+    grid-column: 1/-1;
+    grid-row: functions;
+    text-align: right;
+    padding: 10px;
+}
+
+.srBtn {
+    margin-left: 20px;
+}
+
+.srItemsTable {
+    grid-column: 1/-1;
+    grid-row: items;
+    border-color: black;
+    border-width: 2px;
+    border-style: solid;
+}
+
+.srItemsTable th, .srNotesTable th, .srRequestorsTable th {
+    background-color: var(--backgroundColor);
+}
+
+.srItemsTable td, .srNotesTable td, .srRequestorsTable td {
+    max-width: 250px;
+    overflow: hidden;
+    margin-left: 3px;
+    vertical-align: middle;
+    white-space: normal;
+    width: max-content;
+}
+
+.srItemsTable td > * , .srNotesTable td > * , .srRequestorsTable > * {
+    margin-left: 0px;
+    margin-right: 3px;
+}
+
+.srItemsTable .optionsBtn, .srNotesTable .optionsBtn, .srRequestorsTable .optionsBtn {
+    margin-right: 3px;
+}
+
+.srItemsNewRow {
+    background-color: var(--backgroundColor) !important;
+    padding-bottom: 3px;
+}
+
+.srItemsNewSaveBtnCell > * {
+    width: 70px !important;
+    margin: 5px !important
+}
+
+.srItemsNewSaveBtnCell {
+    background-color: var(--backgroundColor) !important;
+}
+
+.srItemsNewRow * {
+    margin-right: auto;
+    margin-top: 3px;
+    width: 100px;
+    margin-left: 0px;
+}
+
+.srNotesTable {
+    grid-column: 1/-1;
+    grid-row: notes;
+    border-color: black;
+    border-width: 2px;
+    border-style: solid;
+}
+
+.srRequestorsTable {
+    grid-column: 1/-1;
+    grid-row: requestors;
+    border-color: black;
+    border-width: 2px;
+    border-style: solid;
+}
+
+.srTodayButton {
+    height: 90%;
+    margin-left: 5px;
+}

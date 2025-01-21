@@ -1,0 +1,134 @@
+
+/************* Unobtrusive alert box (bottom of the screen) *************/
+/* A for the container where we put unobtrusive alerts */
+.alertContainer {
+  z-index: 50 !important; /* keep this on top of the rest of the page, the !important makes this rule take presidence whe being overwritten */
+  position: fixed !important; /* keeps it above the rest of the page (scrolling and everything) */
+  left: 0 !important; /* place it at the bottom of the page */
+  bottom: 0 !important;
+  right: 0 !important;
+  display: flex;
+  flex-wrap: nowrap;
+  flex-direction: column;
+}
+/* the container for the box */
+.unobtrusiveAlert {
+    background-color: var(--otherColor);
+    color: white;
+    padding: 8px !important; 
+    box-sizing: inherit; /* so that the inside stuff is sized based on the inside of the border */
+    margin: 0;
+    padding: 0;
+    border: solid var(--contrastColor); /* set the border */
+    font: inherit;
+    font-size: 100%;
+    vertical-align: baseline; /* keeps content stuck to the bottom */
+    text-align: center;  /* keeps everything centered horizontally */
+}
+
+/* for the little x that closes the box */
+.closeAlert {
+    color: #fff;
+    float: right;  /* have the x float tp the right side and have everything else wrap around it */
+    font-size: 28px;
+    font-weight: bold;
+}
+ /* style for the little x when it is hovered over by the mouse or tabbed into focus */
+.closeAlert:hover, .closeAlert:focus {
+    color: var(--contrastColor);  /* change the color */
+    text-decoration: none;
+    cursor: pointer;  /* make the mouse change to the one with the index finger that says 'you can click on me I do stuff' 
+     in a weird unconcious way for the user */
+}
+
+/* for the container within .unobtrusiveAlert that holds the content*/
+.alertContent {
+    font-size: larger;
+    overflow: auto;  /* set the content to generate a scroll bar if it becomes too big */
+}
+
+
+/************* A big popup window that takes over the whole screen *************/
+
+/* the container that holds everything. It's opaque and takes up the whole screen */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 50; /* Sit on top */
+    padding-top: 2.5vh; /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 300%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.8); /* Black w/ opacity */
+  }
+  
+  /* The white box that holds the content */
+  .modal-content {
+    background-color: #fefefe;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 95%;  /* chagne this number of you want the box to be wider */
+    overflow: auto;  /* set a scroll bar to appear if things become too big for the box */
+    white-space: nowrap;  /* part of the funcionality of the overflow: auto; style */
+    height: 90%;  /* chagne this one if you want it to be taller/ shorter */
+    font-size: 12px;
+    font-weight: normal;
+    font-family: Gotham A, Gotham B, Helvetica, sans-serif;
+    height: auto;
+    max-height: 90vh;  /* make sure the box dosnt expand greter then the page height (vh is % of view window height */
+  }
+  /* for displaying tables within .modal-content*/
+  .modalTableContainer {
+    overflow-x: auto;  /* get some nice scrolling action */
+    overflow-y: auto;
+    white-space: initial;
+    clear: both;  /* prevent's the .close button from getting in the way of the table (maximum width) */
+  }
+
+  /* The Close Button */
+  .close { 
+    color: black;
+    font-size: 70px;
+    font-weight: bold;
+    display: inline-block;
+    height: 40px;
+    line-height: 35px;
+  }
+
+  /* for the print icon */
+  .printIcon {
+    color: black;
+    font-size: 44px;
+    font-weight: bold;
+    line-height: 63px;
+    display: inline-block;
+    height: 37px;
+  }
+
+  /* when the close button is moused over it jumps out of the page and leaves a shadow */
+  .close:hover, .close:focus {
+    text-shadow: 5px 5px 2px grey;
+    line-height: 30px;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  /* when the print icon is moused over it jumps out of the page and leaves a shadow */
+  .printIcon:hover, .printIcon:focus {
+    text-shadow: 5px 5px 2px grey;
+    line-height: 53px;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  /* For the box that hold the close and print icons */
+  .modalIconContainer {
+    float: right; /* This makes the whole thing */
+    display: grid;
+    text-align: center;
+  }
+

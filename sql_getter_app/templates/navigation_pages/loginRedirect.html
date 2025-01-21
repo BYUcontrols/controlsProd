@@ -1,0 +1,8 @@
+<h1>Redirecting you to the byu login page</h1>
+<p>If you can still see this after a few seconds something has gone terribly wrong. Come talk to us in the Controls shop about it</p>
+
+<script>
+    window.localStorage.setItem('next', location.href);
+    console.log('{{casUrl|safe}}');
+    location.replace('{{casUrl|safe}}');
+</script>

@@ -1,0 +1,91 @@
+<!-- This is the base layout for the error page -->
+
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="utf-8" />
+        <title>{% block title %}{% endblock %}</title>
+        <!-- Import byu theme components -->
+        <script async src="https://cdn.byu.edu/byu-theme-components/experimental/user-info/byu-theme-components.min.js"></script>
+        <link rel="stylesheet" href="https://cdn.byu.edu/byu-theme-components/experimental/user-info/byu-theme-components.min.css" media="all">
+        <link rel="stylesheet" href="https://cdn.byu.edu/theme-fonts/1.x.x/ringside/fonts.css" media="all">
+        <link rel="stylesheet" href="https://cdn.byu.edu/theme-fonts/1.x.x/public-sans/fonts.css" media="all">
+        <!-- get our css stylesheet -->
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/site.css') }}" />
+        <!-- get the little icon -->
+        <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+        
+        <!-- define the color scheme for the site based on of the database is in production or not -->
+        {% if production %}
+        <style>
+            :root {
+                --contrastColor: #B49E50;
+                --otherColor: #002f5d;
+                --backgroundColor: #85C2BB;
+            }
+        </style>
+        {% else %}
+        <style>
+            :root {
+                --contrastColor: beige;
+                --otherColor: #CCCCFF;
+                --backgroundColor: lavender;
+            }
+        </style>
+        {% endif %}
+        
+    </head>
+    <!-- place to put the page (for the byu theme) -->
+        <div class='containing-element'>
+            <byu-header style="z-index: 5;">
+                <!-- site header (at the top of the page) -->
+                <span slot="site-title" onclick="window.location='/'" style='cursor: pointer'>HVAC Controls</span>
+            </byu-header>
+
+            <div class='page-content'>
+                <!-- a place to put the error message (the template will fill it in) -->
+                <div class='errorBox'>
+                    {% block content %}
+                    {% endblock %}
+                    <!-- a little message and options to go home or fill in a suggestion report -->
+                    <p><br>"Life is pain, your highness. Anyone who says differently is selling something." <br>
+                        - William Goldman, The Princess Bride</p>
+                    <p onclick="window.location='{{ url_for('navigationPages.home') }}'" class='BYUbuttonWhite'>Go Home</p>
+                    <p onclick="window.location='https:\/\/forms.gle/rCQEtSvcD6F48KVTA'" class='BYUbuttonWhite'>Suggestions</p>
+                </div>
+            </div>
+            <!-- the byu footer -->
+            <byu-footer>
+                <byu-footer-column>
+                    <span slot="header">Contact</span>
+                    <!-- info about us -->
+                    <p> 
+                        BYU HVAC Controls
+                        <br> Isaac Cutler & Joe Housley
+                        <br> Air Conditioning Shop
+                        <br> Brewster Building
+                    </p>
+                    <!-- rickrolls the user. Change this possibly? -->
+                    <byu-footer-action-button>
+                        <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ&list=PLahKLy8pQdCM0SiXNn3EfGIXX19QGzUG3" slot="actiontext">Contact Us</a>
+                    </byu-footer-action-button>
+                </byu-footer-column>
+                <byu-footer-column>
+                    <span slot="header">Suggestions?</span>
+                    <!-- beta message -->
+                    <p>
+                        This website is still in production
+                        <br> if you would like to make a suggestion
+                        <br> or report an error fill out
+                        <br> our form!
+                    </p>
+                    <!-- suggestions form -->
+                    <byu-footer-action-button>
+                        <a href="https://forms.gle/rCQEtSvcD6F48KVTA" slot="actiontext">Suggestion Form</a>
+                    </byu-footer-action-button>
+                </byu-footer-column>
+            </byu-footer>
+        </div>
+    </body>
+</html>
