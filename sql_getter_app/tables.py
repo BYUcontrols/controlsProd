@@ -365,36 +365,3 @@ def PyManual():
         abort(401)
 
 
-
-@bp.route('/sendEmail')
-@login_required
-def sendEmailTest():
-    from collection import sendEmails
-
-    sender_email = "ijc24@byu.edu"
-    receiver_email = "isaac.the.cool@gmail.com"
-    message = """\
-    Subject: Hi there
-
-    This message is sent from Python."""
-
-    sendEmails.sendmail(sender_email, receiver_email, message)
-
-    return 'Message sent'
-
-@bp.route('/checkEmails')
-@login_required
-def checkEmailsTest():
-    from collection import receiveEmails
-
-    msg = 'Here are your emails: \n'
-
-    tmp, data = receiveEmails.search(None, 'ALL')
-    for num in data[0].split():
-        tmp, data = receiveEmails.fetch(num, '(RFC822)')
-        msg += 'Message: {0}\n'.format(num)
-        msg += data[0][1] + '\n'
-        break
-
-    return msg
-

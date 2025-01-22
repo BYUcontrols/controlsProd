@@ -109,29 +109,4 @@ def camel_to_title(name):
     return re.sub('([a-z0-9])([A-Z])', r'\1 \2', name).title()
 
 
-# EMAIL EXPERIMENTS
-
-# works with any @byu.edu email
-
-import smtplib, ssl, imaplib
-
-sendPort = 587
-checkPort = 993
-username = ''
-password = ''
-externalEmailServer = 'mail.byu.edu'
-secureContext = ssl.create_default_context()
-
-sendEmails = smtplib.SMTP(externalEmailServer, sendPort)
-sendEmails.starttls(context=secureContext)
-
-receiveEmails = imaplib.IMAP4_SSL(externalEmailServer, checkPort, ssl_context=secureContext)
-
-def startEmailServices():
-    try: 
-        sendEmails.login(username, password)
-        receiveEmails.login(username, password)
-
-    except:
-        print('Login to emails failed')
     

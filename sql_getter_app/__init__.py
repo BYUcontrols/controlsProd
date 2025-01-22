@@ -4,10 +4,9 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine
 
-from collection import db as sqlDB
-from collection import (login_manager, oauthKey, oauthRedirect, startEmailServices, startLogging, production, testEnv)
-
-from menuCreation import createMenus
+from .collection import db as sqlDB
+from .collection import (login_manager, oauthKey, oauthRedirect, startLogging, production, testEnv)
+from .menuCreation import createMenus
 
 
 def create_app(test_config = None):
@@ -69,9 +68,6 @@ def create_app(test_config = None):
     app.register_blueprint(serviceRequestBp)
     from navigationPages import bp as navigationPagesBp
     app.register_blueprint(navigationPagesBp)
-    
-    # experimental, starts email services
-    startEmailServices()
 
     # create the menu templates for the various roles
     createMenus(app)
