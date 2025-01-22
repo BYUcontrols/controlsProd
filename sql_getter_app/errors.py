@@ -5,7 +5,7 @@ import sys
 
 from flask import Blueprint, render_template
 from sqlalchemy import text
-from collection import db, flask_login, production
+from .collection import db, flask_login, production
 
 bp = Blueprint("errors", __name__)
 

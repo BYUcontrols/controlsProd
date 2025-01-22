@@ -2,15 +2,15 @@ from sys import version
 import flask_login
 from flask import (Flask,escape, redirect, render_template, request, session, url_for, Blueprint, abort, make_response)
 from sqlalchemy.sql.expression import false, true
-from crud import getColumnTypes
-from auth import login_required
-from createTableHtml import tableHtml
-from collection import db, production, versionString
+from .crud import getColumnTypes
+from .auth import login_required
+from .createTableHtml import tableHtml
+from .collection import db, production, versionString
 from sqlalchemy import text
 
 import json
 
-from tables import item, tablePermissions
+from .tables import item, tablePermissions
 
 
 bp = Blueprint("serviceRequests", __name__)
@@ -25,7 +25,7 @@ def serviceRequest():
 #       mask = the display name of the table
 def serviceRequestPull(mask):
     
-    from menuCreation import getMenuForRole
+    from .menuCreation import getMenuForRole
 
     User = flask_login.current_user
     dName = 'ServiceRequest'
@@ -34,7 +34,7 @@ def serviceRequestPull(mask):
     # get the permissions object for the table
     tablePermissions = User.getPermissionsObject(dName)
     # uncomment these 2 lines if you want to track how long each process takes
-    #from collection import profiled
+    #from .collection import profiled
     #with profiled():
 
     if tablePermissions['canView']:

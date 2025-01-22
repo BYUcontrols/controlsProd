@@ -78,7 +78,7 @@ rawMenu = [
 
 # this is called when the application starts and fills the viewLevel parameter for each table
 def createMenus(app):
-    from collection import db
+    from .collection import db
     import json
         # first fetch the default configuration from tablePermissions 'DEFAULT'
         # we will use this for all tables that do not have an entry in the tablePermissions table
@@ -116,7 +116,7 @@ def createMenus(app):
 
 # This one is passed the current user class and returns the menu object for that user's level
 def getMenuForRole(user):
-    from menuCreation import rawMenu
+    from .menuCreation import rawMenu
     import copy # the copy module lets us make shallow copies of objects
 
     newMenuList = list()

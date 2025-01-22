@@ -54,19 +54,19 @@ def create_app(test_config = None):
     # load blueprints
     # These are portals by which flask can search various files for @route() tags
 
-    from crud import bp as crudbp
+    from .crud import bp as crudbp
     app.register_blueprint(crudbp)
-    from auth import bp as authbp
+    from .auth import bp as authbp
     app.register_blueprint(authbp)
-    from tables import bp as tablesbp
+    from .tables import bp as tablesbp
     app.register_blueprint(tablesbp)
-    from tableLinks import bp as tableLinksbp
+    from .tableLinks import bp as tableLinksbp
     app.register_blueprint(tableLinksbp)
-    from errors import bp as errorsbp
+    from .errors import bp as errorsbp
     app.register_blueprint(errorsbp)
-    from serviceRequests import bp as serviceRequestBp
+    from .serviceRequests import bp as serviceRequestBp
     app.register_blueprint(serviceRequestBp)
-    from navigationPages import bp as navigationPagesBp
+    from .navigationPages import bp as navigationPagesBp
     app.register_blueprint(navigationPagesBp)
 
     # create the menu templates for the various roles

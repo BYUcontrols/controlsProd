@@ -8,9 +8,8 @@ import flask_login
 from flask import (Blueprint, redirect, request, render_template, abort)
 from sqlalchemy.sql.expression import true
 
-from collection import login_manager, db, production, versionString
-
-from user_class import user_session
+from .collection import login_manager, db, production, versionString
+from .user_class import user_session
 
 bp = Blueprint("auth", __name__)
 
@@ -52,7 +51,7 @@ def login():
     # in essence this is the pre login page. 
 @login_manager.unauthorized_handler
 def loginPage():
-    from collection import oauthRedirect, oauthKey
+    from .collection import oauthRedirect, oauthKey
     # return the loginRedirect.html template (it saves the url the user was trying to access in the localStorage then sends them
     # to the casUrl we passed to them)
     # the casUrl is the url for the byu login api 
@@ -98,7 +97,7 @@ def adminLevelSpoof(newLevel, roleText):
     # this is the page where the user can use the previous function to spoof their user and test
 @bp.route('/userTester')
 def userTester():
-    from menuCreation import getMenuForRole
+    from .menuCreation import getMenuForRole
 
     User = flask_login.current_user
 
@@ -137,7 +136,7 @@ def userTester():
 ################ if the link somehow gets lost here it is
 @bp.route('/testLogin')
 def testLogin():
-    from collection import testEnv, adminRoleId
+    from .collection import testEnv, adminRoleId
     if testEnv['env']: # MAKE SURE WE ARE NOT IN A OUTWARD FACING ENVIRONMENT
     
         import json, time

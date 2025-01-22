@@ -1,5 +1,5 @@
 # a class to create the html for a table from a list of columns and sqlAlchemy resultProxys
-from collection import camel_to_title
+from .collection import camel_to_title
 class tableHtml(object):
 
     def __init__(self, User, dbName, primaryKey):
@@ -40,7 +40,7 @@ class tableHtml(object):
             import json
             # so that we can stub out functions for testing
             if self.testing is False:
-                from crud import getLinkedChildren
+                from .crud import getLinkedChildren
             else:
                 getLinkedChildren = self.getLinkedChildren
             # pass the data required for a table to run, if you have questions look at crud.py/pull() where we pass this data and explain it
@@ -134,7 +134,7 @@ class tableHtml(object):
         else:
             linkedColumns = self.linkedColumnsStub
         # fetch the initialized database
-        from collection import db
+        from .collection import db
 
         # extract the requisite data from linkedColumns
         table = linkedColumns[colName][0]

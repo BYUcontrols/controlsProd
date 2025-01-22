@@ -6,7 +6,7 @@ import os
 #sys.path.append('C:\\control-app\\appEnv\\sql_getter_app')
 import sql_getter_app
 from sql_getter_app import app
-from collection import db
+from .collection import db
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 

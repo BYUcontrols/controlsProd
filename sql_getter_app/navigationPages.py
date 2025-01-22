@@ -1,9 +1,9 @@
 import flask_login
 from flask import (Flask, escape, redirect, render_template, request, session, url_for, Blueprint)
-from crud import pull
-from auth import login_required
-from collection import production, versionString
-from menuCreation import getMenuForRole
+from .crud import pull
+from .auth import login_required
+from .collection import production, versionString
+from .menuCreation import getMenuForRole
 
 bp = Blueprint("navigationPages", __name__)
 

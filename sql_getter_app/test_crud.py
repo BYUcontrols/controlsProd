@@ -5,8 +5,8 @@ import sys
 import pytest
 import sql_getter_app
 
-from collection import db
-from crud import pull
+from .collection import db
+from .crud import pull
 from test_app import client, test_db, login, logout
 
 def test_read_user(client):

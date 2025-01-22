@@ -6,12 +6,12 @@ import flask_login
 import json
 from flask import request, Blueprint
 from sqlalchemy.sql.expression import true
-from collection import db
+from .collection import db
 from sqlalchemy import text
 
-from createTableHtml import tableHtml
-from crud import getKeys, getIdColumn, verifyTableName, getColumnTypes, verifyColumnAndTableName
-from auth import login_required
+from .createTableHtml import tableHtml
+from .crud import getKeys, getIdColumn, verifyTableName, getColumnTypes, verifyColumnAndTableName
+from .auth import login_required
 
 
 bp = Blueprint("tableLinks", __name__)

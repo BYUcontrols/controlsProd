@@ -4,8 +4,8 @@ import pytest
 from unittest.mock import MagicMock, patch
 import sql_getter_app
 
-from collection import db
-from crud import pull
+from .collection import db
+from .crud import pull
 from requests import status_codes
 from user_class import user_session
 

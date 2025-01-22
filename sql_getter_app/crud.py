@@ -10,6 +10,7 @@ from flask.globals import current_app
 
 import flask_login
 import logging
+import pdfkit # this is a wraper for the wkhtmltopdf tool https://wkhtmltopdf.org/downloads.html
 from flask import Blueprint, render_template, request, make_response, abort
 from markupsafe import Markup
 from sqlalchemy import text
@@ -17,12 +18,12 @@ from sqlalchemy import bindparam
 from sqlalchemy.exc import InvalidRequestError, StatementError
 from urllib import parse # to decode the base 64 encoded filter string on a url
 
-from collection import db, production, versionString
-from menuCreation import getMenuForRole
-from createTableHtml import tableHtml
-from auth import login_required
-from sqlCommandClass import sqlCommands
-import pdfkit # this is a wraper for the wkhtmltopdf tool https://wkhtmltopdf.org/downloads.html
+from .collection import db, production, versionString
+from .menuCreation import getMenuForRole
+from .createTableHtml import tableHtml
+from .auth import login_required
+from .sqlCommandClass import sqlCommands
+
 
 bp = Blueprint("crud", __name__)
 LOG = logging.getLogger(__name__)
@@ -156,7 +157,7 @@ def pull(dName = "BBMD", mask=None, columnTypes=None, message=None):
     tablePermissions = User.getPermissionsObject(dName)
 
     # uncomment these 2 lines if you want to track how long each process takes
-    #from collection import profiled
+    #from .collection import profiled
     #with profiled():
         # check to see if the user has view permissions for the table
     if tablePermissions['canView']:

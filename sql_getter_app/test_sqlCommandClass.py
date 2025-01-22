@@ -1,7 +1,7 @@
 import pytest
 import sql_getter_app
 
-from collection import db
+from .collection import db
 from sqlCommandClass import sqlCommands
 
 # stub functions

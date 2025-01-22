@@ -10,7 +10,7 @@ LOG = logging.getLogger(__name__)
 class user_session(object):
         #define the default permission values for an table (if the sql permission query fails)
     def __init__(self):
-        from collection import adminRoleId
+        from .collection import adminRoleId
         self.adminRoleId = adminRoleId
         
         pass
@@ -20,7 +20,7 @@ class user_session(object):
         #   from the sql server based on self.byuId and sets them to default
         #   values if the byuId is not in the 'User' table
     def getData(self):
-        from collection import db
+        from .collection import db
         # get from engine
         try:
             # get the User's roleId and hierarchy number from the database
@@ -67,7 +67,7 @@ class user_session(object):
     #   string - the name for the table you want to know the permissions for
     #   int - the default level (if something goes wrong)
     def accessTableAccessLevel(self, column, tableName):
-        from collection import db
+        from .collection import db
         from sqlalchemy import text
         from flask import abort
 
@@ -144,7 +144,7 @@ class user_session(object):
         #   it all in one
     def getPermissionsObject(self, table):
         
-        from collection import db
+        from .collection import db
         from sqlalchemy import text
         from flask import abort
             # first check to see if the user is an admin, if they are give them full access
@@ -286,7 +286,7 @@ class user_session(object):
     def setFromTolken(self, token):
  
         import certifi, requests
-        from collection import oauthKey, oauthSecret, oauthRedirect
+        from .collection import oauthKey, oauthSecret, oauthRedirect
         from flask import abort
             # sets the arguments for the request to the token api
         data = {'grant_type': 'authorization_code', 'code': token, 'redirect_uri': oauthRedirect} # callback URL
