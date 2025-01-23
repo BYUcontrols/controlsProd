@@ -21,7 +21,6 @@ function generateInput() {
         window.inputEngine = new rowEngine(columnsInfo, tableName, permissionsObject, linkedChildrenExist, true);
             // create the input fields
         window.inputEngine.generateInputFields(document.getElementById('inputNew'));
-
     }
 }
 
@@ -92,7 +91,7 @@ function checkEmptyValues(save, columnsObject) {
     }
 }
 
-/* The function that interfaces the javascript with the server - it is called everytime a server request is made
+/* The function that interfaces the javascript with the server - it is called every time a server request is made
  * 
  * Arguments:
  *  1. object - the data to be sent to the server

@@ -17,6 +17,7 @@ class cellEngine {
         this.editing = false;
         this.maxChar = this.columnsDataObject.maxChar;
         this.uneditable = this.columnsDataObject.uneditable;
+
             // assign the sortVal, getVal, edit and restoreCell functions based on the type of column
         this.assignMembersForType(this.columnsDataObject);
     }
@@ -214,13 +215,15 @@ class cellEngine {
     
     edit_varchar(val=this.getVal()) {
         if (!this.editing && !this.uneditable) {
-            this.editing = true;
-            this.htmlRef.innerHTML = '';
+            window.onload = () => {
+                this.editing = true;
+                this.htmlRef.innerHTML = '';
 
-            let input = createTextArea(val, this.maxChar, this.nullable);
+                let input = createTextArea(val, this.maxChar, this.nullable);
 
-            this.inputRef = input;
-            this.htmlRef.appendChild(input);     
+                this.inputRef = input;
+                this.htmlRef.appendChild(input);     
+            }
         }
     }
 
@@ -234,9 +237,10 @@ class cellEngine {
         if (!this.uneditable) {
             this.editing = true;
             if (this.htmlRef) this.htmlRef.innerHTML = '';
-
-            this.inputRef = createDropdown(this.linkObject, val);
-            this.htmlRef.appendChild(this.inputRef);
+            window.onload = () => {
+                this.inputRef = createDropdown(this.linkObject, val);
+                this.htmlRef.appendChild(this.inputRef);
+            }
             // create the ***** Table button next to the input field when tableButton is true
             if (tableButton) {
                     // define the this context as a variable that we ay we can access it many levels deep into
@@ -375,11 +379,14 @@ class cellEngine {
     restoreCell_linked(val=this.getVal()) {
         this.htmlRef.innerHTML = '';
         if (val && val != 'None') {
-            this.htmlRef.appendChild(createInspectIcon(val, this.linkTable));
+            if(!document.getElementById("srtable")){
+                this.htmlRef.appendChild(createInspectIcon(val, this.linkTable));
+            }
             this.linkedIndex = val;
             this.linkedText = this.linkObject[val]
             this.htmlRef.appendChild(document.createTextNode(this.linkObject[val]));
             this.htmlRef.title = `ID Number: ${this.linkedIndex}`;
+
         } else {
             this.htmlRef.appendChild(document.createTextNode('None'));
             this.linkedIndex = null;
@@ -409,7 +416,6 @@ class cellEngine {
 
     restoreCell_datetime(val=this.getVal()) {
         this.htmlRef.innerHTML = '';
-        
         // if the val was a valid date string...
         if (!isNaN(Date.parse(val))) { 
             let dateEngine = new dateTimeVoodoo(val);

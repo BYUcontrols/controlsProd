@@ -8,7 +8,7 @@
 
 function testStartup() {
     titleLog("Welcome to the Controls App site JS testing framework");
-    console.log('\nThe following tests are designed to exaluate all the functions that make the client side part of this site function. If there are errors they will appear in red and you can trace them by looking on the right at where the titles are called');
+    console.log('\nThe following tests are designed to evaluate all the functions that make the client side part of this site function. If there are errors they will appear in red and you can trace them by looking on the right at where the titles are called');
     bigTitleLog("HTML from Python");
     testHTMLReq();
     

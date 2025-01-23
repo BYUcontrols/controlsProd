@@ -1,8 +1,9 @@
+# High level summary of this page:
 # This file holds the object that contains the linked columns and what we replace them with
 # 
 # We would normally use the database to get this data but,
 #   1. We want to minimize the number of requests made to the database
-#   2. There is no way to determine the perfered column of the table being liked to display
+#   2. There is no way to determine the preferred column of the table being linked to display
 #
 # convention:
 #   'column Name To Link':('linked Table', 'linked column to replace it with', 'linked Id column', 'Human readable column name', {sql where object})
@@ -10,9 +11,13 @@
 #   sql where object - sometimes you may not want to link all of a table (eg for the technician field in the service request table; we don't want to
 #       display all the users, just the technicians). So this object is in the format {'tableName':'sql where string', 'othertableName':'different where clause'}
 #       with the keys for that object refering to specific tables you want to apply the filters to.
-#
 
 linkedColumns = {
+    # linked columns in the SR table
+    'userIdRequestor':('User', 'fullName', 'userId', 'Requestor'),
+    'userIdTechnician':('User', 'fullName', 'userId', 'Assigned To'),
+    'priorityId':('Priority', 'priority', 'priorityId', 'Priority'),
+    ################################
     'buildingId':('Building', 'buildingAbbreviation', 'buildingId', 'Building'),
     'deviceId':('Device', 'deviceName', 'deviceId', 'Device'), 
     'deviceTypeId':('DeviceType', 'deviceType', 'deviceTypeId', 'Device Type'),
@@ -29,11 +34,13 @@ linkedColumns = {
     'userRoleId':('Role', 'role', 'roleId', 'Role'),
     'deviceSubTypeId':('DeviceSubType', 'deviceSubType', 'deviceSubTypeId', 'Device Sub Type'),
     'statusId':('Status', 'status', 'statusId', 'Status', 
+        # This must be a SQL where object
         {
             'Device':'AND forDevices = \'true\'', 
             'ServiceRequest':'AND forServiceRequest = \'true\'', 
             'RequestItem':'AND forItems = \'true\''
-        }),
+        }
+        ),
     'manufacturerId':('Manufacturer', 'name', 'manufacturerId', 'Manufacturer'),
     'oitJackId':('OITJack', 'jackNumber', 'oitJackId', 'OIT Jack'),
     'userIdRequestor':('User', 'fullName', 'userId', 'Requestor'),

@@ -12,7 +12,7 @@ class sortSelect {
         // idNUmber - A unique number/string to identify this one in the localstorage
         // onChange - a function to be run onChange of anything
     constructor(columns, idNumber, onChange) {
-        
+
         this.columnsInfo = columns;
         this.id = idNumber;
         this.onChange = onChange;
@@ -44,7 +44,7 @@ class sortSelect {
             // Create backward/reverse button cookie retrieval
         let sortUp;
         if (isStorageItem(`sortUp${this.id}`)) {sortUp = getStorageItem(`sortUp${this.id}`); console.log(sortUp)}
-        else sortUp = 'true';
+        else sortUp = 'false';
             // Create a button to change if we sort accending or descending
         this.accendingButton = document.createElement('button');
         div.appendChild(this.accendingButton);
@@ -137,7 +137,7 @@ class sortMenu {
         div.classList = 'tableFunction';
         let divContainer = document.createElement('div');
         divContainer.classList = 'displayDropdown';
-        divContainer.style.paddingRight = '20px';
+        divContainer.style.marginRight = '20px';
         div.appendChild(divContainer);
             // create the big button (with first select)
         let bigButton = document.createElement('div');

@@ -1,13 +1,17 @@
+# High level summary of this page:
+#   1. import modules
+#   2. defines functions for the unit tests on the functions from userClass.py
+
 # here lie the unit tests for the user session class
 
 import pytest
 from unittest.mock import MagicMock, patch
 import sql_getter_app
+from requests import status_codes
 
 from .collection import db
 from .crud import pull
-from requests import status_codes
-from user_class import user_session
+from .user_class import user_session
 
 # basic init function that returns a fresh user_session
 def userSession_testInit():
@@ -43,9 +47,6 @@ class userSessionTestStubClass():
             self.wasCalled = 1
         return True
 
-
-  
-
 # we will simply test every member one at a time, top to bottom
 
 def test_userSession_getData(test_app_context):
@@ -64,7 +65,6 @@ def test_userSession_getData(test_app_context):
     user.getData()
     assert user.accessLevel is 1
     assert user.tableId is db.engine.execute(f"SELECT [userId] FROM [User] WHERE userName='{user.byuId}';").fetchall()[0][0]
-
     
     # create a user to do tests on
     user = userSession_testInit()
@@ -75,20 +75,15 @@ def test_userSession_getData(test_app_context):
     
     assert user.tableId is 'None'
 
-    
     # clean up the table
     db.engine.execute("DELETE FROM [dbo].[User] WHERE userName = 'johndoe'")
     
-
 def test_userSession_accessTableAccessLevel(test_app_context):
     
     # create a test table entry in tablePermissions to experiment on in the database
     db.engine.execute("DELETE FROM [dbo].[TablePermissions] WHERE tableName = 'aTableForTesting'")
     db.engine.execute("""INSERT INTO [dbo].[TablePermissions] (tableName, viewingLevel, editingLevel, addingLevel, deletingLevel, userIdModified) 
                 VALUES ('aTableForTesting', 100, 101, 102, 103, 1);""")
-
-            
-
 
 def test_userSession_canView():
     import types # to stub out the memebrs
@@ -100,7 +95,6 @@ def test_userSession_canView():
     assert user.canView('badName') is False
     # check to make sure it was looking for the correct column
     assert user.columnPassed is 'viewingLevel'
-
 
 def test_userSession_canEdit():
     import types # to stub out the memebrs
@@ -169,7 +163,6 @@ def test_userSession_setFromString():
     assert user.setFromString(sessionString, 1) == True
     assert user.logged_in == True
 
-
 def test_userSession_processOauthResponse():
     import types # to stub out the memebrs
     # here is a response form the byu oauth api when I login. Use wisely. Please.
@@ -188,8 +181,6 @@ def test_userSession_processOauthResponse():
     assert user.logged_in == True
     assert user.byuId == 'ijc24'
     assert user.fullName == 'Cutler, Isaac James'
-
-
 
 def test_userSession_setFromTolken():
     import requests
@@ -224,9 +215,13 @@ def test_userSession_setFromTolken():
         assert user.logged_in == False
         assert threwAnError == True
 
-
-
-
-
-
-
+def test_getPermissionsObject(): ################################################################# This has been moved to the User class, move it when you have time
+    # patch the user_session class
+    with patch('auth.user_session', autospec=True, return_value=True) as userMock:
+        # run the rest
+        res = user_session.getPermissionsObject(userMock, 'testTable')
+        # assert results
+        userMock.canView.assert_called_once_with('testTable')
+        userMock.canEdit.assert_called_once_with('testTable')
+        userMock.canAdd.assert_called_once_with('testTable')
+        userMock.canDelete.assert_called_once_with('testTable')

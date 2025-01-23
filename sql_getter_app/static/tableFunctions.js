@@ -8,17 +8,20 @@
 
 // Generates sort select
 function generateSortSelect() {
-        // Looks for a cookie
+    // Looks for a cookie
     if (isStorageItem('sortBy')) window.sortBy = getStorageItem('sortBy');
     else window.sortBy = 1; // default sort by the column after the ID column
-        // create a dropdown container and place it in the page
+    // create a dropdown container and place it in the page
+
     let div = document.createElement('div');
     div.classList = 'tableFunction';
-    document.getElementById('tableFunctions').appendChild(div);
+    document.getElementsByClassName('tableFunctions')[0].appendChild(div);
     let divContainer = document.createElement('div');
+
     divContainer.classList = 'tableFunctionContainer';
     divContainer.style.paddingRight = '20px';
     div.appendChild(divContainer);
+
         // set the tooltip
     setTooltip(divContainer, 'Select a column to sort the table by (alphabetically); Arrow controls sort direction');
         // create a new dropdown
@@ -29,7 +32,7 @@ function generateSortSelect() {
     sortDropdown.select.id = 'sortSelect';
         // options using the columns object
     for (let col in columnsInfo) {
-        sortDropdown.option(columnsInfo[col].readableName, col, col == sortBy);  
+        sortDropdown.option(columnsInfo[col].readableName, col, col == sortBy);
     }
         // Create backward/reverse button cookie retrieval
     if (isStorageItem('sortUp')) sortUp = getStorageItem('sortUp'); 
@@ -48,9 +51,11 @@ function generateSortSelect() {
     } else {
         reverse = false;
     }
+    
         // run the onclick function associated with the button to initialize everything 
     sortCall.bind(accendingButton)();
 }
+
 
 // function that runs onclick of the accending button
 function sortCall() {
@@ -96,7 +101,6 @@ function sortTable() {
     // run the paginate command when the row updates if the paginate select has been created
     if (window.updatePagination) window.updatePagination();
 }
-
 
 // sorts a given array of rowEngine objects by the sortCol
 function sortRowsArray(tr, sortCol, isReversed) { 
@@ -177,7 +181,7 @@ function ultimateStringComparer(aStr, bStr) {
         else if (!isNum(a) && !isNum(b)) verdictChar = a.localeCompare(b, undefined, {sensitivity: 'base'}); // compare based on unicode order (case insensitive)
             // when both characters are numbers
         else {
-                // iterate until you have found the end of that number and numerize it
+                // iterate until you have found the end of that number and number-ize it
             tempPosA = posA;
             while (isNum(aStr[tempPosA])) { tempPosA ++; }
             let numberA = num(aStr.substring(posA, tempPosA));
@@ -234,19 +238,19 @@ function generateDisplaySelect(suppliedColumns = null) {
     dropdownContent.setAttribute("id", "displaySelect");
     dropdownContent.setAttribute("class", "displayDropdown-content");
 
-        // Put the select where it needs to go on the page
+    // Put the select where it needs to go on the page
     dropdown.appendChild(dropdownBtn);
     dropdown.appendChild(dropdownContent);
     div.appendChild(dropdown);
     document.getElementById('tableFunctions').appendChild(div);
-
+    
     // Creates a Select all option
         // set option text as the column names
     let optionSelect = document.createElement("div");
     optionSelect.classList.add('selectAllOption');
     window.displaySelectAllCheckbox = document.createElement("input");
     window.displaySelectAllCheckbox.setAttribute("type", "checkbox");
-    window.displaySelectAllCheckbox.setAttribute("onchange", "handleSelectAllChange(this)") // passing 'this' tells te browser to pass the html ref of the text
+    window.displaySelectAllCheckbox.setAttribute("onchange", "handleSelectAllChange(this)") // passing 'this' tells the browser to pass the html ref of the text
     window.displaySelectAllCheckbox.classList.add("displayDropdown-option");
     window.displaySelectAllCheckbox.setAttribute("name", 'selectAllCheckbox');
         // Create the label for the checkbox
@@ -257,6 +261,7 @@ function generateDisplaySelect(suppliedColumns = null) {
     optionSelect.appendChild(window.displaySelectAllCheckbox);  
     optionSelect.appendChild(colName);
     optionSelect.style.position = 'relative';
+    optionSelect.style.color = 'white';
     dropdownContent.appendChild(optionSelect);
 
     // create a spot to store all the checkboxes
@@ -270,14 +275,14 @@ function generateDisplaySelect(suppliedColumns = null) {
         let text = document.createElement("input"); 
         if (displayedColumns[iterator] == true) { // if the displayed columns object is true for a column check it
             text.setAttribute("checked", true);
-        } 
+        }
         text.setAttribute("value", iterator); // set the value as the index number of the column that way we can access it on check change
         text.setAttribute("type", "checkbox");
         text.setAttribute("onchange", "handleCheckboxChange(this)") // passing 'this' tells te browser to pass the html ref of the text
         text.setAttribute("class", "displayDropdown-option");
         text.setAttribute("id", iterator);
         text.setAttribute("name", columnsInfo[iterator].readableName);
-        
+
         // Create the label for the checkbox
         colName = document.createElement("label");
         colName.setAttribute("for", columnsInfo[iterator].readableName);
@@ -286,6 +291,7 @@ function generateDisplaySelect(suppliedColumns = null) {
         option.appendChild(text);  
         option.appendChild(colName);
         option.style.position = 'relative';
+        option.style.color = 'white';
         dropdownContent.appendChild(option);
             // append the checkbox in the checkbox array
         window.displaySelectCheckboxes.push(text);
@@ -293,7 +299,6 @@ function generateDisplaySelect(suppliedColumns = null) {
     handleColumnVisibility();
     handleDisplaySelectAll();
 }
-
 
 // sets column visibility based on contents of displayedColumns array
 function handleColumnVisibility() {

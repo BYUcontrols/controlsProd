@@ -1,8 +1,12 @@
+# High level summary of this page:
+#   1. import modules
+#   2. defines functions for the unit tests on the functions from sqlCommandClass.py
+
 import pytest
 import sql_getter_app
 
 from .collection import db
-from sqlCommandClass import sqlCommands
+from .sqlCommandClass import sqlCommands
 
 # stub functions
 
@@ -18,9 +22,6 @@ def verifyColumnFALSE(one, two):
 
 def verifyColumnTRUE(one, two):
     return True
-
- 
-
 
 def test_initSqlCom():
     sqlCom = startSqlComTestObj()
@@ -40,7 +41,6 @@ def test_values():
     assert sqlCom.valueList == ':1,:2'
     assert sqlCom.insertDict == {'1': 'girl', '2': 'boy'}
     assert sqlCom.pairs == 'noelle=:1,dieter=:2'
-
 
     sqlCom = startSqlComTestObj()
     # stub the verify column function WHEN THE COLUMNS ARE NOT OK
@@ -103,7 +103,3 @@ def test_where():
     sqlCom.where(rawData)
     assert sqlCom.text == ' AND noelle = :1'
     assert sqlCom.insertDict == {'1': 'True'}
-
-
-
-

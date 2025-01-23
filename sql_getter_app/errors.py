@@ -1,13 +1,17 @@
+# High level summary of this page:
+#   1. Creates an error blueprint
+#   2. Defines places to route errors that the flask app calls
+
 import sys
 # for production
 #sys.path.append('C:\\control-app\\appEnv\\sql_getter_app')
 
-
 from flask import Blueprint, render_template
 from sqlalchemy import text
+# below are local module imports
 from .collection import db, flask_login, production
 
-bp = Blueprint("errors", __name__)
+bp = Blueprint("errors", __name__)  # sets up the blueprint with name errors defined at __name__
 
 # here we define places to route errors that the flask app calls
 # They return custom error pages (and possibly record server errors in the database)

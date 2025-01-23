@@ -1,3 +1,10 @@
+/*
+    Mason's note: Some of these test cases did not pass when I ran them
+    after making a variety of changes to the code base. I updated them 
+    so that they pass now. To see the changes, take a look below for more
+    specific comments / documentation.
+*/
+
 function rowEngineTesting() {
 
     try {
@@ -53,13 +60,18 @@ function rowEngineTesting() {
     catch(a) {testCatch(a)};
     
     try {
+        // UPDATED TEST CASE
         titleLog('editRow() - with an object passed');
         let x = rowEngineRowInTable();
         // Isolate function
         replaceEverythingInArray(x.fields, 'getVal', function(x=null,y=null) { return {'test':'ing'}; });
-        let edit_currentValues = new Array()
-        replaceEverythingInArray(x.fields, 'edit', function(x=null,y=null) { edit_currentValues.push(y); });
         
+        let edit_currentValues = new Array()
+        
+        /* all I changed was the third argument in this function, which is a function. It wasn't pushing the 
+           the number to the array, but now it does */
+        
+        replaceEverythingInArray(x.fields, 'edit', function(y=null) { edit_currentValues.push(y); });
         x.editRow(null, {"Food":12, "foodTypeId":13, "Edible":14, "Calories":15, "ExpirationDate":16});
 
         console.log('- passed the correct values into the cells')
@@ -68,10 +80,12 @@ function rowEngineTesting() {
     catch(a) {testCatch(a)};
     
     try {
+        // UPDATED TEST CASE
         titleLog('getValues()');
         let x = rowEngineRowInTable();
         // isolate function
-        replaceEverythingInArray(x.fields, 'getVal', function(y=null,z=null) { let data = new Object(); data[y.colName] = 'testing'; return data; });
+        // I changed the third argument here once again, the function. Previously it used y.colName instead of this.colName, which did not result in the correct value
+        replaceEverythingInArray(x.fields, 'getVal', function(y=null,z=null) { let data = new Object(); data[this.colName] = 'testing'; return data; });
 
         let out = x.getValues();
 
@@ -81,11 +95,13 @@ function rowEngineTesting() {
     catch(a) {testCatch(a)};
     
     try {
+        // UPDATED TEST CASE
         titleLog('saveRow() - without passing an object');
         let x = rowEngineRowInTable();
         // Isolate function
         // fake the rowEngine.getVal member
-        replaceEverythingInArray(x.fields, 'getVal', function(y=null,z=null) { let data = new Object(); data[y.colName] = 'testing'; return data; });
+        // I updated this function in the same way as the function from the getValues() test case. Changed y.colName to this.colName
+        replaceEverythingInArray(x.fields, 'getVal', function(y=null,z=null) { let data = new Object(); data[this.colName] = 'testing'; return data; });
 
         // fake the post() function
         let instance = sinon.createSandbox();
@@ -259,6 +275,8 @@ function rowEngineTesting() {
     catch(a) {testCatch(a)};
 
     try {
+        // UPDATED TEST CASE
+        // What changed is actually in the rowEngine.js file in the deleteRow() function. Go there for further documentation.
         titleLog('this.deleteRow() - user clicks "no"');
         let x = rowEngineRowInTable();
 
@@ -275,15 +293,17 @@ function rowEngineTesting() {
 
         instance.restore();
 
-        console.log('- confirm called');
-        testObject(true, confirm_called);  
-        
         console.log('- post not called');
         testObject(false, post_called); 
+
+        console.log('- confirm called');
+        testObject(true, confirm_called);  
     }
     catch(a) {testCatch(a)}
 
     try {
+        // UPDATED TEST CASE
+        // What changed is actually in the rowEngine.js file in the deleteRow() function. Go there for further documentation.
         titleLog('this.deleteRow() - user clicks "yes"');
         let x = rowEngineRowInTable();
 
@@ -308,6 +328,8 @@ function rowEngineTesting() {
     } catch(a) {testCatch(a)}
 
     try {
+        // UPDATED TEST CASE
+        // What changed is actually in the rowEngine.js file in the finishDelete() function. Go there for further documentation.
         titleLog("finishDelete()")
         let x = rowEngineRowInTable();
 

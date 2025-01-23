@@ -1,6 +1,6 @@
 /*  
     Functions relating to the pushing of data to the server,
-    loading saved cookie data, and rediecting backward
+    loading saved cookie data, and redirecting backward
 
            Written by: 
       Isaac Cutler 12/1/2020

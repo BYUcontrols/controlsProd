@@ -14,6 +14,7 @@ It extends layout.html (it will fill in the values of layout.html)
 the curly brackets are places that the template will fill with the arguments of render_template() -->
 <script>
     // we sanitize the data by passing it through JSON (a standard for converting objects to strings and vice versa)
+    // one of the 
     window.tableName = JSON.parse('{{tableName|tojson}}');
     window.links = JSON.parse('{{linkedColData|tojson}}');
     window.uneditableColumns = JSON.parse('{{uneditableColumns|tojson}}');
@@ -22,6 +23,7 @@ the curly brackets are places that the template will fill with the arguments of 
     window.tableColumnArray = JSON.parse('{{columns|tojson}}');
     window.linkedChildrenExist = JSON.parse('{{linkedChildrenExist|tojson}}');
     window.userIdNumber = JSON.parse('{{userId|tojson}}');
+    var primaryKey = JSON.parse('{{primaryKey|tojson}}');
 </script>
 <!-- This is for testing and is harmless -->
 <p id='demo'></p>
@@ -31,9 +33,9 @@ the curly brackets are places that the template will fill with the arguments of 
 <h2 class='tableMessage'>{% if message %}{{message|safe}}{% endif %}</h2>
 <!-- The container for the table and tableFunctions -->
 <div id='displayTable' class='tableContainer'>
-    <!-- The place that the javascript will fill in with the table functions -->
+    <!-- The place that the javascript will fill in with the table functions from pagination.js-->
     <div id='tableFunctions' class="tableFunctions"></div>
-    <!-- the actual table wrapped in a nice snuggly div-->
+    <!-- the actual table wrapped in a nice snugly div-->
     <div class='tableWrapper'>
         <table id='table' class='printThis'>
             <!-- passing the table html as a string -->

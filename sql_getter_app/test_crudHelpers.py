@@ -1,14 +1,17 @@
-import pytest
+# High level summary of this page:
+#   1. import modules
+#   2. defines functions for the unit tests on things like the following:
+#       a. getKeys
+#       b. verifyColumn
+#       c. etc
+
 from unittest.mock import patch, MagicMock
 import sql_getter_app
 
 from .collection import db
 from .crud import getKeys, swapPositions, getOrderedKeys, getColumnTypes, getIdColumn, verifyColumn, verifyTableName, a
 
-
-
 ### unit tests
-
 
 def test_getKeys(test_app_context):
     # test with the user Table
@@ -27,7 +30,6 @@ def test_getKeys(test_app_context):
         assert False
     except Exception as err:
         assert True
-
 
 def test_swapPositions():
     testList = ['zero', 'one', 'two', 'three', 'four', 'five']
@@ -79,7 +81,6 @@ def test_getColumnTypes(test_app_context):
     except Exception as e:
         assert True
 
-
 def test_getIdColumn(test_app_context):
     # run the function with a valid table name
     assert getIdColumn('User') == 'userId'
@@ -90,7 +91,6 @@ def test_getIdColumn(test_app_context):
         assert False
     except Exception as e:
         assert True
-    
 
 def test_verifyColumn():
     # define a fake table
@@ -106,4 +106,3 @@ def test_verifyTableName(test_app_context):
     # test various names
     assert verifyTableName('User') is True
     assert verifyTableName('RubberDuckies') is False
-    

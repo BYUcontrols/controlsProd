@@ -9,8 +9,8 @@
 
 // new pagination class because I didn't like how it was done before and it could be super easy to do it and test it like this
 
-/* pagination breaks the page up into pages to make long tbales more managable
- *
+/* 
+ * pagination breaks the page up into pages to make long tables more manageable
  */
 class paginationEngine {
         // takes a list of rows (obtained by aHTMLtableElement.rows)
@@ -21,10 +21,10 @@ class paginationEngine {
         if (isStorageItem('paginateScale')) this.currentScale = getStorageItem('paginateScale');
         else this.currentScale = 'all';
             // create container and place container in page
-        let functionDiv = document.createElement("DIV");
-        functionDiv.classList = 'tableFunction';
-        let divContainer = document.createElement('div');
-        divContainer.classList = 'tableFunctionContainer';
+        let functionDiv = document.createElement("DIV");    // creates a div element for the js functions
+        functionDiv.classList = 'tableFunction';            // assigns the div with a class called tableFunction for all the mini tools above the table
+        let divContainer = document.createElement('div');   // create a div element to the number-of-items-to-display tool
+        divContainer.classList = 'tableFunctionContainer';  // creates the class specifically for the engine that lets you select how many items you want to display at once
         divContainer.style.display = 'inline-block';
         setTooltip(divContainer, 'Choose how many items to display at a time and choose which group of items is displayed based on their \'Sort by:\' column values');
         functionDiv.appendChild(divContainer);
@@ -43,7 +43,7 @@ class paginationEngine {
         let div = document.createElement('div');
         div.style.marginLeft = '10px'
         divContainer.appendChild(div);
-            // create page slecetor dropdown
+            // create page selector dropdown
         this.pageDrop = new dropdown();
         this.pageDrop.create(this.paginate.bind(this));
         div.appendChild(document.createTextNode('Showing:'));
@@ -75,7 +75,7 @@ class paginationEngine {
             let divideBy = num(this.currentScale),
                 pointer = -1,
                 oldPointer = 0;
-                // runs for every chunck of range
+                // runs for every chunk of range
             while((this.rows.length - 1) > pointer) {
                     // update position variable
                 pointer += divideBy;
@@ -92,9 +92,9 @@ class paginationEngine {
                 // run the onchange for the pageDrop
             this.paginate();
         } else { // when the scale is all (Everything is selected)
-                // hide the pageDrop dropdown (it's no longer relevent)
+                // hide the pageDrop dropdown (it's no longer relevant)
             this.pageDrop.select.parentNode.style.display = 'none';
-                // unhide all the rows
+                // un-hide all the rows
             this.paginate();
         }
     }
@@ -109,7 +109,7 @@ class paginationEngine {
             let high = low + num(this.currentScale) - 1;
                 // set the cookie for the page range, so that when we come back it's the same
             setStorageItem('paginateRange', low);
-                // loop throuhg rows
+                // loop through rows
             for (row in this.rows) {
                     // if the row is outside the range hide it
                 if ((row >= low) && (row <= high)) this.rows[row].rowRef.style.display = 'table-row';
@@ -117,10 +117,8 @@ class paginationEngine {
             }
         } else {
                 // for when the selector is set to 'Everything' (not a number)
-                // unhide all the rows
+                // un-hide all the rows
             for (row in this.rows) this.rows[row].rowRef.style.display = 'table-row';
         }
     }
-}
-
-   
+}   

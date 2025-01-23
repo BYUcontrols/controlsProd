@@ -2,7 +2,7 @@
 /************* Unobtrusive alert box (bottom of the screen) *************/
 /* A for the container where we put unobtrusive alerts */
 .alertContainer {
-  z-index: 50 !important; /* keep this on top of the rest of the page, the !important makes this rule take presidence whe being overwritten */
+  z-index: 50 !important; /* keep this on top of the rest of the page, the !important makes this rule take precedence when being overwritten */
   position: fixed !important; /* keeps it above the rest of the page (scrolling and everything) */
   left: 0 !important; /* place it at the bottom of the page */
   bottom: 0 !important;
@@ -29,7 +29,7 @@
 /* for the little x that closes the box */
 .closeAlert {
     color: #fff;
-    float: right;  /* have the x float tp the right side and have everything else wrap around it */
+    float: right;  /* have the x float to the right side and have everything else wrap around it */
     font-size: 28px;
     font-weight: bold;
 }
@@ -38,7 +38,7 @@
     color: var(--contrastColor);  /* change the color */
     text-decoration: none;
     cursor: pointer;  /* make the mouse change to the one with the index finger that says 'you can click on me I do stuff' 
-     in a weird unconcious way for the user */
+     in a weird unconscious way for the user */
 }
 
 /* for the container within .unobtrusiveAlert that holds the content*/
@@ -71,22 +71,22 @@
     margin: auto;
     padding: 20px;
     border: 1px solid #888;
-    width: 95%;  /* chagne this number of you want the box to be wider */
+    width: 95%;  /* change this number if you want the box to be wider */
     overflow: auto;  /* set a scroll bar to appear if things become too big for the box */
-    white-space: nowrap;  /* part of the funcionality of the overflow: auto; style */
-    height: 90%;  /* chagne this one if you want it to be taller/ shorter */
+    white-space: nowrap;  /* part of the functionality of the overflow: auto; style */
+    height: 90%;  /* change this one if you want it to be taller/ shorter */
     font-size: 12px;
     font-weight: normal;
     font-family: Gotham A, Gotham B, Helvetica, sans-serif;
     height: auto;
-    max-height: 90vh;  /* make sure the box dosnt expand greter then the page height (vh is % of view window height */
+    max-height: 90vh;  /* make sure the box doesn't expand greater then the page height (vh is % of view window height */
   }
   /* for displaying tables within .modal-content*/
   .modalTableContainer {
     overflow-x: auto;  /* get some nice scrolling action */
     overflow-y: auto;
     white-space: initial;
-    clear: both;  /* prevent's the .close button from getting in the way of the table (maximum width) */
+    clear: both;  /* prevents the .close button from getting in the way of the table (maximum width) */
   }
 
   /* The Close Button */
@@ -109,26 +109,24 @@
     height: 37px;
   }
 
-  /* when the close button is moused over it jumps out of the page and leaves a shadow */
+  /* when the close button is moused over it scales up a little */
   .close:hover, .close:focus {
-    text-shadow: 5px 5px 2px grey;
-    line-height: 30px;
+    transform: scale(1.1);
     text-decoration: none;
     cursor: pointer;
   }
 
-  /* when the print icon is moused over it jumps out of the page and leaves a shadow */
+  /* when the print icon is moused over it scales up a little */
   .printIcon:hover, .printIcon:focus {
-    text-shadow: 5px 5px 2px grey;
-    line-height: 53px;
+    transform: scale(1.1);
     text-decoration: none;
     cursor: pointer;
   }
 
   /* For the box that hold the close and print icons */
   .modalIconContainer {
-    float: right; /* This makes the whole thing */
-    display: grid;
-    text-align: center;
+    float: right; /* This makes the whole thing float to the right side of the modal */
+    display: grid; /* Use grid layout for the icons */
+    text-align: center; /* Center the icons horizontally */
   }
 

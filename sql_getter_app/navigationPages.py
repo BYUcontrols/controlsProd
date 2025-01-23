@@ -1,11 +1,18 @@
+# High level summary of this page:
+#   1. creates the navigationPages blueprint
+#   2. defines the function to serve the home page
+#   3. defines the function to serve the site map page
+
 import flask_login
-from flask import (Flask, escape, redirect, render_template, request, session, url_for, Blueprint)
+from flask import (Flask, redirect, render_template, request, session, url_for, Blueprint)
+from markupsafe import escape
+# below are local module imports
 from .crud import pull
 from .auth import login_required
 from .collection import production, versionString
 from .menuCreation import getMenuForRole
 
-bp = Blueprint("navigationPages", __name__)
+bp = Blueprint("navigationPages", __name__) # sets up the blueprint with name navigationPages defined at __name__
 
 ################## home page ##################################
 @bp.route('/')
@@ -50,4 +57,3 @@ def siteMap():
     else:
         from flask import abort
         abort(401)
-

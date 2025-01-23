@@ -21,199 +21,309 @@ Main Page
 <a name="top"></a>
 <pre style='background-color: white; padding: 10px;'>
 
+Written by Joe Housley
+Updated by Mason Hunter 4/18/2022
+
 Here we will talk about how the server side elements of our application work. 
-If you have questions about the client side stuff look at the JavaScript Manual
+If you have questions about the client side stuff look at the JavaScript Manual.
 
 To create the requirements document use the command: pip freeze > requirements.txt
 
-The server is written in python and functions using the following modules:
-    flask - http request handling - https://flask.palletsprojects.com/en/1.1.x/
-    modWSGI - for interface between the flask application and the Apache server - https://modwsgi.readthedocs.io/en/master/ and https://flask.palletsprojects.com/en/1.1.x/deploying/mod_wsgi/
-    sqlAlchemy - to access the database - https://www.sqlalchemy.org/
+The server is written in Python and functions using the following modules:
+    Flask - http request handling - https://flask.palletsprojects.com/en/1.1.x/
+    modWSGI - For interface between the Flask application and the Apache server - https://modwsgi.readthedocs.io/en/master/ and https://flask.palletsprojects.com/en/1.1.x/deploying/mod_wsgi/
+    sqlAlchemy - To access the database - https://www.sqlalchemy.org/
 
-Our code is (should be at least) very well commented and will be easy to follow but to get you started
-here basic overviews for the processes of our app. If you want any details go read the comments 
+Our code is (should be at least) very well commented and will be easy to follow, but to get you started
+here are some basic overviews for the processes of our app. If you want any details go read the comments 
 next to the actual code!
 
 Table of Contents:
-<a href='#http'>Handling an http request</a>
-<a href='#serv'>Serving html</a>
-<a href='#data'>Talking to the database</a>
-<a href='#apa'>Flask talking to Apache</a>
+<a href='#http'>Handling an http Request</a>
+<a href='#serv'>Serving HTML</a>
+<a href='#data'>Talking to the Database</a>
+<a href='#apa'>Flask Talking to Apache</a>
 <a href='#usr'>User Authentication</a>
-<a href='#cas'>Byu CAS (central authentication system)</a>
+<a href='#cas'>BYU CAS (Central Authentication System)</a>
 <a href='#men'>Loading Menus</a>
-<a href='#tbl'>Displaying tables</a>
-<a href='#cth'>Create Table Html</a>
-<a href='#edi'>Editing, creating new rows, Auditing, and printing</a>
+<a href='#tbl'>Displaying Tables</a>
+<a href='#cth'>Create Table HTML</a>
+<a href='#edi'>Editing, Creating New Rows, Auditing, and Printing</a>
 <a href='#'></a>
 
-
-<a name='http'></a><a href='#top'>Top of page</a>
-Handling an http request
-    1. A user sends a request for the home page '/home'
-    2. Flask looks for a function with the wrapper (the thing with the @ before functions) @bp.route('/home') before it
-    3. Flask finds that function in tables.py and then runs it home()
-
-
-<a name='serv'></a><a href='#top'>Top of page</a>
-Serving html
-    1. functions with the @bp.route() wrapper should return strings
-    2. full page requests (browser requests) use render_template() to generate the html
-    3. render_template()'s first argument is a string that points to a file_
-        in the 'templates' folder that contains an html template (rendered using the JINJA module, https://jinja.palletsprojects.com/en/2.11.x/) 
-    4. other arguments are values to pass to the templates. (in the form of a key and a value, key='value')
-    5. the JINJA template engine then parses the template file and the arguments provided
-        to return an html string that is passed ot the user's browser.
+Python is Unique to Service Request Functionality
+<a href='#servReq'>Service Request</a>
+<a href='#col'>Collection</a>
+<a href='#tabhtml'>createTableHtml</a>
+<a href='#tabhtml2'>createTableHtml Support</a>
+<a href='#ff'>formFuncs</a>
+<a href='#sr'>Service Requests</a>
+<a href='#tab'>Tables</a>
+<a href='#uc'>userClass</a>
 
 
-<a name='data'></a><a href='#top'>Top of page</a>
-Talking to the database
-    1. in __init__.py when the server starts it starts a connection with the database using
-        the sqlAlchemy's .init_app(app)
-    2. Connection configuration is located in collection.py
-    3. Every python file that will access the database imports the db object from collections.py
-    4. We can then run sql commands using db.execute(text('sql command text'), parameters)
-    5. text() parses strings into sql friendly commands (including parameter markers)
-    6. parameter markers are how we pass data safely to the sql command (format -> :nameOfParameter)
+<a name='http'></a><a href='#top'>Top of Page</a>
+Handling an http Request:
+    1. A user sends a request for the home page '/home',
+    2. Flask looks for a function with the wrapper (the thing with the @ before functions) @bp.route('/home') before it,
+    3. Flask finds that function in tables.py and then runs it home().
+
+
+<a name='serv'></a><a href='#top'>Top of Page</a>
+Serving HTML
+    1. Functions with the @bp.route() wrapper should return strings,
+    2. Full page requests (browser requests) use render_template() to generate the HTML,
+    3. Render_template()'s first argument is a string that points to a file,
+        in the 'templates' folder that contains an HTML template (rendered using the JINJA module, https://jinja.palletsprojects.com/en/2.11.x/), 
+    4. Other arguments are values to pass to the templates (in the form of a key and a value, key='value'),
+    5. The JINJA template engine then parses the template file and the arguments provided
+        to return an HTML string that is passed to the user's browser.
+
+
+<a name='data'></a><a href='#top'>Top of Page</a>
+Talking to the Database:
+
+    1. In __init__.py when the server starts it starts a connection with the database using
+        the sqlAlchemy's .init_app(app),
+    2. Connection configuration is located in collection.py,
+    3. Every Python file that will access the database imports the db object from collections.py,
+    4. We can then run SQL commands using db.execute(text('sql command text'), parameters),
+    5. text() parses strings into SQL friendly commands (including parameter markers),
+    6. Parameter markers are how we pass data safely to the SQL command (format -> :nameOfParameter),
     7. Then in .execute() the second argument is a dictionary (https://docs.python.org/3/tutorial/datastructures.html)
-        with the parameter names and their values (eg {'nameOfParameter':value})
-    8. .execute() returns a ResultProxy object that contains the requested data (https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.ResultProxy)
-    NOTE: we usually call .fetchall() on our ResultProxies because it turns them into a much easier to deal with
-        list of RowProxies (https://docs.python.org/3/tutorial/datastructures.html AND https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.RowProxy)
-
-
-<a name='apa'></a><a href='#top'>Top of page</a>        
-Flask talking to Apache
-    See the controls-app/docs/APACHE_CONFIG.txt for information on how to set up an apache server
-
-    Apache talks to flask through a module (python and apache) called mod-wsgi. We import it through python's pip tool
-    and that module contains the apache module. Here is about how that process works.
-
-    1. In the Apache Apache/conf/controls.conf script we tell apache what to do when a user tries to access our site. There we
-        load the apache mod-wsgi module and pass it our appLoader.wsgi script. (located in the same folder as sql_getter_app)
-    2. appLoader.wsgi starts the virtual environment and then calls sql_getter_app/__init__.py/create_app()
-    3. create_app() loads our application and starts everything (Flask, login_manager, sqlAlchemy, etc.)
-    4. The mod_wsgi in apache then serves our application all the requests from the users.
-
-
-<a name='usr'></a><a href='#top'>Top of page</a>
-User Authentication
-    1. A function has the @login_required wrapper (defined in auth.py)
-    2. @login_required asks the login_manager object (defined in collection.py) if the user is logged in
-    3. If the user is not logged in we send them a page that redirects them to the Byu CAS login api 
-        (defined in auth.py at loginPage())
-    4. If the user is logged in then @login_manager (the gatekeeper of sorts) lets the page function run
-    5. Inside any python function the code can reference flask_login.current_user to get more data about the user
-        - flask_login.current_user is an instance of our user class (user_class.py)
-        - it is created at '/login'
-        - it has functions that tell you all about the user (what tables they can access, name, role, etc.)
+        with the parameter names and their values (eg {'nameOfParameter':value}),
+    8. .execute() returns a ResultProxy object that contains the requested data (https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.ResultProxy).
     
-    Further information about what permissions a user has for a table are obtained by...
+    NOTE: We usually call .fetchall() on our ResultProxies because it makes them into a much easier to deal with
+        list of RowProxies (https://docs.python.org/3/tutorial/datastructures.html AND https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.RowProxy).
+
+
+<a name='apa'></a><a href='#top'>Top of Page</a>        
+Flask Talking to Apache
+    See the controls-app/docs/APACHE_CONFIG.txt for information on how to set up an apache server.
+
+    Apache talks to Flask through a module (Python and Apache) called mod-wsgi. We import it through Python's pip tool
+    and that module contains the Apache module. Here is about how that process works:
+
+    1. In the Apache Apache/conf/controls.conf script we tell Apache what to do when a user tries to access our site. There we
+        load the Apache mod-wsgi module and pass it our appLoader.wsgi script(located in the same folder as sql_getter_app),
+    2. appLoader.wsgi starts the Virtual Environment and then calls sql_getter_app/__init__.py/create_app(),
+    3. create_app() loads our application and starts everything(Flask, login_manager, sqlAlchemy, etc.),
+    4. The mod_wsgi in Apache then serves our application all the requests from the users.
+
+
+<a name='usr'></a><a href='#top'>Top of Page</a>
+User Authentication:
+    1. A function has the @login_required wrapper (defined in auth.py),
+    2. @login_required asks the login_manager object (defined in collection.py) if the user is logged in,
+    3. If the user is not logged in we send them a page that redirects them to the BYU CAS login API 
+        (defined in auth.py at loginPage()),
+    4. If the user is logged in then @login_manager (the gatekeeper of sorts) lets the page function run,
+    5. Inside any Python function the code can reference flask_login.current_user to get more data about the user.
+        - flask_login.current_user is an instance of our user class (user_class.py)
+        - It is created at '/login'.
+        - It has functions that tell you all about the user (what tables they can access, name, role, etc.).
+    
+    Further information about what permissions a user has for a table are obtained:
 
         1. When a user is logged in (see the next section) user.getData() is called which grabs the roleId for the
-            user. This represents the role for the table
+            user. This represents the role for the table,
         2. The Server tries to access a permission level through: 
             user.canView(), user.canEdit(), user.canAdd(), user.canDelete(), 
-            user.canUnDelete(), user.canAudit(), or user.getPermissionsObject()
+            user.canUnDelete(), user.canAudit(), or user.getPermissionsObject();
         3. Those functions get the permission list from the TablePermissions table 
-            (or the DEFAULT if there is no row for that table) for the action wanted.
+            (or the DEFAULT if there is no row for that table) for the action wanted,
         4. They then parse that permission list (user.parseTablePermissionsResult()) and see if the Users roleId is
-            on that list granting them access or not.
-        5. Admins are always allowed permission, regardless of what the tablePermissions table says
+            on that list granting them access or not,
+        5. Admins are always allowed permission, regardless of what the tablePermissions table says.
 
 
-<a name='cas'></a><a href='#top'>Top of page</a>
-Byu CAS (central authentication system)
-    We use the byu login api to login our users (using their byu account) instead of creating our own login system
-    because #1, We don't want everyone ending up using the same account #2, everyone already has a byu account and #3,
-    do you really need another password to remember? 
-    First we will go over how to set up the site with the api.
+<a name='cas'></a><a href='#top'>Top of Page</a>
+BYU CAS (Central Authentication System):
+    We use the BYU login API to authenticate our users (using their BYU account)
+
+    First we will go over how to set up the site with the API:
     
-        1. Go to https://api.byu.edu/store/ and login to with your byu credentials
-        2. Go to the 'My Applications' tab
-        3. Create your new application with the callback url being https://###site url###/redirect_from_auth
-        4. Go to the 'My Subscriptions' tab and from the dropdown select your new application
-        5. Click 'generate keys' in the production box
-        6. copy the Key and Secret into sql-getter-app/collection.py...  
+        1. Go to https://api.byu.edu/store/ and login to with your BYU credentials,
+        2. Go to the 'My Applications' tab,
+        3. Create your new application with the callback url being https://###site url###/redirect_from_auth,
+        4. Go to the 'My Subscriptions' tab and from the dropdown select your new application,
+        5. Click 'generate keys' in the production box,
+        6. Copy the Key and Secret into sql-getter-app/collection.py:
 
             oauthKey = '### Consumer Key ###'
             oauthSecret = '### Consumer Secret ###'
             oauthRedirect = '### The Callback url you choose in step 3 ###'
 
-    Now we will go over how this works
+    Now we will go over how this works:
 
-        1. When a user who has not logged in tries to access a page with the @login_required flag the flask login
-            manager return the loginPage() view defined in sql_getter_app/auth.py
-        2. This view saves the url they were trying to access in the browser localStorage and...
-        3. Redirects the user to the byu login page with the Consumer Key in the url. When the user
-            logs into byu the byu login api sends them to the Callback Url we set up earlier with a 'code' argument
+        1. When a user who has not logged in tries to access a page, the @login_required flags the Flask login
+            manager returns the loginPage() view defined in sql_getter_app/auth.py,
+        2. This view saves the url they were trying to access in the browser localStorage,
+        3. Then redirects the user to the BYU login page with the Consumer Key in the url. When the user
+            logs into BYU, the BYU login API sends them to the callback url we set up earlier with a 'code' argument,
         4. The /redirect_from_auth endpoint on our server (sql_getter_app/auth.py/redirect_from_auth()) takes out the
             code, creates a new instance of our user_session class (sql_getter_app/user_class.py), sets all the variables for
-            the user that we need (table permissions, etc.) using the user_session.setFromToken(code), then passes the logged
-            in user_session to the login_manager.
-        5. user_session.setFromToken() takes the code and sends a request (from our server) to the https://api.byu.edu/token
-            api with our credentials (key and secret) and the code for the user. The api sends back the byu id of the user.
-        6. That byuId is then processed (user_session.getData()) to get the table access level, role, and name for this user.
-        7. Lastly /redirect_from_auth returns a page to the user that redirects them to the url saved in step 2
+            the user that we need (table permissions, etc.) using the user_session.setFromToken(code), and then passes the logged
+            in user_session to the login_manager;
+        5. user_session.setFromToken() then takes the code and sends a request (from our server) to the https://api.byu.edu/token
+            API with our credentials (key and secret) and the code for the user. The API sends back the BYU ID of the user,
+        6. That BYU ID is then processed (user_session.getData()) to get the table access level, role, and name for this user,
+        7. Lastly /redirect_from_auth returns a page to the user that redirects them to the url saved in step 2.
 
 
 
-<a name='men'></a><a href='#top'>Top of page</a>
-Loading Menus
-    Menus displayed to the user cannot be just plain typed out html because different users will not have access
-    to all the menus. So...
+<a name='men'></a><a href='#top'>Top of Page</a>
+Loading Menus:
+    Menus displayed to the user cannot be just plain typed out HTML because different users will not have access
+    to all the menus, so:
 
-    1. All the menu data is stored in menuCreation.py/rawMenu
+    1. All the menu data is stored in menuCreation.py/rawMenu,
     2. When the server is start up init.py runs menuCreation.py/createMenus() which loops through the rawMenu and adds and fills the 'viewingLevel'
-        argument for each options with the tables viewingLevel from the TablePermissions sql table
+        argument for each options with the tables viewingLevel from the TablePermissions SQL table,
     3. Then each time a page is loaded the menuCreation.py/getMenuForRole() function is called and returns the rawMenu, just without the options
-        that the user does not have permission to view.
-    4. The new rawMenu is passed to the jinja html template which is looped through using the template function in templates/menu_options.html
-        to create the html menus that are displayed to the user.
+        that the user does not have permission to view,
+    4. The new rawMenu is passed to the JINJA HTML template which is looped through using the template function in templates/menu_options.html
+        to create the HTML menus that are displayed to the user.
 
 
-<a name='tbl'></a><a href='#top'>Top of page</a>
-Displaying tables
-    1. the urls for the tables are their sql tableName (eg '/Building' for the buildings table)
-    2. All the @bp.route()'s for the tables are in tables.py
-    3. Those table functions call the function pull() from crud.py
+<a name='tbl'></a><a href='#top'>Top of Page</a>
+Displaying Tables:
+
+    1. The urls for the tables are their SQL tableName (e.g. '/Building' for the buildings table),
+    2. All the @bp.route()'s for the tables are in tables.py,
+    3. Those table functions call the function pull() from crud.py,
     4. pull() returns talks to the database 
-        and generates html for the table using the tableHtml class (createTableHtml.py)
+        and generates HTML for the table using the tableHtml class (createTableHtml.py).
 
-<a name='cth'></a><a href='#top'>Top of page</a>
-Creating table Html
-    Any time the user requests a table (audits, linked tables, just plain tables, etc.)
-    We execute a sql query to retrieve the data and then feed that data into the createTableHtml class
-    to turn the resultProxy objects returned from the server into html tables that work with
-    the client side javascript. Here are the members of that class ( located in createTableHtml.py)
+<a name='cth'></a><a href='#top'>Top of Page</a>
+Creating Table HTML (also see createTableHtml.py for the specific code):
+        Any time the user requests a table (audits, linked tables, just plain tables, etc.),
+    we execute a SQL query to retrieve the data and then feed that data into the createTableHtml class
+    to turn the resultProxy objects returned from the server into HTML tables that work with
+    the client side javascript. Here are the members of that class (located in createTableHtml.py):
 
-        constructor - 
-            The constructor saves the arguments to the class (data about the table needed by the class)
+        constructor (The function __init__()):
+            - The Constructor saves the arguments to the class (data about the table needed by the class).
 
-        newHeader - 
-            Assembles the header (&lt;th>) string and if the linkedDataTag is true then also includes
-            data about the table in there for the javascript as html tags
+        newHeader:
+            - Assembles the header (&lt;th>) string and if the linkedDataTag is true then also includes
+            data about the table in there for the JavaScript as HTML tags.
+            - To add more headers, take a look at the variable headersText:
+                -> In order to add headers, you have to use some HTML syntax(i.e. &lt;th>)
+                    - For Python, it will be written in "" or ''.
+                -> The Headers listed are written with the Keys from the page that it is pulling from:
+                    - From serviceRequests.py, the first key is called 'serviceRequestId'(line 285).
+                        -> In createTableHtml.py, that is written as  headersText += f"&lt;th>{self.PK}&lt;/th>"(line 44).
+                    - To add more columns, use headersText += "&lt;th>&lt;/th>". Inbetween the HTML code write the name of your new column.
+                    - From there we also need to change the column array. 
+                        -> This will be written as: self.columnArray.append('').
+                        -> That space inbetween the '' will be the name of your new column.
+                    - Also note that if you add a header that is not in the database, you will run into some problems.
+                        -> To get around this, you need to create a non-persistent column(a column that won't persist to the database).
 
-        content - 
-            Takes the resultProxy and adds to the table html string created in hewHeader the rest of the
-            data in the table
+        content: 
+            - Takes the resultProxy and adds to the table HTML string created in hewHeader the rest of the
+            data in the table.
+            - Under the content function, line 131, is an if statement for the Service Requests.
+             -> Here is where with our headers will be populated with the database information. 
+             -> It is probably here where a non-persistent column(a column that won't persist to the database) 
+             can be written. 
+                - This will help when we write the code to merge service requests. 
+                    -> A similar idea can be found in the pages under the 'Tables' Navigation bar. 
 
         linkedElements - 
             Looks through the list of linked columns in linkedColumns.py and the current keys to look
-            to see if we have any linked columns. If we do it calls self.getLinkedColumn() on that column
-            and returns all the day
+            to see if we have any linked columns. If we do, it calls self.getLinkedColumn() on that column
+            and returns all the day.
 
         getLinkedColumn - 
-            queries the database for the linked data (name column and id column) for the linked database
-            and returns it
+            Queries the database for the linked data (name column and ID column) for the linked database
+            and returns it.
 
 
-<a name='edi'></a><a href='#top'>Top of page</a>
-Editing, creating new rows, Auditing, and printing
-    1. The user performs an action that causes the javascript (the code that runs on the user's browser)
-        to send a http request to the server ( for instance to the '/print' url in crud.py)
-    2. The functions associated with those urls do something then return a string to the javascript.
+<a name='edi'></a><a href='#top'>Top of Page</a>
+Editing, Creating New Rows, Auditing, and Printing:
+    1. The user performs an action that causes the JavaScript (the code that runs on the user's browser)
+        to send a http request to the server (for instance to the '/print' url in crud.py),
+    2. The functions associated with those urls do something then return a string to the JavaScript.
+
+<div id="servReq"></div><a href='#top'>Top of Page</a>
+Python Unique to Service Request Functionality:
+by Mason Hunter 4/20/2022
+
+<div id="col"></div><a href='#top'>Top of Page</a>
+Collection Variables I added:
+
+ - userTechId = '(True,)' - The value for in the technician column of the User table that means a user IS a technician. 
+                                If that value changes, you need to change it here, too.
+ - devUserName = 'test' - the dev site auto logs in with this user name.
+
+<div id="tabhtml"></div><a href='#top'>Top of Page</a>
+createTableHtml:
+
+This was originally written by Joe.
+I modified this a bit to:
+    - Change the name of some columns in the SR list page,
+    - Apply the correct filter in the SR list page depending on if a user is the requestor, a technician, etc.
+
+For more info go into the specific file and read my comments!
+
+
+<div id="tabhtml2"></div><a href='#top'>Top of Page</a>
+createTableHtml Support:
+
+I added this file because my edits to the original were taking up a lot of room:
+
+    makeRow() - Function used in the createTableHtml module, tableHtml class in order to make a row in the table.
+    checkIfStatusIsOpen() - Tells us if the row has an open status or not.
+
+<div id="ff"></div><a href='#top'>Top of Page</a>
+formFuncs:
+
+    A Module(found in formFuncs.py) I created for functions that help with getting information from forms 
+    and submitting them to the database because the serviceRequests module was getting crowded:
+
+        newReqHelper() - Takes the info submitted by the user to create a new requestor and submits it to the database to save it.
+        newSRHelper() - Takes the info submitted by the user to create a new service request and submits it to the database to save it.
+        convertStringToDatetime() - Takes a string that is a data and converts it to the datetime data type.
+        getServReqData() - Gets all the data of a given service request from the database.
+        submitEdits() - Takes the info submitted by the user to edit a service request and submits it to the database to save it.
+        submitNewItem() - Takes the info submitted by the user to create a new item and submits it to the database to save it.
+        addItem() - Adds an item to a service request in the database.
+        addNote() - Adds a note to a service request in the database.
+        saveReqItemEdits() - Saves the edits to a specific item connected to a sepcific service request to the database.
+        saveReqNoteEdits() - Saves the edits to a specific note connected to a sepcific service request to the database.
+
+
+<div id="sr"></div><a href='#top'>Top of Page</a>
+Service Requests
+The serviceRequests.py file was created by Joe initially, and I added some changes as needed.
+Changes I made:
+    - Added some pages for the filtering functionality of the SR list page.
+    - Added some code to receive information from JS forms and send them through formFuncs for processing.
+    - Removed some columns from the SR list page.
+    - Created a function for retrieving a list of values from the database.
+    - Created a function for retrieving a list of names from the database.
+    - Created a function to get the next available ID number of a given table in the database.
+
+    Look at my comments for more info
+
+<div id="tab"></div><a href='#top'>Top of Page</a>
+Tables
+All I added here was the code to generate the new pages,
+Check out tables.py for more info.
+
+<div id="uc"></div><a href='#top'>Top of Page</a>
+userClass
+user_class.py was written by Joe and I modified it as needed.
+I added 3 functions:
+
+checkIfUserIsTechnician() - Checking if a user is a technician for the service request functionality.
+checkIfUserIsRequestor() - Tells us if the user is the requestor of a service request or not.
+checkIfUserIsAssignedTo() - Tells us if the user is the Assigned to technician for a service request or not.
+
+
 </pre>
 {% endraw %}
 {% endblock %}

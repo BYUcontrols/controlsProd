@@ -7,7 +7,7 @@
 */
 
 // function that creates the filter button
-function generateFilterButton(container = document.getElementById('tableFunctions')) {
+function generateFilterButton(container = document.getElementsByClassName('tableFunctions')[0]) {
   let button = document.createElement('p');
   button.appendChild(document.createTextNode('Filter'));
   button.classList = 'BYUbutton';
@@ -19,29 +19,31 @@ function generateFilterButton(container = document.getElementById('tableFunction
 
   setTooltip(button, 'Pick or modify filters for the table');
 
-   // alert the user to filters present
+  // alert the user to filters present
   let urlArgEngine = new URLSearchParams(window.location.search);
- 
-  if (urlArgEngine.has('filter') && Object.keys(JSON.parse(urlArgEngine.get('filter'))).length > 0) { // if the filter url exists and has argunents
+
+  if (urlArgEngine.has('filter') && Object.keys(JSON.parse(urlArgEngine.get('filter'))).length > 0) { // if the filter url exists and has arguments
     unobtrusiveAlert('This page has the following filters applied: ' + filterReadableText());
   }
 }
 
-/* function that runs when the filter button is clicked: it will...
+/* 
+  function that runs when the filter button is clicked: it will...
   * reveal the existing filter menu or
-  * create it */
+  * create it
+*/
 function filterMenu() {
   if (document.getElementById('filterMenu')) {
-    window.filterMenuContainer.openModal()
+    window.filterMenuContainer.openModal();
   } else {
     let urlArgEngine = new URLSearchParams(window.location.search);
     // create display box
     window.filterMenuContainer = createDisplayContainer('filterMenu', false, 'filterModal');
-    window.filterMenuContainer.openModal()
+    window.filterMenuContainer.openModal();
     // create the title
-    let title = document.createElement('h1')
+    let title = document.createElement('h1');
     title.classList.add('filterTitle');
-    title.textContent = 'Filtering'
+    title.textContent = 'Filtering';
     window.filterMenuContainer.appendChild(title);
     // create a place to put the filter options
     let tableDiv = document.createElement('div');
@@ -55,12 +57,16 @@ function filterMenu() {
     tableBox.appendChild(table);
     // get the url args
     let urlArgs = JSON.parse(decodeURIComponent(urlArgEngine.get('filter')));
+    
     // create the options and store them in a global array
     window.filterDataArray = new Array();
     for (let headerData of columnsInfo) {
       let colClass = new filterOption(headerData, table, urlArgs);
       filterDataArray.push(colClass);
     }
+
+   // let typeCol = generateColumnsObject();
+
     // create the showDeleted option
     filterDataArray.push(new showDeletedOption(tableDiv, urlArgs));
     // store the filterDataArray in a place we can access it for debugging
@@ -84,6 +90,10 @@ function filterMenu() {
         let colClass = new filterOption(headerData, table, urlArgs);
         filterDataArray.push(colClass);
       }
+        // delete the showDeleted option
+        const showDeletedIndex = document.getElementById('showDeletedContainer');
+        if (showDeletedIndex)
+          showDeletedIndex.parentNode.removeChild(showDeletedIndex);
         // create the showDeleted option
       filterDataArray.push(new showDeletedOption(tableDiv, urlArgs));
     };
@@ -151,70 +161,77 @@ class filterOption {
     this.nullable = colData.nullable;
     this.colData = colData;
 
-    if (existingArgs) {
-      if (existingArgs[this.colName]) {
-        this.oldOp = existingArgs[this.colName]['op'];
-        this.oldData = existingArgs[this.colName]['list'];
-      } else {
+    // we don't want a filter option for Estimate on the SR table
+    if (this.displayName != 'Estimate') {
+      // the rest of this is by Cutler
+      if (existingArgs) {
+        if (existingArgs[this.colName]) {
+          this.oldOp = existingArgs[this.colName]['op'];
+          this.oldData = existingArgs[this.colName]['list'];
+        } else {
+          this.oldOp = null;
+          this.oldData = null;
+        }
+        } else {
         this.oldOp = null;
         this.oldData = null;
       }
-    } else {
-      this.oldOp = null;
-      this.oldData = null;
+
+      let row = document.createElement('tr');
+      row.classList = 'filterRow';
+      container.appendChild(row);
+
+      this.nameCell = document.createElement('td');
+      setTooltip(this.nameCell, 'A column in the table')
+      row.appendChild(this.nameCell);
+
+      this.opCell = document.createElement('td');
+      setTooltip(this.opCell, 'Choose the filter method for this column')
+      row.appendChild(this.opCell);
+      
+      this.valCell = document.createElement('td');
+      setTooltip(this.valCell, 'The filter terms go here');
+      row.appendChild(this.valCell);
+
+      this.storedOperaton = new Array();
+      this.operationInputRef = new Object();
+
+      this.nameCell.textContent = this.displayName;
+      this.createFilterDropdown();
     }
-
-    let row = document.createElement('tr');
-    row.classList = 'filterRow';
-    container.appendChild(row);
-
-    this.nameCell = document.createElement('td');
-    setTooltip(this.nameCell, 'A column in the table')
-    row.appendChild(this.nameCell);
-
-    this.opCell = document.createElement('td');
-    setTooltip(this.opCell, 'Choose the filter method for this column')
-    row.appendChild(this.opCell);
-    
-    this.valCell = document.createElement('td');
-    setTooltip(this.valCell, 'The filter terms go here');
-    row.appendChild(this.valCell);
-
-    this.storedOperaton = new Array();
-    this.operationInputRef = new Object();
-
-    this.nameCell.textContent = this.displayName;
-    this.createFilterDropdown();
   }
 
     // gets the data for the filter
   get data() {
-    if (this.drop.value != 'null') {
-      let values = new Array()
+    // we don't want a filter option for Estimate on the SR table
+    if (this.displayName != 'Estimate') {
+      if (this.drop.value != 'null') {
+        let values = new Array()
 
-      for (let input of this.operationInputRef[this.drop.value]) {
-        if (this.type != 'datetime') {
-          values.push(cleanOutput(input.value));
-        } else {
-          if (input.value != 'null') { // datetime needs special handling to format it for sql
-            console.log(input.value);
-            let dateEngine = new dateTimeVoodoo(input.value);
-            values.push(dateEngine.forComputers());
+        for (let input of this.operationInputRef[this.drop.value]) {
+          if (this.type != 'datetime') {
+            values.push(cleanOutput(input.value));
+          } else {
+            if (input.value != 'null') { // datetime needs special handling to format it for sql
+              console.log(input.value);
+              let dateEngine = new dateTimeVoodoo(input.value);
+              values.push(dateEngine.forComputers());
+            }
           }
         }
+
+        let data = new Object();
+        data['op'] = this.drop.value;
+        data['list'] = values;
+
+        var wrapper = new Object();
+        wrapper[this.colName] = data;
+      } else {
+        var wrapper = null
       }
-
-      let data = new Object();
-      data['op'] = this.drop.value;
-      data['list'] = values;
-
-      var wrapper = new Object();
-      wrapper[this.colName] = data;
-    } else {
-      var wrapper = null
-    }
     
-    return wrapper;
+      return wrapper;
+    }
   }
 
   createFilterDropdown() {
@@ -381,7 +398,7 @@ class filterOption {
       inputToDelete.parentNode.innerHTML = '';
       inputsArray.splice(inputsArray.indexOf(inputToDelete), 1);
     } else { // if this input box is the last one
-      // channge the operation box to 'None'
+      // change the operation box to 'None'
       this.drop.value = "null";
       // run the operation dropdown change handler
       this.changeOperation();
@@ -455,10 +472,7 @@ class filterOption {
   }
 }
 
-
-
-
-// function that returns the filter paramerters as human readable text. given the filter parameters
+// function that returns the filter parameters as human readable text. given the filter parameters
 function filterReadableText(data = JSON.parse(decodeURIComponent(new URLSearchParams(window.location.search).get('filter')))) {
   let out = new String(); // as in 'output'
   for (let col in data) {
@@ -504,10 +518,6 @@ function replaceIfLinked(col, raw) {
   return ((col in window.links) && isNum(raw)) ? (window.links[col][num(raw)]) : (raw);
 }
 
-
-
-
-
 /* This class it in the same format as the filterOption class except it is for the last
   showDeleted row. It still has the get data() method
 
@@ -531,6 +541,7 @@ class showDeletedOption {
     this.home = document.createElement('div');
     container.appendChild(this.home);
     this.home.classList.add('filterShowDeletedContainer');
+    this.home.id = "showDeletedContainer";
 
     this.home.textContent = 'Show Deleted Rows: ';
     this.checkbox = document.createElement('input');

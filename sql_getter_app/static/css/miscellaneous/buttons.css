@@ -1,13 +1,13 @@
  /* Here lives the css for all things buttons */
- /* I will comment anything weird and workaroundy but for the most part
+ /* I will comment anything weird and workaround-y but for the most part
     this css should be readable. Might want to google the difference between margin and padding */
 
-/************* Byu buttons Style *************/
+/************* BYU Buttons Style *************/
 /* little buttons */
 button {
     color: white;
     font-family: 'HCo Ringside Narrow SSm';
-    background: var(--otherColor); /* this is a variable and is definied in site.css */
+    background: var(--otherColor); /* this is a variable and is defined in layout.html & errorLayout.html */
     padding: 2px;
     padding-left: 5px;
     padding-right: 5px;
@@ -18,7 +18,7 @@ button {
     font-size: 12px;
     margin-right: 1px;
 }
-/* little butons that have been disbaled (buttonExampleHtmlRefObject.disabled = true;)*/
+/* little buttons that have been disabled (buttonExampleHtmlRefObject.disabled = true;)*/
 button:disabled {
     background: lightslategray;
     color: rgb(182, 182, 182);
@@ -31,7 +31,7 @@ button:disabled {
     width: 100px;
     margin-right: 0px;
     display: block;
-    white-space: normal; /* this forces them to wrap their text and exand vertically to accomidate everythogn */
+    white-space: normal; /* this forces them to wrap their text and expand vertically to accommodate everything */
 }
 
 /* The style for the select buttons */
@@ -63,7 +63,7 @@ button:disabled {
 /* style for BYUbuttons that have the mouse over them */
 .BYUbutton:hover{
     background-color:  var(--contrastColor);
-    color: black
+    color: white
 }
 /* a variation of the byu button */
 .BYUbuttonWhite {

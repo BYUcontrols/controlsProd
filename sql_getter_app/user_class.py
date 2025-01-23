@@ -1,19 +1,28 @@
+# High level summary of this page:
+# This is one giant class called user_session
+#   1. creates a constant variable LOG for the logging session
+#   2. Starts defining the class and all the functions within
+#       a. __init__ to get the admin role id
+#       b. other functions to control user sessions, such as 
+#               getting permissions, access levels, and IDs
+
 import logging
 
-from sqlalchemy.sql.expression import false
+from sqlalchemy.sql.expression import false, true
 
-LOG = logging.getLogger(__name__)
+LOG = logging.getLogger(__name__)   # this is how you declare a constant variable
 
 
 #- This is a class to handle all things users, an instance of it is fed to flask-login to handle session management
 
 class user_session(object):
-        #define the default permission values for an table (if the sql permission query fails)
-    def __init__(self):
-        from .collection import adminRoleId
-        self.adminRoleId = adminRoleId
+        # define the default permission values for an table (if the sql permission query fails)
+    def __init__(self): # __init__ function is first called whenever the class is instantiated
+                        # the self argument referres to the object we are manipulating when calling the class
+        from .collection import adminRoleId  # gets adminRoleId from .collection.py
+        self.adminRoleId = adminRoleId      # assigns adminRoleId of the object we're manipulating to adminRoleId from .collection.py
         
-        pass
+        pass    # passes by without executing any code
 
         # called by self.setFromString and self.setFromToken
         #   it defines selfroleId self.tableId and self.roleText
@@ -24,8 +33,10 @@ class user_session(object):
         # get from engine
         try:
             # get the User's roleId and hierarchy number from the database
-            self.roleId = int(db.engine.execute(f"SELECT [userRoleId] FROM [User] WHERE userName='{self.byuId}';").fetchall()[0][0])
-            #### note: the userRoleId column does not refers to the role table's hierarchy column
+            self.userId = int(db.engine.execute(f"SELECT [userId] FROM [User] WHERE userName='{self.byuId}';").fetchall()[0][0])
+            self.roleId = int(db.engine.execute(f"SELECT [roleId] FROM [UserRole] WHERE userId='{self.userId}';").fetchall()[0][0])
+
+            #### note: the userRoleId column does not refer to the role table's hierarchy column
             self.tableId = int(db.engine.execute(f"SELECT [userId] FROM [User] WHERE userName='{self.byuId}';").fetchall()[0][0])
             self.roleText = str(db.engine.execute(f"SELECT [role] FROM [Role] WHERE roleId='{self.roleId}';").fetchall()[0][0])
             print(self.roleText)
@@ -105,7 +116,7 @@ class user_session(object):
 
                 # very bad, this means we have bad data in the tablePermissions table
                 else:
-                    print(' THERE ARE MORE THEN ONE ROWS FOR A TABLE IN TABLE PERMISSIONS ')
+                    print(' THERE ARE MORE THAN ONE ROWS FOR A TABLE IN TABLE PERMISSIONS ')
                     abort(500)
             
             except Exception as e:
@@ -115,7 +126,7 @@ class user_session(object):
                 # if something goes wrong with the sql request default to only admins have permission
                 return False
 
-    # these functions are used in the table to verify is a user has permission to do something
+    # these functions are used in the table to verify if a user has permission to do something
     
     def canView(self, tableName):
         return self.accessTableAccessLevel('viewingLevel', tableName)
@@ -205,7 +216,7 @@ class user_session(object):
                 FROM [dbo].[TablePermissions]
                 WHERE active = 1 AND tableName = 'DEFAULT';
                 """)).fetchall()[0]
-                #parse the data
+                # parse the data
             output = dict()
             output['canView'] = self.parseTablePermissionsResult(defaultResponse['viewing'])
             output['canEdit'] = self.parseTablePermissionsResult(defaultResponse['editing'])
@@ -215,12 +226,10 @@ class user_session(object):
             output['canUndelete'] = self.parseTablePermissionsResult(defaultResponse['undeleting'])
             return output
 
-        # lastly if we get more then one response that means someone doubled up on tables in the tablePermissions
+        # lastly if we get more than one response that means someone doubled up on tables in the tablePermissions
         else:
             print(' THERE ARE MORE THEN ONE ROWS FOR A TABLE IN TABLE PERMISSIONS ')
             abort(500)
-
-
 
         '''except Exception as e:
             print('error retrieveing permissions: Denying all access')
@@ -235,7 +244,6 @@ class user_session(object):
             output['canAudit'] = False
             output['canUndelete'] = False
             return output'''
-
 
         # When a user makes a new request after having logged in we don't want to send them back to CAS,
         #   so the Flask User library encrypts their byu Id and stores it as a cookie. This function
@@ -262,12 +270,12 @@ class user_session(object):
                 # this boolean lets them change it back
             self.isAdmin = userCookie['adminImposter']  
             return True
-        
+
         else:
             # the user is timed out, log them out
             self.logged_in = False
             return False
-        
+
         # member to process raw api.byu.edu/token response and log a user in based on that data
     def processOauthResponse(self, raw):
         import jwt, json
@@ -329,7 +337,7 @@ class user_session(object):
         from flask import abort
         try:
             # constructs the userCookie object (be careful, if someone were to get ahold of the session cookie they could see all this stuff)
-            # so don't put anything secure here (don't worry, an attacker can't modify anything withought the secret key)
+            # so don't put anything secure here (don't worry, an attacker can't modify anything without the secret key)
             userCookie = dict()
             userCookie['id'] = self.byuId
             userCookie['created'] = time.time_ns()
@@ -343,9 +351,9 @@ class user_session(object):
         except:
             abort(403)
         try:
-            return six.text_type(json.dumps(userCookie)) # the save the data to the cookie
+            return six.text_type(json.dumps(userCookie)) # save the data to the cookie
         except AttributeError:
-            raise NotImplementedError('No `id` attribute - override `get_id`') # 
+            raise NotImplementedError('No `id` attribute - override `get_id`')
 
     # required by the flask_login library
     def __ne__(self, other):
@@ -357,5 +365,41 @@ class user_session(object):
             return NotImplemented
         return not equal
 
-    
+    def returnUserName(self):
+        from .collection import db
+        return self.byuId
 
+    def returnFullName(self):
+        print(self.fullName)
+        return self.fullName
+
+    # MASON: Checking if a user is a technician, for the service request functionality
+    def checkIfUserIsTechnician(self):
+        from .collection import db, userTechId
+        self.techId = db.engine.execute(f"SELECT [technician] FROM [User] WHERE userName='{self.byuId}';").fetchone()
+
+        if (str(self.techId) == userTechId):
+            return True
+        else:
+            return False
+
+    # tells us if the user is the requestor of a service request or not
+    def checkIfUserIsRequestor(self, row, PK):
+        from .collection import db
+        self.requestorId = db.engine.execute(f"SELECT [userIdRequestor] FROM [serviceRequest] WHERE serviceRequestId='{str(row[PK])}';").fetchone()
+        self.userId = db.engine.execute(f"SELECT [userId] FROM [User] WHERE userName='{self.byuId}';").fetchone()
+        if (self.requestorId == self.userId):
+            return True
+        else:
+            return False
+            
+    # tells us if the user is the Assigned To technician for a service request or not
+    def checkIfUserIsAssignedTo(self, row, PK):
+        from .collection import db
+        self.assignedId = db.engine.execute(f"SELECT [userIdTechnician] FROM [serviceRequest] WHERE serviceRequestId='{str(row[PK])}';").fetchone()
+        self.userId = db.engine.execute(f"SELECT [userId] FROM [User] WHERE userName='{self.byuId}';").fetchone()
+
+        if (self.assignedId == self.userId):
+            return True
+        else:
+            return False

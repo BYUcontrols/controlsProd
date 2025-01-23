@@ -9,8 +9,18 @@ Main Page
 
 {% block content %}
 <script>
-    testLogin = {{loggedIn|tojson}};
+    let testLogin = {{loggedIn|tojson}};
 </script>
-<div class='homeImage'><h1 class='banner'> Version: {{ versionString }} {% if not production %}(Test Environment){% endif %} </h1></div>
+
+
+
+<div class='homeImage'>
+    <h1 class='banner'> Version: {{ versionString }} {% if not production %}(Test Environment){% endif %} </h1>
+
+    <!-- Button that links to create a new service request -->
+    <p>
+        <a class='bluebutton center' href = "{{ url_for('serviceRequests.newServiceRequest') }}">New Service Request</a>
+    </p>
+</div>
 
 {% endblock %}

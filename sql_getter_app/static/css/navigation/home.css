@@ -2,12 +2,11 @@
 .homeImage {
     width: 100vw; /* set div to occupy the whole page */
     height: 100vh;
-    background-position: center center;  /* cener the background image */
+    background-position: center center;  /* center the background image */
     background-repeat: no-repeat;  /* make sure we don't try the tile the image in the background */
-    background-size: cover;  /* make sure the background image isn't zoomed in when we crop it (not about that lores) */
+    background-size: cover;  /* make sure the background image isn't zoomed in when we crop it (not about that life) */
     background-image: url("/static/images/earth2-02.jpeg");  /* tell the div where to find the background image */
-    display: block;  /* so that it will expand to fill everything */
-
+    display: flex;  /* so that it will expand to fill everything */
 }
 
 /* for the version number in home */
@@ -17,13 +16,56 @@
     color: white;
     text-align: center;  /* center the text */
     display: block;  /* make sure it stays put */
-    position: absolute;  /* place it absolutly (relative to it's parent) in the page */
+    position: absolute;  /* place it absolutely (relative to it's parent) in the page */
     margin-left: auto;  /* place it in the center */
     margin-right: auto;
-    left: 0;  /* no left or right position shify */
+    left: 0;  /* no left or right position shift */
     right: 0;
     top: 80vh;  /* position us .8 * the window height down the div */
     width: 450px;
     background-color: rgb(50, 50, 50, .8);  /* a nice background */
     border-radius: 20px;  /* gotta love those round corners */
 }
+
+.bluebutton {
+    font-family: 'HCo Ringside Narrow SSm', Arial, sans-serif;
+    font-size: 40px;
+    text-align: center;
+    display: inline-block;
+    padding: 10px 20px;
+    position: absolute;
+    left: 0;  /* no left or right position shift */
+    right: 0;
+    top: 20vh;  /* position us .8 * the window height down the div */
+    background-color: #002E5D;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease; /* Smooth transition effect */
+    width: 450px; /* Adjust the value as needed */
+    margin: 0 auto; /* Center horizontally within the available width */
+}
+
+.center {
+    display: flex;
+    justify-content: center;
+}
+
+.bluebutton:hover {
+    transform: scale(1.025); /* Increase the size of the button on hover */
+}
+
+/* Styles for screens smaller than or equal to 768px (tablets or mobile devices) */
+@media (max-width: 768px) {
+    .bluebutton, .banner {
+        width: calc(100% - 80px);
+        max-width: 450px;
+    }
+}
+
+/* Syles that shrink font size when on a smaller device (makes the bluebutton still on one line of text when on a phone) */
+@media (max-width: 486px) {
+    .bluebutton, .banner {
+        font-size: 30px;
+    }
+} 

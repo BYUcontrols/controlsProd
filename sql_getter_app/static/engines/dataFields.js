@@ -44,8 +44,7 @@ function createDecimalInput(val='0') {
     return input;
 }
 
-
-// generate big byu button given a string and a function
+// generate big byu button given a string and a function  
 function generateByuButton(text, onClick) {
         // create a button
     let button = document.createElement('p');
@@ -75,7 +74,6 @@ function createButton(text, action, tooltipText=null) {
     if (tooltipText) setTooltip(btn, tooltipText);
     return btn;
 }
-
 
 function createDropdown(table, current=null) {
     // start an instance of my dropdown class

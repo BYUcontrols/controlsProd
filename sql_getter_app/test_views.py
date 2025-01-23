@@ -4,7 +4,7 @@ import sys
 
 import pytest
 import sql_getter_app
-from test_app import client, login, logout, test_db
+from .test_app import client, login, logout, test_db
 
 def test_home_page(client):
     login(client)

@@ -118,3 +118,216 @@ function createInputNewRequestorRow(requestContext) {
     inputButtons.append(button);
     inputButtons.classList.add('srItemsNewSaveBtnCell');
 }
+
+// opens the form to create a new requestor
+function createNewRequestor() {
+    popup.open();
+}
+
+// creates the popup and the form to create a new requestor
+function createNewReqSupport() {
+    // create popup
+    let popup = document.createElement('div');
+    document.getElementById('body').appendChild(popup);
+    popup.classList = 'modal';
+    popup.setAttribute('id', 'popup');
+    popup.style.display = 'none';
+
+    // create popup content
+    let popCon = document.createElement('div');
+    document.getElementById('popup').appendChild(popCon);
+    popCon.classList = 'modal-content';
+    popCon.setAttribute('id', 'popup-content')
+
+    // create the form
+    let popForm = document.createElement('form');
+    document.getElementById('popup-content').appendChild(popForm);
+    popForm.setAttribute('id', 'newReqForm');
+    popForm.method = 'post';
+    popForm.action = $SCRIPT_ROOT + '/NewServiceRequest';
+
+    // the user Id
+    let idText = document.createElement('div');
+    idText.innerText = 'Most Probable Id: ' + userNextId;
+    idText.setAttribute('title', 'The Id field is automatically populated by the database when it is saved. The Id displayed here is our best estimate of what that value will be.');
+    popForm.appendChild(idText);
+
+    // create the userName label
+    createLabel('userName', 'Username (BYU Net ID)', popForm);
+    // create the userName part of the form
+    createInputElement('text', 'userName', popForm);
+
+    // line break for aesthetics
+    popForm.appendChild(document.createElement('br'));
+
+    // create the firstName label
+    createLabel('firstName', 'First Name', popForm);
+    // create the userName part of the form
+    createInputElement('text', 'firstName', popForm);
+
+    // line break for aesthetics
+    popForm.appendChild(document.createElement('br'));
+
+    // create the lastName label
+    createLabel('lastName', 'Last Name', popForm);
+    // create the userName part of the form
+    createInputElement('text', 'lastName', popForm);
+
+    // line break for aesthetics
+    popForm.appendChild(document.createElement('br'));
+
+    //create the technician label
+    createLabel('technician', 'Technician', popForm);
+    //create the technician part of the form
+    let technician = document.createElement('select');
+    technician.setAttribute('id', 'technician');
+    technician.name = 'technician';
+    technician.required = true;
+    popForm.appendChild(technician);
+
+    let falseOption = document.createElement('option');
+    falseOption.setAttribute("value", "false");
+    falseOption.innerText = "False";
+    technician.appendChild(falseOption);
+
+    let trueOption = document.createElement('option');
+    trueOption.setAttribute("value", "true");
+    trueOption.innerText = "True";
+    technician.appendChild(trueOption);
+    
+    // line break for aesthetics
+    popForm.appendChild(document.createElement('br'));
+
+    //phone
+    createLabel('phone', 'Phone', popForm);
+    let phone = document.createElement('input');
+    phone.type = 'tel';
+    phone.id = 'phone';
+    phone.name = 'phone';
+    phone.required = true;
+    //phone.setAttribute('onblur', 'checkPhoneNum()');
+    phone.pattern = '[0-9]{3}-[0-9]{3}-[0-9]{4}';
+    phone.title = "Phone format: 123-456-7890";
+    phone.placeholder = "Format: 123-456-7890";
+    popForm.appendChild(phone);
+
+    // line break for aesthetics
+    popForm.appendChild(document.createElement('br'));    
+
+    //email
+    createLabel('email', 'eMail', popForm);
+    let email = document.createElement('input');
+    email.setAttribute('type', 'email');
+    email.setAttribute('id', 'email');
+    email.name = 'email';
+    email.required = true;
+    //email.setAttribute('onblur', 'checkEmail()');
+    email.onblur = function() {
+        emailValidation(email)
+    };
+    popForm.appendChild(email)
+
+    // line break for aesthetics
+    popForm.appendChild(document.createElement('br'));    
+
+    //vendorId
+    createLabel('vendorId', 'Vendor', popForm);
+    let vendorId = document.createElement('select');
+    vendorId.id = 'vendorId';
+    vendorId.name = 'vendorId';
+    vendorId.required = true;
+    popForm.appendChild(vendorId);
+
+    for (key in vendors) {
+        let value = vendors[key];
+        let opt = document.createElement('option');
+        opt.setAttribute('value', value);
+        opt.innerText = value;
+        vendorId.appendChild(opt);
+    }
+
+    // line break for aesthetics
+    popForm.appendChild(document.createElement('br'));
+
+    //userIdModified
+    createLabel('number', 'User Modified', popForm);
+    let userIdModified = document.createElement('input');
+    userIdModified.type = 'text';
+    userIdModified.readOnly = true;
+    userIdModified.value = userName;
+    userIdModified.name = 'userIdModified';
+    userIdModified.required = true;
+    popForm.appendChild(userIdModified);
+
+    // line break for aesthetics
+    popForm.appendChild(document.createElement('br'));
+
+    //Full Name
+    createLabel('fullName', 'Full Name', popForm);
+    let fullName = document.createElement('input');
+    fullName.id = "fullName";
+    fullName.name = 'fullName';
+    fullName.required = true;
+    popForm.appendChild(fullName);
+
+    // line break for aesthetics
+    popForm.appendChild(document.createElement('br'));
+
+    //userRoleId
+    createLabel('userRoleId', 'Role', popForm);
+    let userRoleId = document.createElement('select');
+    userRoleId.id = 'userRoleId';
+    userRoleId.name = 'userRoleId';
+    userRoleId.required = true;
+    popForm.appendChild(userRoleId);
+
+    for (key in roles) {
+        let value = roles[key];
+        let opt = document.createElement('option');
+        opt.setAttribute('value', value);
+        opt.innerText = value;
+        if (value == "Customer") {
+            opt.selected = true;
+        }
+        userRoleId.appendChild(opt);
+    }
+
+    // line break for aesthetics
+    popForm.appendChild(document.createElement('br'));
+   
+    //submit
+    let submit = document.createElement('input');
+    submit.type = 'submit';
+    submit.value = 'Create';
+    popForm.appendChild(submit);
+
+    //cancel
+    let cancel = document.createElement('input');
+    cancel.type = 'button';
+    cancel.value = 'Cancel';
+    cancel.onclick = function () {
+        cancelCloser();
+    };
+    popForm.appendChild(cancel)
+
+    // function that opens the popup
+    let openFunction = function() {
+        popup.style.display = "block"
+    }
+    popup.open = openFunction;
+}
+
+// sets the focus on requestor when a user cancels creating a new requestor
+function cancelCloser() {
+    document.getElementById('userName').value = '';
+    document.getElementById('firstName').value = '';
+    document.getElementById('lastName').value = '';
+    document.getElementById('phone').value = '';
+    document.getElementById('email').value = '';
+    document.getElementById('fullName').value = '';
+    popup.style.display = "none";
+
+    let requestor = document.querySelector('#requestor');
+    requestor.focus();
+    requestor.value = "";
+}

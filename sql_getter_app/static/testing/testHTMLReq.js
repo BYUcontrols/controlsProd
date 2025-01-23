@@ -17,7 +17,7 @@ function evaluate_globalVariables() {
     console.log(' - uneditableColumns');
     testObject(['Calories'], uneditableColumns);
     console.log(' - permissionsObject');
-    testObject({"canView": true, "canEdit": true, "canAdd": true, "canAudit": true, "canDelete": true}, permissionsObject);
+    testObject({"canAdd": true, "canAudit": true, "canDelete": true, "canEdit": true, "canView": true}, permissionsObject);
     console.log(' - columnTypes');
     testObject(
         {

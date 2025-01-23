@@ -54,7 +54,7 @@ class dropdown {
         this.select.setAttribute("onchange", onchange);
             // Put the select where it needs to go on the page
         container.appendChild(this.select);
-        // creates the selecter using the columns object
+        // creates the selector using the columns object
     }
 
     option(text, value, selected=false) {

@@ -1,14 +1,14 @@
 
 
-/************* For the Filter menue *************/
-/* for table used to allign everything */
+/************* For the Filter menu *************/
+/* for table used to align everything */
 #filterTable {
     margin: auto;
     width: auto;
 }
  /* all the children of the filterTable (# means id) that are table cells */
 #filterTable td {
-    vertical-align: top !important; /* set everthing to allign to the top of the cell */
+    vertical-align: top !important; /* set everything to align to the top of the cell */
 }
  /* here we will define the width of the 1st, 2nd and 3rd cells in the filterTable */
 #filterTable td:nth-child(1) { 
@@ -45,17 +45,25 @@
     position: absolute;  /* set it's position as absolute (does not affect or is affected by anything else on the page) */
     cursor: pointer;  /* force te mouse to be the pointer finger */
 }
- /* special stle for the filer modal (white content box) */
+ /* special style for the filer modal (white content box) */
 .filterModal {
     width: 100%;
-    min-width: 400px;  /* keep it between 400 and 500px (shrinks as soon as the page reaches 500px in width */
+    min-width: 300px;  /* keep it between 400 and 500px (shrinks as soon as the page reaches 500px in width */
     max-width: 500px;
     max-height: 80vh;
 }
+
+    @media (max-width: 768px) {
+        .filterModal {
+            width: calc(100% - 60px);
+            max-width: 450px;
+        }
+    }
+
  /* a place to put the buttons at the bottom of the filter menu */
 .filterButtonContainer {
     display: grid;  /* define a grid to put the children in */
-    grid-template-columns: auto auto auto; /* make three equally sized columns (childeren of .filterButtonContainer will be
+    grid-template-columns: auto auto auto; /* make three equally sized columns (children of .filterButtonContainer will be
     automatically assigned to a column */
 }
  /* A div that contains all the input fields and their corresponding x's */

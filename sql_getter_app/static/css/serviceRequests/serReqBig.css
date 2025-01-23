@@ -3,7 +3,6 @@
     background-color: hotpink;
 }
 
-
 .serviceRequestWindow {
     width: max-content;
     max-width: 95%;
@@ -106,7 +105,7 @@
     margin-left: 3px !important;
 }
 
-/* position classes for the fields: naem format is sr+F+# , service request + field + field number */
+/* position classes for the fields: name format is sr+F+# , service request + field + field number */
 
 .srF1 {
     grid-column: val1; 

@@ -1,14 +1,49 @@
 {% extends "layout.html" %}
 
 {% block content %}
+<!-- Here we pass data to the javascript about the table by attaching them to the window object
+the curly brackets are places that the template will fill with the arguments of render_template() -->
+<script>
+    // we sanitize the data by passing it through JSON (a standard for converting objects to strings and vice versa)
+    window.tableName = JSON.parse('{{tableName|tojson}}');
+    window.links = JSON.parse('{{linkedColData|tojson}}');
+    window.uneditableColumns = JSON.parse('{{uneditableColumns|tojson}}');
+    window.userIdNumber = JSON.parse('{{userId|tojson}}');
+    window.permissionsObject = JSON.parse('{{permissionsObject|tojson}}');      
+    window.linkedChildrenExist = JSON.parse('{{linkedChildrenExist|tojson}}');  
+    window.columnTypes = JSON.parse('{{columnTypes|tojson}}');                  
+    window.tableColumnArray = JSON.parse('{{columns|tojson}}');
+    let primaryKey = JSON.parse('{{primaryKey|tojson}}');
+    let userIsTech = JSON.parse('{{userIsTech|tojson}}');
+    let urlPath = JSON.parse('{{urlPath|tojson}}');
+    $SCRIPT_ROOT = JSON.parse('{{request.script_root|tojson}}');
+    let requests = JSON.parse('{{requests|tojson}}');         
+</script>
 
-<h1 class ='title' id='title'>Service Requests</h1>
+<h1 class ='title' id='title'>
+    Service Requests
+    <!-- MASON: the link above takes you to a page to create a new SR. 
+    VS Code acts like there is a problem with the link, but the page loads
+    and any other way I put it prevents the page from loading. -->
+</h1>
 
 <div id='displayTable' class='tableContainer'>
-    <div id='tableFunctions' class="tableFunctions"></div>
-    <table id='table'>
-        {{body|safe}}
-    </table>
+    <div id='srTableFunctions' class="tableFunctions">
+        <button id='showOpen' class='showOpen BYUbutton'></button>
+        <button id='showAll' class='showAll BYUbutton'></button>
+        <div class="tableFunction">
+            <a class="BYUbutton" id="viewSwitchButton" 
+            title="Create a new service request" 
+            href="{{ url_for('serviceRequests.newServiceRequest') }}"
+            style="background-color: #002E5D; text-decoration: none;">+ Request</a>
+        </div>
+    </div>
+    <div class="tableWrapper">
+        <table id='srtable'>
+            <!-- the safe filter is used when body variable contains HTML to filter out the HTML-->
+            {{body|safe}}
+        </table>
+    </div>
 </div>
 
 <div id='inputNew' class='inputNew'></div>

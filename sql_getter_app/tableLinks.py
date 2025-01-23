@@ -1,3 +1,10 @@
+# High level summary of this page:
+#   1. imports modules we need
+#   2. sets up the tableLinks blueprint
+#   3. defines the NEWlinkedElement function which is for quick view of a linked element, returns the HTML for a single column and it's header
+#   4. defines the updateLinkedObject function which is for when we are editing an row and click on the '***** Table' button, go to the linked table and create a row
+#   5. defines the aMessAroundFunction which is a url to test new functions
+
 import sys
 # for production
 #sys.path.append('C:\\control-app\\appEnv\\sql_getter_app')
@@ -6,15 +13,14 @@ import flask_login
 import json
 from flask import request, Blueprint
 from sqlalchemy.sql.expression import true
-from .collection import db
 from sqlalchemy import text
-
+# below are local module imports
+from .collection import db
 from .createTableHtml import tableHtml
 from .crud import getKeys, getIdColumn, verifyTableName, getColumnTypes, verifyColumnAndTableName
 from .auth import login_required
 
-
-bp = Blueprint("tableLinks", __name__)
+bp = Blueprint("tableLinks", __name__)  # sets up the blueprint with name tableLinks defined at __name__
 
 # for quick view of a linked element, returns the HTML for a single column and it's header
 # this request should have the following url args ( the stuff after the ? ):
@@ -45,7 +51,6 @@ def NEWlinkedElement():
         # if they don't have permission return 'unauthorized'
         return 'error', 403
 
-
 # When we are editing an row and click on the '***** Table' button, go to the linked table and create a row
 # then we get redirected back to the old table with the new id, but the old table doesn't have the new updated id's data
 # this url supplies that data
@@ -53,7 +58,6 @@ def NEWlinkedElement():
 #   the name of the column desired
 #   the name of the table desired
 #   the id you want
-#
 @bp.route('/updateLinkedObject/<columnToGet>/<linkedTableName>/<newId>', methods=['GET'])
 @login_required
 def updateLinkedObject(linkedTableName, columnToGet, newId):
@@ -78,10 +82,7 @@ def updateLinkedObject(linkedTableName, columnToGet, newId):
     else:
         return 'unauthorized', 403
 
-
 # a url to test new functions
 @bp.route('/mo', methods=['GET', 'POST'])
 def aMessAroundFunction():
     return 'sucess', 200
-
-

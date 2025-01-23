@@ -12,69 +12,28 @@
         <link rel="stylesheet" media="screen" href="https://cdn.byu.edu/byu-theme-components/experimental/user-info/byu-theme-components.min.css" media="all">
         <!-- Our css style sheets and the favicon (little icon in the tab) -->
         <link rel="stylesheet" media="screen" type="text/css" href="{{ url_for('static', filename='css/site.css') }}?version={{versionString}}" />
+        <link rel="stylesheet" media="screen" type="text/css" href="../static/css/tables/inputNew.css" />
+
         <link rel="icon" href="{{ url_for('static', filename='images/favicon.ico') }}?version={{versionString}}"/>
-        <!-- Our Javascript files -->
-        <script src="{{ url_for('static', filename='initialize.js') }}?version={{versionString}}"></script>
-        <script src="{{ url_for('static', filename='tableFunctions.js') }}?version={{versionString}}"></script>
-        <script src="{{ url_for('static', filename='newItem.js') }}?version={{versionString}}"></script>
-        <script src="{{ url_for('static', filename='publish.js') }}?version={{versionString}}"></script>
-        <script src="{{ url_for('static', filename='audit.js') }}?version={{versionString}}"></script>
-        <script src="{{ url_for('static', filename='linkedElements.js') }}?version={{versionString}}"></script>
-        <script src="{{ url_for('static', filename='quickLook.js') }}?version={{versionString}}"></script>
-        <script src="{{ url_for('static', filename='pagination.js') }}?version={{versionString}}"></script>
-        <script src="{{ url_for('static', filename='print.js') }}?version={{versionString}}"></script>
-        <script src="{{ url_for('static', filename='filter.js') }}?version={{versionString}}"></script>
-        <script src="{{ url_for('static', filename='engines/rowEngine.js') }}?version={{versionString}}"></script>
-        <script src="{{ url_for('static', filename='engines/cellEngine.js') }}?version={{versionString}}"></script>
-        <script src="{{ url_for('static', filename='engines/dataFields.js') }}?version={{versionString}}"></script>
-        <script src="{{ url_for('static', filename='sortBy.js') }}?version={{versionString}}"></script>
-
-        <!-- Javascript for service requests -->
-        <script src="{{ url_for('static', filename='serviceRequests/srMain.js') }}?version={{versionString}}"></script>
-        <script src="{{ url_for('static', filename='serviceRequests/srItems.js') }}?version={{versionString}}"></script>
-        <script src="{{ url_for('static', filename='serviceRequests/srNotes.js') }}?version={{versionString}}"></script>
-        <script src="{{ url_for('static', filename='serviceRequests/srRequestor.js') }}?version={{versionString}}"></script>
-        <script src="{{ url_for('static', filename='serviceRequests/printSr.js') }}?version={{versionString}}"></script>
-
-        <!-- javascript for testing -->
-        {% if 'true' in testing %}
-        <script src="{{ url_for('static', filename='testing/testHTMLReq.js') }}?version={{versionString}}"></script>
-        <script src="{{ url_for('static', filename='testing/testFramework.js') }}?version={{versionString}}"></script>
-        <script src="{{ url_for('static', filename='testing/testStartup.js') }}?version={{versionString}}"></script>
-        <script src="{{ url_for('static', filename='testing/otherTesting.js') }}?version={{versionString}}"></script>
-        <script src="{{ url_for('static', filename='testing/rowEngineTesting.js') }}?version={{versionString}}"></script>
-        <script src="{{ url_for('static', filename='testing/sinon-9.2.4.js') }}?version={{versionString}}"></script>
-        {% endif %}
 
         <!-- define the color scheme for the site based on of the database is in production or not -->
-        {% if production %}
         <style>
             :root {
-                --contrastColor: #B49E50;
-                --otherColor: #002f5d;
-                --backgroundColor: #85C2BB;
-            }
-        </style>
-        {% else %}
-        <style>
-            :root {
-                --contrastColor: #AD9D8E;
+                --contrastColor: #002E5D;
                 --otherColor: #888A8A;
-                --backgroundColor: #DE817B;
+                --backgroundColor: #C7C9C7;
             }
         </style>
-        {% endif %}
 
-        
     </head>
     <!-- runs the javascript startup function when the body loads ( the page onload string is passed in the javascript )-->
-    
+
     <body onload='{{pageOnLoadFunction|safe}}' id='body' style='height:100%'>
     
         <div class='containing-element'>
             <!-- The BYU header -->
             <byu-header style='z-index: 5;'>
-                <span slot="site-title" onclick="window.location='/'" style='cursor: pointer'>HVAC Controls{% if not production %} (development site){% endif %}</span>
+                <span slot="site-title" onclick="window.location='/'" style='cursor: pointer'>HVAC Controls{% if not production %} (Development){% endif %}</span>
                 <byu-user-info slot="user" login-url="/login">
                     <!-- user info from the template -->
                     {% if userN is defined %}
@@ -85,11 +44,11 @@
                     {% endif %}
                 </byu-user-info>
                 <!-- menus, they pull from the menuObject ( created by menuCreation.py/getMenuForRole() ) 
-                    and parse the object using a macro (google 'jinja macros') -->
-                <!-- documentation about how the html is formatted can be found at https://webcomponents.byu.edu/ -->
+                    and parse the object using a macro (google 'jinja macros')
+                    documentation about how the html is formatted can be found at https://webcomponents.byu.edu/ -->
                 {% import 'menu_options.html' as options %}
                 <byu-menu slot="nav" active-selector=".is-active">
-                    <!-- ###################### DROPDOWN MENUS #########################-->
+                    <!--###################### DROPDOWN MENUS #########################-->
                     {% for menu in menuObject %}
                     <div class="dropdown">
                         <!-- put a checkbox here to support our mobile menus (so that a tap on the <label> will check the box and the css can
@@ -97,7 +56,7 @@
                         <input type='checkbox' name='menuRadio' id='{{ loop.index0 }}' onclick="mobileMenuClick(this)" class="dropdown-checkbox"> 
                         <label for='{{ loop.index0 }}' class='dropdown-btn'>{{ menu.name }}</label>
                         <div class="dropdown-child">
-                            <!-- this macro creates the html for the menu based on the options provided -->
+                            <!-- this macro creates the html for the menu based on the options provided, macro found in menu_options.html -->
                             {{ options.menuCreator(menu.options) }}
                         </div>
                     </div>
@@ -118,7 +77,7 @@
                     <p>
                         BYU HVAC Controls
                         <br> Version: {{versionString}}
-                        <br> Isaac Cutler & Joe Housley
+                        <br> Isaac Cutler, Joe Housley, Mason Hunter, & Eli Allan
                         <br> Air Conditioning Shop
                         <br> Brewster Building
                         <br> Photo credit (GoogleEarth)
@@ -133,7 +92,7 @@
                         {% endif %}
                     </p>
                     <byu-footer-action-button>
-                        <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ&list=PLahKLy8pQdCM0SiXNn3EfGIXX19QGzUG3" slot="actiontext">Contact Us</a>
+                        <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ&list=PLahKLy8pQdCM0SiXNn3EfGIXX19QGzUG3" slot="actiontext" tabindex="-1">Contact Us</a>
                     </byu-footer-action-button>
                 </byu-footer-column>
                 <byu-footer-column>
@@ -149,7 +108,7 @@
                         {% endif %}
                     </p>
                     <byu-footer-action-button>
-                        <a href="https://forms.gle/rCQEtSvcD6F48KVTA" slot="actiontext">Suggestion Form</a>
+                        <a href="https://forms.gle/rCQEtSvcD6F48KVTA" slot="actiontext" tabindex="-1">Suggestion Form</a>
                     </byu-footer-action-button>
                 </byu-footer-column>
                 <byu-footer-column>
@@ -159,7 +118,7 @@
                         <br> Please use a modern version of Chrome, Edge, or Firefox. Internet Explorer will not work with this site.
                     </p>
                     <byu-footer-action-button>
-                        <a href="{{url_for('navigationPages.siteMap')}}" slot="actiontext">Map</a>
+                        <a href="{{url_for('navigationPages.siteMap')}}" slot="actiontext" tabindex="-1">Map</a>
                     </byu-footer-action-button>
                 </byu-footer-column>
                 {% if not production %}
@@ -169,10 +128,9 @@
                         Superficial logout tool (log out of the site but not out of byu)
                     </p>
                     <byu-footer-action-button>
-                        <a href="{{url_for('auth.superficialLogout')}}" slot="actiontext">Logout</a>
+                        <a href="{{url_for('auth.superficialLogout')}}" slot="actiontext" tabindex="-1">Logout</a>
                     </byu-footer-action-button>
                 </byu-footer-column>
-
                 {% endif %}
             </byu-footer>
         </div>
@@ -181,5 +139,46 @@
         <!-- Create a place where the unobtrusive alerts can reside (and stack) -->
         <div id='unobtrusiveAlerts' class='alertContainer'></div>
     </body>
+
+    <div id='JS-FILES-GO-LAST-SO-THEY-RUN-AFTER-HTML-GENERATES'>
+        <!-- Our Javascript files -->
+        <script src="{{ url_for('static', filename='initialize.js') }}?version={{versionString}}" defer></script>
+        <script src="{{ url_for('static', filename='tableFunctions.js') }}?version={{versionString}}" defer></script>
+        <script src="{{ url_for('static', filename='newItem.js') }}?version={{versionString}}" defer></script>
+        <script src="{{ url_for('static', filename='publish.js') }}?version={{versionString}}" defer></script>
+        <script src="{{ url_for('static', filename='audit.js') }}?version={{versionString}}" defer></script>
+        <script src="{{ url_for('static', filename='linkedElements.js') }}?version={{versionString}}" defer></script>
+        <script src="{{ url_for('static', filename='quickLook.js') }}?version={{versionString}}" defer></script>
+        <script src="{{ url_for('static', filename='pagination.js') }}?version={{versionString}}" defer></script>
+        <script src="{{ url_for('static', filename='print.js') }}?version={{versionString}}" defer></script>
+        <script src="{{ url_for('static', filename='filter.js') }}?version={{versionString}}" defer></script>
+        <script src="{{ url_for('static', filename='engines/rowEngine.js') }}?version={{versionString}}" defer></script>
+        <script src="{{ url_for('static', filename='engines/cellEngine.js') }}?version={{versionString}}" defer></script>
+        <script src="{{ url_for('static', filename='engines/dataFields.js') }}?version={{versionString}}" defer></script>
+        <script src="{{ url_for('static', filename='sortBy.js') }}?version={{versionString}}" defer></script>
+
+        <!-- Javascript for service requests -->
+        <script src="{{ url_for('static', filename='serviceRequests/srMain.js') }}?version={{versionString}}" defer></script>
+        <script src="{{ url_for('static', filename='serviceRequests/srItems.js') }}?version={{versionString}}" defer></script>
+        <script src="{{ url_for('static', filename='serviceRequests/srNotes.js') }}?version={{versionString}}" defer></script>
+        <script src="{{ url_for('static', filename='serviceRequests/srRequestor.js') }}?version={{versionString}}" defer></script>
+        <script src="{{ url_for('static', filename='serviceRequests/printSr.js') }}?version={{versionString}}" defer></script>
+        <script src="{{ url_for('static', filename='serviceRequests/srTechFunc.js') }}?version={{versionString}}" defer></script>
+        <script src="{{ url_for('static', filename='serviceRequests/editSr.js') }}?version={{versionString}}" defer></script>
+        <script src="{{ url_for('static', filename='serviceRequests/editSrHelper.js') }}?version={{versionString}}" defer></script>
+        <script src="{{ url_for('static', filename='serviceRequests/tableBuilders.js') }}?version={{versionString}}" defer></script>
+        <script src="{{ url_for('static', filename='serviceRequests/formBuilders.js') }}?version={{versionString}}" defer></script>
+
+
+        <!-- javascript for testing -->
+        {% if 'true' in testing %}
+        <script src="{{ url_for('static', filename='testing/testHTMLReq.js') }}?version={{versionString}}" defer></script>
+        <script src="{{ url_for('static', filename='testing/testFramework.js') }}?version={{versionString}}" defer></script>
+        <script src="{{ url_for('static', filename='testing/testStartup.js') }}?version={{versionString}}" defer></script>
+        <script src="{{ url_for('static', filename='testing/otherTesting.js') }}?version={{versionString}}" defer></script>
+        <script src="{{ url_for('static', filename='testing/rowEngineTesting.js') }}?version={{versionString}}" defer></script>
+        <script src="{{ url_for('static', filename='testing/sinon-9.2.4.js') }}?version={{versionString}}" defer></script>
+        {% endif %}
+    </div>
     
 </html>

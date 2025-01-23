@@ -27,7 +27,7 @@ function auditTable() {
 // additionalClass - string - a class that can be added to the content (if)
 
 function createDisplayContainer(id='displayContainer', dynamic=true, additionalClass=null) {
-        // create the window
+    // create the window
     let modal = document.createElement('DIV');
     document.getElementById('body').appendChild(modal);
     modal.classList = 'modal';
@@ -50,9 +50,13 @@ function createDisplayContainer(id='displayContainer', dynamic=true, additionalC
     iconDiv.classList.add('modalIconContainer')
     content.append(iconDiv);
         // create an x that closes the modal
-    let closeBox = document.createElement('SPAN');
-    closeBox.classList = 'close';
-    closeBox.innerHTML = '&#8678;';
+    let closeBox = document.createElement('span');
+    closeBox.classList.add('close');
+    closeBox.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512" width="24" height="24" fill="currentColor">
+            <path d="M400 145.49L366.51 112 256 222.51 145.49 112 112 145.49 222.51 256 112 366.51 145.49 400 256 289.49 366.51 400 400 366.51 289.49 256 400 145.49z"/>
+        </svg>
+    `;
     closeBox.divToClose = modal;
     iconDiv.appendChild(closeBox)
     let closeFunction = function() {
@@ -89,9 +93,17 @@ function createDisplayContainer(id='displayContainer', dynamic=true, additionalC
     // implement a print functionality option for the modal
     container.addPrintButton = function (fileName='someone_forgot_to_specify_a_file_name') {
             // create the print button 
-        let printBtn = document.createElement('SPAN');
-        printBtn.classList = 'printIcon';
-        printBtn.innerHTML = '🖨️';
+            let printBtn = document.createElement('SPAN');
+            printBtn.classList.add('printIcon');  // Add the class without overwriting
+            // print icon svg
+            printBtn.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512">
+              <path d="M400 96V56a8 8 0 00-8-8H120a8 8 0 00-8 8v40"/>
+              <rect x="152" y="264" width="208" height="160" rx="4" ry="4" fill="none"/>
+              <rect x="152" y="264" width="208" height="160" rx="4" ry="4" fill="none"/>
+              <path d="M408 112H104a56 56 0 00-56 56v208a8 8 0 008 8h56v72a8 8 0 008 8h272a8 8 0 008-8v-72h56a8 8 0 008-8V168a56 56 0 00-56-56zm-48 308a4 4 0 01-4 4H156a4 4 0 01-4-4V268a4 4 0 014-4h200a4 4 0 014 4zm34-212.08a24 24 0 1122-22 24 24 0 01-22 22z"/>
+            </svg>
+            `;            
         iconDiv.append(printBtn);
             // set the print button to send data to the server when clicked
         printBtn.onclick = function () {

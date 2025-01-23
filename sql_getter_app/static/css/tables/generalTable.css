@@ -1,119 +1,244 @@
-/************* STYLE FOR THE TABLE *************/
-/* general table format */
+/************* GENERAL TABLE STYLE *************/
 table, .body-content {
     color: #666;
     font-size: 12px;
     font-weight: normal;
-    border-color: solid #666;
-    border: 1px;
+    border: 1px solid #666;
     vertical-align: middle;
-    font-family: Gotham A, Gotham B, Helvetica, sans-serif;
+    font-family: 'Gotham A', 'Gotham B', Helvetica, sans-serif;
     padding: 10px;
-    border-collapse: collapse;  /* get rid of table borders (also to look clean and slim) */
-    width: 100%;  /* have the table span the whole width of the page (looks super clean) */
+    border-collapse: collapse; /* Eliminate spacing between table borders */
+    width: 100%; /* Make the table span the entire width of the page */
     text-align: left;
     background-color: #fff;
+    overflow-wrap: break-word; /* Ensure text wraps properly */
+    table-layout: auto; /* Allow column widths to adjust based on content */
 }
-/* table header */
-th{
-    color: #002e5d;
+
+/************* SERVICE REQUEST TABLE *************/
+#srtable {
+    margin: 0 auto 2.5%; /* Center the table and add bottom spacing */
+    width: 97.5%; /* Slightly reduce width for a cleaner layout */
+    border-width: 2px 5px 5px 5px; /* Remove the top border */
+    border-color: #002e5d; /* Match the header color */
+}
+
+#tableBodyContainer {
+    border-radius: 10px;
+}
+
+/************* TABLE HEADERS *************/
+th {
+    background-color: #002e5d;
+    color: white;
     font-weight: bold;
-    padding-bottom: 5px;
     font-size: 14px;
-    padding-left: 5px;
-    position: -webkit-sticky;  /* So that the header sticks to the top of the page when we scroll down the table */
-    position: sticky;  /* ditto but for non-chrome or edge browsers (firefox and safari i guess, everything else is chromium based. Rip explorer)*/
-    top: 0; /* Don't forget this, required for the stickiness */
-    background-color: #FFFFFF;
+    padding: 5px 10px; /* Add spacing around text */
+    position: sticky; /* Sticky headers for better UX */
+    top: 0; /* Required for sticky positioning */
+    z-index: 2; /* Ensure headers stay above table content */
+    border-bottom: 2px solid #002e5d; /* Add a bottom border for separation */
 }
-/* table cell */
-td{
-    padding-left: 5px;
+
+/************* TABLE CELLS *************/
+td {
+    padding: 10px;
     font-weight: 500;
-    max-width: 300px; /* set the maximum width of a cell this keeps things spaced out when we have a table with only a few columns 
-    displayed on a super wide screen. this can be violated if the cell must be bigger then 300px to fill the screen (see table/width) */
-    vertical-align: middle; /* center the content vertically */
-    overflow-wrap: break-word; /* set the text inside the cell to wrap on a word if one line doesn't fit in the 300px 
-    (if there is no space it will still wrap) */
+    vertical-align: middle;
+    max-width: 400px; /* Limit cell width */
+    white-space: nowrap; /* Prevent content from wrapping */
+    overflow: hidden; /* Hide overflowing content */
+    text-overflow: ellipsis; /* Add ellipsis for truncated content */
 }
 
-/* alternating white/greyish rows (every odd numbered table row) */
+/************* ALTERNATING ROW COLORS *************/
 tr:nth-child(even) {
-    vertical-align: top;
+    background-color: #f9f9f9;
 }
-/* alternating white/greyish rows (every even numbered table row) */
+
 tr:nth-child(odd) {
-    background-color: #e5e5e5;
-    vertical-align: top;
+    background-color: #e9ecef;
 }
 
-/* alternating white/greyish rows (every odd numbered table row) */
 tr.deletedRow:nth-child(even) {
-    background-color: #ff000040;
-    vertical-align: top;
+    background-color: rgba(255, 0, 0, 0.25); /* Red with transparency */
 }
-/* alternating white/greyish rows (every even numbered table row) */
+
 tr.deletedRow:nth-child(odd) {
-    background-color: #ff000052;
-    vertical-align: top;
+    background-color: rgba(255, 0, 0, 0.35); /* Slightly darker red */
 }
 
-
-/* this class is placed on the parts of the table you don't want to print (buttons) */
+/************* PRINT STYLING *************/
 .noPrint {
-    padding: 0px;
+    display: none; /* Hide elements with this class when printing */
 }
 
-/* this is how a row being edited will be styled */
+/************* EDITABLE ROWS *************/
 .editable {
-    background-color: var(--contrastColor) !important;
+    background-color: var(--contrastColor) !important; /* Highlight editable rows */
+    transition: background-color 0.3s ease; /* Smooth transition for clarity */
 }
 
-/* for the little inspect icons next to linked entries in the table (magnifying glasses) */
+/************* ICON STYLING *************/
 .icon {
-    padding: 1px;
+    padding: 1px 3px;
     border: none;
     background: none;
-    padding-right: 3px;
     font-size: 13px;
-    font-family: -webkit-pictograph; /* The font family that makes the magnifying glass look the best */
-    cursor: pointer; /* Make the mouse into the index finger 'you can click me' one */
-    color: black;
+    font-family: -webkit-pictograph; /* Best for magnifying glass icon */
+    cursor: pointer;
+    color: #000; /* Black color for contrast */
 }
 
-/* for the display deleted checkbox */
+/************ IONICONS STYLING *************/
+.ionicon{
+    width: 16px; /* Adjust size as needed */
+    height: 16px;
+}
+
+/************* DELETED ROW TOGGLE *************/
 .showDeletedCheckbox {
     vertical-align: middle;
 }
+
 .showDeletedLabel {
     font-size: 11px;
     vertical-align: middle;
 }
 
-/**************** mobile/touchscreen table ****************/
-/* This media query checks to see is the device is incapable of hovering (no mouse) and the pointer is coarse (touch mode).
-This actually applies to anything with a touchscreen (surface tablets with the keyboard removed for instance) */
-
-@media (hover: none) and (pointer: coarse)  {
-    /* set the table to be a lot easier to deal with on the mobile version */
+/************* RESPONSIVE DESIGN *************/
+@media (hover: none) and (pointer: coarse) {
+    /* Touchscreen/tablet-friendly table */
     .tableWrapper {
-        overflow: auto; /* set the table to scroll */
-        height: 80vh; /* force the table window to only be 80% of the window height */
+        overflow: auto; /* Enable horizontal and vertical scrolling */
+        max-height: 80vh; /* Limit table height to 80% of viewport */
     }
 }
 
-
-/* class for horizontally scrollable tables */
+/************* SCROLLABLE TABLE *************/
 .scrollTable {
-    overflow-x: initial;
-    overflow-y: auto;
-    white-space: initial;
+    overflow-x: auto !important;  /* Enable horizontal scrolling */
+    overflow-y: auto; /* Enable vertical scrolling */
+    white-space: nowrap; /* Prevent content wrapping */
+    max-width: 100%; /* Limit to the container width */
+    border: 1px solid #ccc; /* Optional: Border for clarity */
 }
 
-/* For the optional message on top of the table */
+.tableWrapper {
+    width: 100%; /* Ensure the table wrapper spans the entire width */
+    overflow-x: auto;
+}
+
+.scrollTable table {
+    width: 100%; /* Ensures the table fills the container */
+    min-width: 800px; /* Set a minimum width for the table */
+    border-collapse: collapse;
+}
+
+/************* TABLE MESSAGES *************/
 h2.tableMessage {
-    font-family: 'HCo Ringside Narrow SSm';
+    font-family: 'HCo Ringside Narrow SSm', sans-serif;
     font-size: 15px;
     margin-left: 15px;
     max-width: 800px;
+    color: #002e5d; /* Match table header color */
 }
+
+/************* ACCESSIBILITY IMPROVEMENTS *************/
+table {
+    border-spacing: 0; /* Prevent gaps between table cells */
+}
+
+th, td {
+    border: 1px solid #ddd; /* Add subtle cell borders */
+    overflow: hidden;       /* Prevent overflow */
+    text-overflow: ellipsis; /* Add "..." for truncated text */
+    white-space: nowrap;    /* Avoid wrapping; combine with ellipsis for truncation */
+    word-break: break-word; /* Break long words */
+}
+
+th:focus, td:focus {
+    outline: 2px solid #0056b3; /* Highlight focused cell for accessibility */
+}
+
+/************* MEDIA QUERIES *************/
+
+/* For small screens (up to 600px) */
+@media (max-width: 600px) {
+    table {
+        font-size: 10px; /* Reduce font size for better visibility */
+    }
+
+    .tableWrapper {
+        overflow-x: auto; /* Enable horizontal scrolling */
+    }
+
+    th, td {
+        white-space: nowrap; /* Prevent wrapping to maintain table structure */
+    }
+}
+
+/* For very small screens (up to 400px) */
+@media (max-width: 400px) {
+    table {
+        font-size: 9px; /* Further reduce font size for smaller screens */
+    }
+
+    th, td {
+        padding-left: 3px;
+        padding-right: 3px; /* Reduce horizontal padding */
+    } 
+
+    .icon {
+        font-size: 11px; /* Reduce icon size */
+    }
+
+    .noPrint {
+        display: none; /* Hide non-essential elements like buttons on tiny screens */
+    }
+
+    .tableWrapper {
+        margin: 0 5px; /* Reduce side margins */
+    }
+}
+
+/* For tablets or medium screens (601px to 768px) */
+@media (min-width: 601px) and (max-width: 768px) {
+    table {
+        font-size: 11px; /* Slightly reduce font size */
+    }
+
+    th, td {
+        padding-left: 5px;
+        padding-right: 5px; /* horizontal padding between text and cell wall */
+    }
+
+    td {
+        max-width: 200px; /* Limit cell width to ensure readability */
+    }
+}
+
+/* For touchscreens with coarse pointers */
+@media (hover: none) and (pointer: coarse) {
+    table {
+        font-size: 12px; /* Maintain legibility on touch devices */
+    }
+    
+    .tableWrapper {
+        max-height: 70vh;
+        overflow-y: auto;
+    }
+}
+
+/* For landscape mode on mobile devices */
+@media (max-height: 500px) and (orientation: landscape) {
+    table {
+        font-size: 10px; /* Reduce font size for landscape view */
+    }
+
+    .tableWrapper {
+        max-height: 60vh; /* Restrict height to avoid overflow */
+        overflow-y: auto; /* Enable vertical scrolling */
+    }
+}
+

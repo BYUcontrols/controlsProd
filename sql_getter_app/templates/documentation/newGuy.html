@@ -1,0 +1,122 @@
+{% extends "layout.html" %}
+{% block title %}
+Main Page
+{% endblock %}
+
+{% block name %}
+{{userN}}
+{% endblock %}
+
+{% block role %}
+{{role}}
+{% endblock %}
+
+{% block loggedIn %}
+{{loggedIn}}
+{% endblock %}
+
+{% block content %}
+<!-- the raw block makes it so that no jinja template code will be executed -->
+{% raw %}
+
+<pre style = 'padding: 10px;'>
+<style>
+    li {
+        display: inline;
+    }
+    ul {
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+</style>
+
+
+<!--START MY NOTES-->
+<h1>Notes for New Guys</h1>
+Last updated 4/18/22
+
+<h2>Background</h2>
+    Hello! I am Mason Hunter. I worked on this app during the fall 2021 and winter 2022 semesters of BYU.
+    This was a few months after Joe and Isaac worked on the app. They built the first version from the ground up.
+    Isaac did the front end (JavaScript) and Joe did the back end (Python). I worked in a full stack capacity.
+    Joe and Isaac got the CRUD functionality working which refers to the part of the app that acts as a user friendly 
+    interface to interact with the database. I worked on the Service Request functionality, although I did not finish it.
+
+<h2>About the App</h2>
+<h3>Tech Stack</h3>
+    1) This App is built using the <a href="https://flask.palletsprojects.com/en/2.0.x/">Flask Framework</a>. Check out the Python documentation tab for more info:
+        a) Flask is a <a href="https://www.python.org/about/">Python</a> based framework, but the front end is handled with <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript">JavaScript</a>, <a href="https://developer.mozilla.org/en-US/docs/Learn/Getting_started_with_the_web/HTML_basics">HTML</a> and <a href="https://developer.mozilla.org/en-US/docs/Web/CSS">CSS</a>. Check out the JavaScript documentation tab for more info.
+        b) We write code in the Microsoft VS Code <a href="https://en.wikipedia.org/wiki/Integrated_development_environment">IDE</a>.
+    2) The Test and Production sites run on an <a href="https://httpd.apache.org/">Apache server</a>, but you can run the Dev site locally by pressing F5 with VS Code open.
+        a) To get to Apache, open the Services app and find Apache2.4 under the Name column. Starting or Restarting Apache will send the current state of the dev site to the test server, 
+        thus updating the test server code base,
+    3) The data is stored in a <a href="https://en.wikipedia.org/wiki/Microsoft_SQL_Server">SQL Server</a> database which you access in Microsoft SQL Server Management Studio.
+        a) Open Microsoft SQL Server Management Studio, follow this path: SSVS470/Databases/ControlsTest/Tables
+    4) Our test framework is currently Sinon for JavaScript and Pytest for Python, but I was migrating the tests to <a href="https://www.browserstack.com/guide/python-selenium-to-run-web-automation-test">Selenium</a> because it will eliminate the need to separate tests by using black box testing.
+        a) Go to C:\Selenium-Test-Automation. Open with VS Code. Open the terminal. Type 'python tests.py'
+    5) We handle version control with <a href="https://en.wikipedia.org/wiki/Git">Git</a> through the source control tab in VS Code.
+
+<h3>Functionality</h3>
+    This App has 2 main functionalities:
+        1) Acts as a user-friendly interface for interacting with the database,
+        2) Handles Service Requests electronically.
+    
+    For more info on how to operate the app, check out the Operations Documentation tab.
+
+<h2>Where to Get Started</h2>
+    I knew nothing about code when I started working on this app. You get to benefit from that because I started reading the codebase 
+    and leaving comments about anything I learned. Hopefully that means that you can open any code file and see my comments to help
+    you understand what's going on.
+    
+    However, I don't recommend reading code as a starting point because it is unproductive. Instead, pick a small task and try to complete it.
+    For example, Matt told me to try duplicating a page as my first task. Solving this problem helped me understand a lot about how the app works.
+    Don't get paralyzed. You will never know everything about code. You don't know what to look for anyway. Just get started on a simple problem
+    and you will know what to search for after testing out a few things. Start by copying a line of code into Google and figuring out what it does.
+    
+<h3>Simple Project Ideas (in increasing difficulty)</h3>
+    1) Change the color of a button. Then, change it back!
+    2) Add some sample data to the ControlsTest database and make it appear in a table (this is simpler than you think).
+    3) Duplicate a page. Be sure to add it to the menu so that you can access it! Once you have it working then remove it, of course.
+    4) Make a small change, like the color of a button, and push that update to the test server. This is different than the dev site (look in documentation for updating the test site).
+    5) Consider asking Matt for a simple problem you can work on.
+
+    If you do all 5 of these simple tasks then you will be well on your way to understanding the controls app!
+
+<h3>Test Driven Development</h3>
+    We are moving into the <a href="https://en.wikipedia.org/wiki/Test-driven_development">Test Driven Development</a> model of software development.
+    
+    This is the process for TDD:
+        1) Convert requirements into a test.
+        2) Write the test method / function in code.
+        3) Run the test. It should fail.
+        4) Write code to pass the test.
+        5) Run the test. It should pass.
+        6) Every time you update your code you should run all tests and watch for failing tests.
+    
+    As you start writing code for the app, follow this process. Write your tests in the Selenium test package so that you don't have to migrate them over later.
+
+<h3>Unfinished Projects</h3>
+    These are the projects that I started but left unfinished. I recommend picking up where I left off.
+
+        - Migrating and combining the JS and Python tests into one Selenium test:
+            - First, write all tests in Selenium,
+            - Then, delete all old tests in both JS and Python.
+        - Service Request functionality. You can check my progress on this <a href='https://trello.com/b/rbjDnFYj/hvac-project-scrum-board'>Trello Board</a>
+            - You may need to ask Matt for permission to access the Trello Board.
+    
+    You might also consider asking Matt what he would have you work on.
+
+<h2>Pro Tips for New Guys</h2>
+    1) Google anything you don't understand. Don't be afraid to copy an entire line of code into Google and search just to see what pops up.
+    2) Use the dev environment to break things. Be sure to push changes to Git constantly so that you can revert back to old versions if you end up breaking something beyond repair.
+    3) Read all the other documentation pages on this site. If you need to know how to app works, look in the documentation first.
+    4) Follow TDD from the beginning. It is much easier to maintain tests and code as you go along instead of building a backlog of tests and errors to handle later.
+    5) Act imperfectly. Progress is more important than perfection. Improve as you go along.
+    6) Complete simple tasks instead of reading code (see above).
+    7) Use comments to document your code as you go. Once again, its much easier to maintain updated documentation 
+    if you do it as you go. It also helps you understand what you wrote when you come back to it further down the line.
+
+
+</pre>
+{% endraw %}
+{% endblock %}

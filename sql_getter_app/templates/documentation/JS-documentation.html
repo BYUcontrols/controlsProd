@@ -33,9 +33,11 @@ Main Page
             Written by: 
        Isaac Cutler 12/1/2020
        isaacjcutler@gmail.com
+            Updated by:
+        Mason Hunter 4/18/2022
     Property of the BYU A/C Shop
 
-Hi! Welcome to the AC controls app's javascript! So glad you could make it!
+Hi! Welcome to the AC controls app's JavaScript! So glad you could make it!
 
 Here I will attempt to outline how the client-side code is organized and how it functions. 
 
@@ -47,8 +49,8 @@ Table of contents:
 <li><a href='#row'>- rowEngine</a></li>
 <li><a href='#cel'>- cellEngine</a></li>
 <li><a href='#lnk'>- Linked Elements</a></li>
-<li><a href='#cki'>- Cookie progress saving</a></li>
-<li><a href='#red'>- Redirect handling</a></li>
+<li><a href='#cki'>- Cookie Progress Saving</a></li>
+<li><a href='#red'>- Redirect Handling</a></li>
 <li><a href='#req'>- Server Requests</a></li></ul>
 Table Functions<ul>
 <li><a href='#srt'>- Sort Select</a></li>
@@ -58,49 +60,75 @@ Table Functions<ul>
 <li><a href='#del'>- Show Deleted</a></li>
 <li><a href='#pag'>- Pagination</a></li></ul>
 Option Buttons<ul>
-<li><a href='#btn'>- edit, save and undo buttons</a></li>
+<li><a href='#btn'>- Edit, Save, and Undo Buttons</a></li>
 <li></li><a href='#aud'>- Audit</a></li>
 <li></li><a href='#lkb'>- Linked</a></li>
 <li></li><a href='#sel'>- Select</a></li></ul>
-<a href='#mag'>Magnifying glass next to linked elements</a>
+<a href='#mag'>Magnifying Glass Next to Linked Elements</a>
+
+JS Unique to Service Request Functionality
+     - <a href="#sr">Service Request JS</a>
+     - <a href="#srmain">SR Initializer Function</a>
+     - <a href="#tech">Technician-only Buttons</a>
+     - <a href="#editsr">Edit and Create a New Service Request</a>
+     - <a href="#requestor">Add a New Requestor</a>
+     - <a href="#notes">Add or Edit Notes</a>
+     - <a href="#items">Add or Edit Items</a>
+     - <a href="#print">Print Functionality for Service Requests</a>
+     - <a href="#tables">Table Builder Functions</a>
+     - <a href="#forms">Form Builder Functions</a>
 
 Terms
 
-    linked element - when a table references a row from another table. For instance the device table 
-        has a column called 'buildingId' that contains integers. Those integers reference the id numbers
+    Linked Element - When a table references a row from another table; for instance, the device table 
+        has a column called 'buildingId' that contains integers. Those integers reference the ID numbers
         in the 'Building' table. This is so that a building row can be edited without also having to
         go through and edit all places that building is referenced.
-    ref - In the code variables ?Ref are html Reference objects. Which are portals from the html
-        to the javascript. If you have questions google is your friend.
+    Ref - In the code variables ?Ref are HTML Reference objects. Which are portals from the HTML
+        to the JavaScript. If you have questions google is your friend.
         https://www.google.com/search?q=html+Refrence+objects
      
-<a name='obj'></a><a href='#top'>Top of page</a>
+<a name='obj'></a><a href='#top'>Top of Page</a>
 Objective
 
-    This is a web interface for the BYU ac shop's sql database that...
-        - Displays tables
-        - Sorts, prints, paginates, filters, and hides columns on the table
-        - Allows editing rows, creating new rows and undoing those edits
-        - Replaces linked columns with their counterparts
-        - Creates a quick inspect icon that brings up a singular editable linked row
-        - Allows users to go to a linked elements table and choose a row and be automatically redirected
-        - Can handle the data types: varchar, bool, int, linked, decimal, datetime, and date
-        - Displays an audit history for the tables and allows you to restore a row
-        - Shows a view linked icon that shows all the places a row is referenced
+    This is a web interface for the BYU AC Shop's SQL database that:
+        - Displays tables,
+        - Sorts, prints, paginates, filters, and hides columns on the table,
+        - Allows editing rows, creating new rows, and undoing those edits,
+        - Replaces linked columns with their counterparts,
+        - Creates a quick inspect icon that brings up a singular editable linked row,
+        - Allows users to go to a linked elements table, choose a row, and be automatically redirected,
+        - Can handle the data types: varchar, bool, int, linked, decimal, datetime, and date,
+        - Displays an audit history for the tables and allows you to restore a row,
+        - Shows a view linked icon that shows all the places a row is referenced.
+    
+    This app is also able to handle Service Request functionality. The development of this functionality is currently in progress:
+        - View a list of Service Requests,
+        - Sort Service Requests,
+        - Print a list of Service Request,
+        - Print an individual Service Request,
+        - Create a new Service Requests,
+        - Update Service Requests,
+        - Delete Service Requests,
+        - Write notes to Service Requests,
+        - Email updates on Service Requests,
+        - Close Service Requests,
+        - Add necessary items to a given Service Request,
+        - Etc.
 
-<a name='ovr'></a><a href='#top'>Top of page</a>
+<a name='ovr'></a><a href='#top'>Top of Page</a>
 Table Overview
 
-    The actual html for the tables themselves is created in python by an instance of the 
-    createTableHtml class, while the supporting elements (table functions, new entries, and 
+    The actual HTML for the tables themselves is created in Python by an instance of the 
+    createTableHtml class while the supporting elements (table functions, new entries, and 
     audit tables, and linked elements) are created by the JS function initialize.js/startup() 
-    that runs onload of the html body. Most of what startup() does is straightforward with
+    that runs onload of the HTML body. Most of what startup() does is straightforward with
     the notable exception of the rowEngine(). Miscellaneous data that we want to pass to
-    the JS from the server is passed through the html template table.html into a &lt;script> 
-    and declared as global JS variables. So if you're scratching your head over where a variable
-    is declared it's probably there.
+    the JS from the server is passed through the HTML template table.html into a &lt;script> 
+    and declared as global JS variables, so if you're scratching your head over where a variable
+    is declared, it's probably there.
 
-<a name='row'></a><a href='#top'>Top of page</a>
+<a name='row'></a><a href='#top'>Top of Page</a>
 rowEngine
 
     To make linking elements, editing, and all the datatypes much easier we have created a class
@@ -108,101 +136,101 @@ rowEngine
     the rest of the code, allowing ease of data access, editing, and saving. It is a wrapper for
     a row of data and handles all the different data types.
     
-    When a new instance of the class is Called it...
-        - takes the a columnsObject (as created by initialize.js/generateColumnsObject())
-        - creates the 'this.fields' array of cell's with each cell being an instance of the cellEngine
-            the cellEngine class is talked about in the next section
+    When a new instance of the class is called, it:
+        - Takes the a columnsObject (as created by initialize.js/generateColumnsObject()),
+        - Creates the 'this.fields' array of cell's with each cell being an instance of the cellEngine
+            (the cellEngine class is talked about in the next section).
     Once the row is initialized we can either load a table row or create input fields (or do something custom
-    like what we do with service requests);
+    like what we do with service requests):
         - this.loadRow()
-            = puts the html ref of a cell in the this.fields array
-            = obtains the id number for that row from the row html: &lt;tr data-id='#'> and stores it
-            = looks for an editing cookie (more on those later) for that row and 
-                loads that cookie into the row
-            = creates the row buttons (edit, save, undo, audit, select (if applicable), etc.) using 
-                the this.createOptionsButtons() member
+            = Puts the HTML ref of a cell in the this.fields array,
+            = Obtains the ID number for that row from the row HTML: &lt;tr data-id='#'> and stores it,
+            = Looks for an editing cookie (more on those later) for that row and 
+                loads that cookie into the row,
+            = Creates the row buttons (edit, save, undo, audit, select (if applicable), etc.) using 
+                the this.createOptionsButtons() member.
         - this.generateInputFields()
-            = creates an input field for every this.fields
-            = loads the values of the fields from a cookie if it exists
-            = creates a save button that calls the this.saveRow() member
-    Lastly there are a couple functions available to perform actions on the rowEngine
+            = Creates an input field for every this.fields,
+            = Loads the values of the fields from a cookie if it exists,
+            = Creates a save button that calls the this.saveRow() member.
+    Lastly there are a couple functions available to perform actions on the rowEngine:
         - this.editRow()
-            = loops through the this.fields and saves the value of each cell into this.backupObj
-                and calls .edit() on each cell to make it editable
-            = change the appearance of the row to signal to the user that it is being edited.
+            = Loops through the this.fields and saves the value of each cell into this.backupObj
+                and calls .edit() on each cell to make it editable,
+            = Changes the appearance of the row to signal to the user that it is being edited.
         - this.getValues()
             = gets all the values of all the cells in the table by calling .getVal() on each cell
         - this.saveRow()
-            = uses this.getValues() to get the values then adds some daa that the server needs and
-                sends the save request to the server
-            = If in airplane mode this does nothing but runs onSaveReturn()
-            = we can pass this.saveRow an object which is saved en lieu of the actual values 
+            = Uses this.getValues() to get the values then adds some data that the server needs and
+                sends the save request to the server,
+            = If in airplane mode this does nothing but runs onSaveReturn(),
+            = We can pass this.saveRow an object which is saved en lieu of the actual values.
         - this.onSaveReturn()
-            = a function that runs when the request sent in this.saveRow returns with a success.
-            = undoes the visual editing cues from this.editRow()
-            = calls .restoreCell() on all the cells (restoring them to an unedited state)
-            = we can pass this.onSaveReturn() an object which is passed to .restoreCell().
-                this makes it so that we can replace different values to the row
+            = A function that runs when the request sent in this.saveRow returns with a success,
+            = Undoes the visual editing cues from this.editRow(),
+            = Calls .restoreCell() on all the cells (restoring them to an unedited state),
+            = We can pass this.onSaveReturn() an object which is passed to .restoreCell();
+                this makes it so that we can replace different values to the row.
         - this.undoRow()
             = Uses the this.backupObj from this.editRow() to undo changes from 2 states:
-                1. if the row is being edited we pass this.onSaveReturn the backupObj
-                2. if we are not editing we must have already saved so we pass this.saveRow()
-                    the backupObj to save, which in turn passes the backupObj to this.onSaveReturn()
-                    to update the values
+                1. If the row is being edited we pass this.onSaveReturn the backupObj,
+                2. If we are not editing we must have already saved so we pass this.saveRow()
+                    the backupObj to save which in turn passes the backupObj to this.onSaveReturn()
+                    to update the values.
         - this.deleteRow()
-            = prepares and sends a request to the server to delete the row
+            = Prepares and sends a request to the server to delete the row.
         - this.finishDelete()
-            = Runs on return of the request sent in this.deleteRow()
-            = erases the row's html (removing it from the view of the user)
+            = Runs on return of the request sent in this.deleteRow(),
+            = Erases the row's HTML (removing it from the view of the user).
         - this.unDeleteRow()
-            = Sends a request to the server to unDelete the row
-            = on return of the request we reload the page
+            = Sends a request to the server to unDelete the row,
+            = On return of the request we reload the page.
 
-<a name='cel'></a><a href='#top'>Top of page</a>
+<a name='cel'></a><a href='#top'>Top of Page</a>
 cellEngine
 
     Represents a cell and has functions for editing the cell, restoring the cell, getting the value of
-    the cell, and get a value by which to sort a cell. This is complicated by the fact that we have to 
-    deal with a bunch of different data types. An integer needs a different editing box then a boolean
-    or a linked column. We handle the difference in data type at the lowest possible level (here). This
+    the cell, and getting a value by which to sort a cell. This is complicated by the fact that we have to 
+    deal with a bunch of different data types. An integer needs a different editing box, then a boolean
+    or linked column. We handle the difference in data type at the lowest possible level(here). This
     allows us to not have to worry about data types higher up in the app where we have lots of other
     stuff to worry about.
 
     - constructor()
-        = takes the passed columnObject (generated by initialize.js/generateColumnsObject())
-            and breaks it up and stores it in the object
-        = call this.assignMembersForType()
+        = Takes the passed columnObject (generated by initialize.js/generateColumnsObject())
+            and breaks it up and stores it in the object.
+        = Calls this.assignMembersForType().
     - this.assignMembersForType()
-        = a bunch of if statements that look for different types
-        = for each type it assigns the:
+        = A bunch of if statements that look for different types,
+        = For each type it assigns the:
             this.edit()
             this.sortVal()
             this.getVal()
             this.restoreCell()
-        variables with the corresponding function for that type.
-        = if the type is 'linked' we grab a few extra variables from the columnObject
+        Variables with the corresponding function for that type.
+        = If the type is 'linked' we grab a few extra variables from the columnObject.
     - this.getVal_****() group
-        = this group gets the value for the cell and returns it
-        = if the argument 'pair' is true then it passes the value with the columnName like
+        = This group gets the value for the cell and returns it,
+        = If the argument 'pair' is True then it passes the value with the columnName like:
             {colName:value}
     - this.edit_******() group
-        = this group takes a 'val' argument (default is the value of this.getVal )
-        = clears the cell
-        = puts in a editable field (box, dropdown, etc.)
-        = assigns the field with the 'val'
+        = This group takes a 'val' argument (default is the value of this.getVal),
+        = Clears the cell,
+        = Puts in a editable field (box, dropdown, etc.),
+        = Assigns the field with the 'val',
     - this.restoreCell_*******() group
-        = also takes an optional 'val' argument
-        = clears the cell
-        = puts uneditable text into the cell (the 'val')
+        = Also takes an optional 'val' argument,
+        = Clears the cell,
+        = Puts uneditable text into the cell (the 'val').
     - this.sortVal_******() group
-        = some data types have values that wouldn't work to be sorted by
-            for instance a linked column's value is an integer but we want to sort by the
+        = Some data types have values that wouldn't work to be sorted by.
+            For instance, a linked column's value is an integer, but we want to sort by the
             text displayed to the user.
-        = returns the sortable value for the cell.
-        = also if editing we want to sort by the unedited value for the cell that way the row
-            doesn't jump around while the user is typing
+        = Returns the sortable value for the cell,
+        = Also while editing we want to sort by the unedited value for the cell, that way the row
+            doesn't jump around while the user is typing.
 
-<a name='lnk'></a><a href='#top'>Top of page</a>
+<a name='lnk'></a><a href='#top'>Top of Page</a>
 Linked Elements
 
     There are a few columns among the tables that are pointers to a row in another table.
@@ -213,30 +241,30 @@ Linked Elements
     Here is their flow:
 
     1. The raw linked data as a dictionary of dictionaries is passed through either the &lt;script> as global
-        variables or in the &lt;table> header for subTables (Audits, Linked Children, Deleted, Quick Look).
+        variables or in the &lt;table> header for subTables (Audits, Linked Children, Deleted, Quick Look),
     2. The initialize.js/generateColumnsObject() function takes the raw data and assigns it to its
-        respective columns
-    3. The RowEngine takes the generatedColumnsObject and passes it to the linked column's cellEngine
-    4. which then creates a dropdown to select the linked elements when editing a linked cell.
+        respective columns,
+    3. The RowEngine takes the generatedColumnsObject and passes it to the linked column's cellEngine,
+    4. Which then creates a dropdown to select the linked elements when editing a linked cell.
 
-<a name='cki'></a><a href='#top'>Top of page</a>
-Cookie progress saving
+<a name='cki'></a><a href='#top'>Top of Page</a>
+Cookie Progress Saving
 
     When the user exits a page their editing and new Item progress is saved in localStorage tied to 
     that page's path. Here are the involved functions:
 
-        - initialize.js/window.addEventListener("unload") - sets and defines a 
+        - initialize.js/window.addEventListener("unload") - Sets and defines a 
             function to run when the page unloads. The function saves the rows and newItem being
             edited as cookies by calling the .getValues() member of the rowEngine class and passing
-            the returned object to publish.js/setStorageItem()
-        - when a RowEngine is initialized and .loadRow() or .generateInputFields() is called they
-            they look for storage items referring to them using publish.js/isStorageItem() and if 
-            there is then they load the row with the stored values using publish.js/getStorageItem()
-        - When a row is saved, undone or deleted its edited cookie is removed using
-            publish.js/removeStorageItem()
+            the returned object to publish.js/setStorageItem(),
+        - When a RowEngine is initialized and .loadRow() or .generateInputFields() is called when
+            they look for storage items referring to them using publish.js/isStorageItem(), and if 
+            there is, then they load the row with the stored values using publish.js/getStorageItem(),
+        - When a row is saved, undone, or deleted its edited cookie is removed using
+            publish.js/removeStorageItem().
 
-<a name='red'></a><a href='#top'>Top of page</a>
-Redirect handling
+<a name='red'></a><a href='#top'>Top of Page</a>
+Redirect Handling
     
     When editing or creating a row, the user may want to visit a linked table to create a new row
     or select a row with more information. To facilitate this we open the page for the linked table 
@@ -244,176 +272,180 @@ Redirect handling
     
         1. publish.js/redirectHandler() is called when a ('Table') button (when editing a linked element) is clicked
             and redirects the user to a given new page with a url parameter containing the current page and 
-            column and row being edited. We also pass the function to be called when a select button is pressed (step 5)
+            column and row being edited. We also pass the function to be called when a select button is pressed(see step 5),
         2. publish.js/checkForParentWindows() is called on startup in the initialize function and checks to see
             if the current page has been opened by the redirectHandler() of another page. If that is the case
-            then we put up a message using unobtrusiveAlert() and set the global variable displaySelectButton to true
-        3. when RowEngine.loadRow() is called it checks displaySelectButton and if true creates 'Select' buttons 
-            that call publish.js/nextPage() so that the
-            user can select a row and be redirected back to the original table
+            then we put up a message using unobtrusiveAlert() and set the global variable displaySelectButton to true,
+        3. When RowEngine.loadRow() is called, it checks displaySelectButton. If true, it creates 'Select' buttons 
+            that call publish.js/nextPage(), so that the user can select a row and be redirected back to the original table,
         4. publish.js/nextPage() is called by a 'Select' button or when a new item is saved and sends the user
             back to the original page and calls the function passed to the redirect handler in step 1, passing the new index.
-                - getting the selected index is easy for a row, but for a newItem we check the return of the 
+                - Getting the selected index is easy for a row, but for a newItem we check the return of the 
                     post request which should contain the generated index.
         5. nextPage() calls the function passed in redirectHandler(), which in our case is defined in 
-            newEditClass.js/rowEngine/edit_linked(). It sets the dropdown to the id passed by nextPage()
-            and if the dropdown does not contain the id (the id was just created) then it asks the server
+            newEditClass.js/rowEngine/edit_linked(). It sets the dropdown to the ID passed by nextPage(),
+            and if the dropdown does not contain the ID (the ID was just created), then it asks the server
             for it thorough /updateLinkedObject url.
         
-<a name='req'></a><a href='#top'>Top of page</a>
+<a name='req'></a><a href='#top'>Top of Page</a>
 Server Requests
 
     For a lot of the operations in this app we need to be able to talk to the server without reloading the page.
-    This functionality is what separates a website from an app, an app is interactive and dynamic. To talk to the
-    server we have created a newItem.js/post() function that handles requests and uses the javascript XMLHttpRequest
-    class. Its arguments are...
+    This functionality is what separates a website from an app; an app is interactive and dynamic. To talk to the
+    server we have created a newItem.js/post() function that handles requests and uses the JavaScript XMLHttpRequest
+    class. Its arguments are:
 
-        1. data (anything that JSON.parse can process)
-            The data to be sent to the server
-        2. type (string)
-            the request type in all caps: POST, PUT, GET, etc.
-        3. url (string)
-            the relative url to send the request to (eg. '/pata')
+        1. Data (anything that JSON.parse can process)
+            The data to be sent to the server,
+        2. Type (string)
+            The request type in all caps: POST, PUT, GET, etc.,
+        3. Url (string)
+            The relative url to send the request to (eg. '/pata'),
         4. finishFunction (function)
-            a function that will be called on successful return
+            A function that will be called on successful return,
         5. dataToPass (any)
-            data that will be passed to the first argument of the finishFunction
+            Data that will be passed to the first argument of the finishFunction.
             
-    The flow of the function is...
+    The flow of the function is:
 
-        1. create the request with the url and data
-        2. create a loading graphic on top of the page to let the user know we are loading 
-        3. send the request
-        4. assign the request something to do when it loads:
-            if successful (200) - run the finishFunction passing the context of the request
-            if sql error (472) - alert the user to the error and pass them the error
-            if server error (500) - alert the user
-            if unauthorized (403) - alert the user and reload the page to log them back in
-            if timeout - alert the user
-        5. remove the loading graphic
-        6. return the engine that way we can assign more data to the request that
-            will then be passed to the finishFunction()
+        1. Create the request with the url and data,
+        2. Create a loading graphic on top of the page to let the user know we are loading,
+        3. Send the request,
+        4. Assign the request something to do when it loads:
+            If successful (200) - runs the finishFunction passing the context of the request,
+            If SQL error (472) - alerts the user to the error and passes them the error,
+            If server error (500) - alerts the user,
+            If unauthorized (403) - alerts the user and reload the page to log them back in,
+            If timeout - alerts the user.
+        5. Removes the loading graphic,
+        6. Returns the engine. That way we can assign more data to the request that
+            will then be passed to the finishFunction().
 
 
-Table functions - the functions that make viewing the table easier
+Table Functions - the functions that make viewing the table easier.
 
-<a name='srt'></a><a href='#top'>Top of page</a>
-Sort by
+<a name='srt'></a><a href='#top'>Top of Page</a>
+Sort By
 
     Creates the ability to choose which column to sort by and which direction to sort by
-    functions are located in tableFunctions.js
+    functions are located in tableFunctions.js:
 
-        1. generateSortSelect() creates the select and configures: 
-            - the select to call sortTable() on change
-            - the up/down arrow to call sortCall() on click
-        2. sortCall() changes the global variable reverse to true/false and runs sortTable()
-        3. sortTable() sorts the table based on the selected column and direction   
-            the actual sorting is done by our sortRowsArray() function
+        1. generateSortSelect() creates the Select and Configures: 
+            - The Select to call sortTable() on change,
+            - The up/down arrow to call sortCall() on click.
+        2. sortCall() changes the global variable reverse to true/false and runs sortTable(),
+        3. sortTable() sorts the table based on the selected column and direction,  
+            but the actual sorting is done by our sortRowsArray() function.
         
-<a name='dis'></a><a href='#top'>Top of page</a>
-Displayed columns
+<a name='dis'></a><a href='#top'>Top of Page</a>
+Displayed Columns
 
     To declutter the table the Displayed Columns 'dropdown' allows the user to choose which columns are displayed. It also saves its
-    state in a cookie. The flow is as follows: -- all functions are located in tableFunctions.js --
+    state in a cookie. The flow is as follows, -- all functions are located in tableFunctions.js -- :
 
-        1. generateDisplaySelect() creates the selector using the columnsInfo variable generated by initialize.js/generateColumnsObject()
-        and checks the cookie to saved configurations
+        1. generateDisplaySelect() creates the selector using the columnsInfo variable generated by initialize.js/generateColumnsObject(),
+        and checks the cookie to saved configurations,
         2. handleColumnVisibility() loops through the table and hides the columns hidden as defined by the global displayedColumns dictionary
-            created by generateDisplaySelect()
-        3. handleCheckboxChange() is called when a checkbox is clicked (set by generateDisplaySelect()) and updates displayedColumns and runs 
-            handleColumnVisibility()
+            created by generateDisplaySelect(),
+        3. handleCheckboxChange() is called when a checkbox is clicked (set by generateDisplaySelect()), and updates displayedColumns and runs 
+            handleColumnVisibility().
 
-<a name='prn'></a><a href='#top'>Top of page</a>
+<a name='prn'></a><a href='#top'>Top of Page</a>
 Print
 
-   An important part of a database is the ability to print reports. The print button generates a pdf and opens it in a new tab with whatever
-   is currently displayed on the table. All the functions are in print.js
+   An important part of a database is the ability to print reports. The print button generates a pdf then opens it in a new tab with whatever
+   is currently displayed on the table. All the functions are in print.js:
 
-    1. generatePrintButton() is called on startup and creates a print button that when clicked calls redirectPost(makeDocument())
-    2. makeDocument() takes the table and prepares it for printing
+    1. generatePrintButton() is called on startup and creates a print button that when clicked calls redirectPost(makeDocument()),
+    2. makeDocument() takes the table and prepares it for printing,
     3. redirectPost() takes the data from make document and sends it to /print and opens the return data in a new tab.
 
-   the /print url takes raw html and turns it into a pdf
+   The /print url takes raw HTML and turns it into a pdf.
 
-<a name='fil'></a><a href='#top'>Top of page</a>
+   Print functionality also works for service requests. You can print a list of service requests or a single request.
+   printSr.js contains a separate print function that sends a single SR to a unique url that formats it correctly.
+
+<a name='fil'></a><a href='#top'>Top of Page</a>
 Filter
 
-   Filtering a table is essential for finding what you want, and how we do it is to let the user pick what they want to filter in the filter menu
-   and then reloading with the 'filter' url argument that contains the filter data. The python then filters using that data and the new pages filter
-   menu is automatically filled in. The js for filtering can be found at filter.js
+   Filtering a table is essential for finding what you want, and how we do it is to let the user pick what they want to filter in the filter menu.
+   Then we reload with the 'filter' url argument that contains the filtered data. Python then filters using that data, and the new pages filter
+   menu is automatically filled in. The JS for filtering can be found at filter.js:
 
-    1. generateFilterButton() creates a filter button and if there are filters in place alerts the user. The filter button calls...
+    1. generateFilterButton() creates a filter button and if there are filters in place alerts the user. The filter button calls:
     2. filterMenu() which creates the filter menu (or unhides it if it already exists) using the global columnsInfo object and creating instances
-        of the filterOption class which are stored in an array so that we can access the filter values later
-    3. applyFilter() takes the array created in filterMenu() and gets the filter values, parses them and reloads the page with the new filter url parameter
+        of the filterOption class which are stored in an array, so that we can access the filter values later,
+    3. applyFilter() takes the array created in filterMenu() and gets the filter values, parses them and reloads the page with the new filter url parameter.
 
   The filterOption class handles all the different operations and data types available and is fairly straightforward to read through. 
 
-<a name='del'></a><a href='#top'>Top of page</a>
+  You can filter the list of service requests.
+
+<a name='del'></a><a href='#top'>Top of Page</a>
 Show Deleted
 
-   Each table has a sql audit table. To view the items deleted from a table we send a request to /showDeleted, which returns a table with the deleted rows.
-   the functions are in deleted.js unless otherwise specified 
+   Each table has a SQL audit table. To view the items deleted from a table we send a request to /showDeleted which returns a table with the deleted rows.
+   These functions are in deleted.js unless otherwise specified:
 
-    1. generateShowDeletedButton() - creates the button and links it to showDeleted()
-    2. showDeleted() - creates a window and sends the get request and runs displayDeletedData() on the request return
+    1. generateShowDeletedButton() - Creates the button and links it to showDeleted(),
+    2. showDeleted() - Creates a window and sends the get request and runs displayDeletedData() on the request return,
     3. displayDeletedData() is very similar to Audit. It:
-        - puts the data in a table and displays it in the popup box
-        - loads the rows using audit.js/loadForeignRow()
+        - Puts the data in a table and displays it in the pop-up box,
+        - Loads the rows using audit.js/loadForeignRow().
 
-<a name='pag'></a><a href='#top'>Top of page</a>
+<a name='pag'></a><a href='#top'>Top of Page</a>
 Pagination
 
-    To make readability and functionality easier on the page we can show the rows 'page' at a time. To fix the annoying
+    To make readability and functionality easier on the page, we can show the rows 'page' at a time. To fix the annoying
     problem of not being able to quickly click through through pages all the rows load when the page loads and the 
-    'pages' are simulated. Additionally the paginated state is saved using a cookie Here is the flow:
+    'pages' are simulated. Additionally the paginated state is saved using a cookie. Here is the flow:
 
-        1. the constructor of pagination.js/paginationEngine class is called at initialize.js/startup() and creates the 'Show:' and
-            'Showing:' dropdowns.
+        1. The constructor of pagination.js/paginationEngine class is called at initialize.js/startup() and creates the 'Show:' and
+            'Showing:' dropdowns,
         2. pagination.js/paginationEngine.setPaginateScale() populates the 'Showing:' dropdown with ranges of values to select based on
             the range selected at 'Show:'. It is called at:
-                pagination.js/paginationEngine - at startup
-                tableFunctions.js/sortTable() - for when the user sorts by a new column
-                onchange of the 'Show:' dropdown - for when a new range is selected
+                - pagination.js/paginationEngine - at startup,
+                - tableFunctions.js/sortTable() - for when the user sorts by a new column,
+                - onchange of the 'Show:' dropdown - for when a new range is selected.
         3. pagination.js/paginate() actually hides all rows that are not in the range of the 'Showing:' dropdown.
 
 
-ROW BUTTONS - perform actions on rows
+ROW BUTTONS - Perform actions on rows.
 
-<a name='btn'></a><a href='#top'>Top of page</a>
-edit, save, and undo 
+<a name='btn'></a><a href='#top'>Top of Page</a>
+Edit, Save, and Undo 
 
-    these are created by the rowEngine during newEditClass.js/loadRow(). They take an instance of the rowClass
-    and perform the appropriate operations
+    These are created by the rowEngine during newEditClass.js/loadRow(). They take an instance of the rowClass
+    and perform the appropriate operations.
 
-<a name='aud'></a><a href='#top'>Top of page</a>
+<a name='aud'></a><a href='#top'>Top of Page</a>
 Audit
 
-    1. created by the rowEngine which passes an instance of itself to audit.js/auditTable()
-    2. audit.js/auditTable() is called on click of the Audit button and creates a window and sends a request to /getAudit
-    3. audit.js/displayAuditData() runs on the request return and...
-        - creates a copy of the reference using audit.js/createCloneOfRow() which...
-            = copies the actual html ref
-            = creates a new rowEngine instance
-            = sets a custom save and delete function for the copy rowEngine that saves/deletes the original and copy
-        - puts the returned audits in a table and runs quickLook.js/loadForeignRow() which...
-            = gets the linked and column data from the response header
-            = loads the row into a rowEngine object
-            = creates the restore button using quickLook.js/restoreElement() which...
-                > creates a button that on click...
-                > compares a reference columnsObject (from the actual table) to the columnsObject
-                    for the row being restored
-                > saves the columns that are the same from the row being restored to the original reference row 
+    1. Created by the rowEngine which passes an instance of itself to audit.js/auditTable(),
+    2. audit.js/auditTable() is called on click of the Audit button and creates a window and sends a request to /getAudit,
+    3. audit.js/displayAuditData() runs on the request return and:
+        - Creates a copy of the reference using audit.js/createCloneOfRow() which:
+            = Copies the actual HTML ref,
+            = Creates a new rowEngine instance,
+            = Sets a custom save and delete function for the copy rowEngine that saves/deletes the original and copy.
+        - Puts the returned audits in a table and runs quickLook.js/loadForeignRow() which:
+            = Gets the linked and column data from the response header,
+            = Loads the row into a rowEngine object,
+            = Creates the restore button using quickLook.js/restoreElement() which:
+                > Creates a button that on click,
+                > Compares a reference columnsObject (from the actual table) to the columnsObject
+                    for the row being restored,
+                > Saves the columns that are the same from the row being restored to the original reference row.
 
-<a name='lkb'></a><a href='#top'>Top of page</a>
+<a name='lkb'></a><a href='#top'>Top of Page</a>
 Linked 
 
-    Displays all the places that the row is referenced (ie the BRWB row in the Buildings table will be referenced by
+    Displays all the places that the row is referenced(i.e. the BRWB row in the Buildings table will be referenced by
     all the devices, oit jacks, etc that are in the BRWB). It does this in a way almost identical to the way Audits
     are displayed with the only difference that instead of an option to restore a row it allows you to edit, delete,
     etc the referenced rows.
 
-<a name='sel'></a><a href='#top'>Top of page</a>
+<a name='sel'></a><a href='#top'>Top of Page</a>
 Select
 
     When you click the 'XXX Table' button when editing a linked field it opens that table and there
@@ -422,49 +454,154 @@ Select
     1. When you click 'Edit' on a row (or in a create new) the rowEngine for that row calls its edit() functions.
         If the cell is linked it calls newEditClass.js/rowEngine/edit_linked(), which creates a dropdown for the
         linked table and creates a 'XXX Table' button.
-    2. Clicking this button calls publish.js/redirectHandler(), which opens a new window in the browser with the
-        requested table. The cool thing is, that when you open a new window using javascript you can interact with
-        that opened page and that page can interact with you (through the 'opener' variable). So...
-    3. When any new table page is loaded the first thing the initialize.js/init() function does is call...
+    2. Clicking this button calls publish.js/redirectHandler() which opens a new window in the browser with the
+        requested table. The cool thing is, that when you open a new window using JavaScript, you can interact with
+        that opened page and that page can interact with you (through the 'opener' variable), so:
+    3. When any new table page is loaded the first thing the initialize.js/init() function does is call:
     4. publish.js/checkForParentWindows() looks to see if the current page has an opener page and if that page has the
         global variable window.dataForChildPages (which redirectHandler() created) and that dataForChildPages has a reference
         to the current page (the current page is being selected). If checkForParentWindows() decides that the page needs
-        select buttons it sets the global variable window.displaySelectButton to true and alerts the user to the fact.
+        select buttons, it sets the global variable window.displaySelectButton to true and alerts the user to the fact.
     5. There are two ways that a user can select a row: a select button or by creating a new row.
         Select buttons - newEditClass.js/rowEngines check to see that they are native rows and that they should display the row 
-            (using window.displaySelectButton) in newEditClass.js/rowEngines/loadRow(). if so 
+            (using window.displaySelectButton) in newEditClass.js/rowEngines/loadRow(). If so, 
             newEditClass.js/rowEngines/loadRow()creates select buttons that when clicked call publish.js/nextPage() 
-            (with the row id passed)
-        New row - When a new row is created (using newItem.js/post()) the server returns the created Id. newIem.js/post()
-            looks for that Id and passes it to publish.js/nextPage()
+            (with the row ID passed).
+        New row - When a new row is created (using newItem.js/post()) the server returns the created ID. newIem.js/post()
+            looks for that Id and passes it to publish.js/nextPage().
     6. publish.js/nextPage() calls the onSelect() function contained in the dataForChildPages (onSelect is defined in 
         newEditClass.js/rowEngine/edit_linked() and passed to publish.js/redirectHandler() which creates the dataForChildPages)
-        with the selected id as an argument. It then closes the page.
-    7. The onSelect function was defined in newEditClass.js/rowEngine/edit_linked() and so can access the dropdown where the 
-        'XXX Table' button was pressed in the first place and set the dropdown to the selected id (back on the original page)
+        with the selected ID as an argument. It then closes the page.
+    7. The onSelect function was defined in newEditClass.js/rowEngine/edit_linked(), so can access the dropdown where the 
+        'XXX Table' button was pressed in the first place and set the dropdown to the selected ID (back on the original page).
 
     An edge case exists where when the user creates a new row to be selected and is redirected back to the original table the 
     original table doesn't have any idea what the selected row is because its window.links object was created by the server way before
-    the new row was created. To solve this in step 7 when onSelect is called if it can't find the selected id in the 
+    the new row was created. To solve this in step 7 when onSelect is called if it can't find the selected ID in the 
     window.links object it sends a request to the server ('/updateLinkedObject') asking for the info on the created row. Once the
     request comes back it recreates the dropdown and updates the window.links object.
 
-<a name='mag'></a><a href='#top'>Top of page</a>
-The little magnifying glass on linked elements
+<a name='mag'></a><a href='#top'>Top of Page</a>
+The Little Magnifying Glass on Linked Elements
 
-    To facilitate quick viewing of an entire linked element we put a little magnifying glass there
-    that brings up the whole row in a window at the bottom of the page. For instance if you were
-    looking at the Device Licence table and wanted to find out more about the device being licensed
-    you would click the magnifying glass next ot the device. It works very similar to Audit in that...
+    To facilitate quick viewing of an entire linked element, we put a little magnifying glass there
+    that brings up the whole row in a window at the bottom of the page. For instance, if you were
+    looking at the Device License table and wanted to find out more about the device being licensed
+    you would click the magnifying glass next ot the device. It works very similar to Audit in that:
 
-    1. quickLook.js/showLink() sends a request to /linkedElement 
-    2. quickLook.js/onLinkedReturn() runs when the request returns and...
-        - creates a popup box
-        - removes the loading icon
-        - puts the returned row into a table
-        - loads that row with quickLook.js/loadForeignRow()
+    1. quickLook.js/showLink() sends a request to /linkedElement, 
+    2. quickLook.js/onLinkedReturn() runs when the request returns and:
+        - Creates a popup box,
+        - Removes the loading icon,
+        - Puts the returned row into a table,
+        - Loads that row with quickLook.js/loadForeignRow().
+    
+    This Magnifying Glass was removed from the list of Service Requests.
 
-    </pre>
+<div id="sr"></div><a href='#top'>Top of Page</a>
+Service Request JS, written by Mason Hunter
+The following are unique to the Service Request functionality of the controls app:
+
+<div id="srmain"></div><a href='#top'>Top of Page</a>
+SR Initializer Function
+Isaac started on this function, and then I modified it as needed.
+It sets up the main SR list page:
+
+serviceRequestInit() found in srMain.js. Check out srMain.js for more documentation:
+    - Added the tech-only buttons,
+    - Removed sort select,
+    - Added the generateNewServiceRequest functionality.
+
+
+<div id="tech"></div><a href='#top'>Top of Page</a>
+Technician-only Buttons
+Functions:
+    displayTechnicianFunctionalities() - Checks if a user is a technician. If they are, it displays various tech-only buttons,
+    showOpenButtonTransformation() - Changes the Show Open Requests button when it is clicked based on what the correct response is,
+    showAllButtonTransformation() - Changes the Show All STATUSES Requests button when it is clicked.
+
+See srTechFunc.js for more detailed documentation.
+
+<div id="editsr"></div><a href='#top'>Top of Page</a>
+Edit and Create a New Service Request
+
+    editSr.js functions:
+    EditSrInnit() - The onload function of the page to edit or create a new service request.
+    CreateForm() - A function for creating the form that edits or creates a new service request.
+
+    editSrHelper.js functions:
+    Contains some code from the internet to get the current date and time.
+    sqlDateToUsableDate(sqlDate) - Changes the SQL formatted date into a usable format.
+    setCompleted() - A function that will run when the completed button is clicked. 
+    removeCompleted() - A function that will run to un-set the date completed.
+    tabIndexInit() - Matt wanted a specific tab order, and this function carries that out.
+
+
+<div id="requestor"></div><a href='#top'>Top of Page</a>
+Add a New Requestor
+
+    srRequestor.js - Isaac wrote this first and then I added functions as needed.
+    Functions that I added:
+    createNewRequestor() - Opens the form to create a new requestor.
+    createNewReqSupport() - Creates the pop-up and the form to create a new requestor.
+    cancelCloser() - Sets the focus on the requestor when a user cancels creating a new requestor.
+
+<div id="notes"></div><a href='#top'>Top of Page</a>
+Add or Edit Notes
+
+    srNotes.js - Isaac started this one, and then I added stuff as needed.
+    Functions that I added:
+    notePopCancel() - Clears the creation form when you click the cancel button.
+    addNoteModal() - Creates and handles the pop-up and form for adding a new note.
+    sendNoteId() - Opens the editor form with a specific note loaded.
+    editNoteModal() - Creates and handles the pop-up and form for editing an existing note.
+    editNoteCancel() - Clears the edit form when you click the cancel button.
+
+
+<div id="items"></div><a href='#top'>Top of Page</a>
+Add or Edit Items
+
+    srItems.js - Isaac started this one, and then I added stuff as needed.
+    Functions that I added:
+    addItemModal() - Creates and handles the pop-up and form for adding a new item.
+    itemCancel() - Clears the adder form when you click the cancel button.
+    newItemModal() -  Creates and handles the pop-up and form for creating a new item.
+    newitemCancel() - Clears the creation form when you click the cancel button.
+    sendItemId() - Opens the editor form with a specific item loaded.
+    editItemModal() - Creates and handles the pop-up and form for editing an existing item.
+    edititemCancel() - Clears the edit form when you click the cancel button.
+
+<div id="print"></div><a href='#top'>Top of Page</a>
+Print functionality for Service Requests
+
+    printSr.js functions:
+    printSingleSr(rawHtml) - Formats a pdf of a single SR when the print button is clicked on the individual SR page.
+    printFunc(servReq) - Runs when the Print button is clicked in the SR list page then formats a pdf of all the SRs in the list.
+
+<div id="tables"></div><a href='#top'>Top of Page</a>
+Table Builder Functions
+
+    tableBuilders.js functions:
+    createTableHeader(value) - Takes a value as the headers text.
+    createTableCell(value=null) - Takes an optional value as the cells text.
+    createNestedTable(key, value) - Creates a table inside of another table.
+
+<div id="forms"></div><a href='#top'>Top ofPpage</a>
+Form Builder Functions
+
+    formBuilders.js functions:
+    createLabel(forId, labelText, form) - A function that creates a label element.
+    createInputElement(type, id, form) - Creates an input element for the form.
+    createDatalistElement(id, dictionary, form) - Creates the datalist element.
+    createDropdownElement(list, id, form) - Creates the dropdown element that displays the datalist.
+    emailValidation(element) - Validates that the emails were put in correctly.
+    invalidAddress(id) - A function to be run when there is an invalid email address found. Clears the input and lets the user know.
+    checkPhoneNum() - Checks if the phone input is filled in or blank.
+    checkEmail() - Checks if the email input is filled in or blank.
+    createDescription(id, form) - Create the description part of the form.
+
+
+</pre>
 {% endraw %}
 {% endblock %}
 

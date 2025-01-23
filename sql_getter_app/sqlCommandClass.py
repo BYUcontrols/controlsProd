@@ -1,9 +1,14 @@
+# High level summary of this page:
+# This is essentially one big class called sqlCommands
+#   1. defines the __init__ function which uses getKeys if testing but if not uses getKeysStub
+#   2. defines the values function which takes data from the client and turn it into segments of sql command strings
+#   3. defines the where function which takes a dictionary, from the javascript on the site, of what to filter by and creates the where statement
+
 import sys
 
 from sqlalchemy.sql.expression import false
 # for production
 #sys.path.append('C:\\control-app\\appEnv\\sql_getter_app')
-
 
 # creates sql where strings, and assembles objects of data into sql command string segments
 #
@@ -18,13 +23,12 @@ from sqlalchemy.sql.expression import false
 #
 # self.values() also generates self.columnsList and self.valueList for the SQL INSERT command
 #
-#
 # self.where() takes data from the client and turns it into a sql where clause
 # if testing you need to pass a getKeysStub
 class sqlCommands:
     def __init__(self, tableName, testing=False, getKeysStub=None):
         self.testing = testing
-        # stub getKeys if testing, else import it form crud
+        # stub getKeys if testing, else import it from crud
         if self.testing is False: from .crud import getKeys
         else: getKeys = getKeysStub
 
@@ -39,7 +43,7 @@ class sqlCommands:
         # create variables to populate
         sqlInsertCol = str() # store columns as a comma list
         sqlInsertVal = str() # store value references ':ref' as a comma list
-        sqlValDict = dict() # place to define the value refences
+        sqlValDict = dict() # place to define the value references
         sqlPairs = str() # stores the values as pairs, col=val
         counter = 1 # to create unique value references
         for column in valuesDict:
@@ -81,7 +85,6 @@ class sqlCommands:
             counter = 1 # to create placeholders
 
             self.showDeleted = False # set a default value for the self.showDeleted boolean
-            
 
             for column in whereDict: # iterates through all the columns
                 if (whereDict[column]['op'] == 'showDeleted'):
@@ -143,7 +146,6 @@ class sqlCommands:
                             elif (whereDict[column]['list'][0] == 'isNotNone'):
                                 text += column +' IS NOT NULL AND '
 
-        
                         else:
                             print(f'UNRECOGNIZED FILTER KEY: {operation}')
 

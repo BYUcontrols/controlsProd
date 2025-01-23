@@ -4,6 +4,8 @@
 
            Written by: 
       Isaac Cutler 12/1/2020
+           Updated by:
+      Mason Hunter 4/18/2022
     Property of the BYU A/C Shop
 */
 function init() {
@@ -22,7 +24,6 @@ function init() {
     };
         // generate the columns object
     window.columnsInfo = generateColumnsObject(document.getElementById('tableHead'));
-    console.log(window.columnsInfo);
         // initialize the rows of the table
     window.rowCollection = initializeRows(document.getElementById('tableBody'), window.columnsInfo);
 
@@ -51,7 +52,6 @@ function init() {
     window.addEventListener('unload', updateSaveCookies);
 
 }
-
 /* create an object that contains column numbers with their values being objects with data about those columns
 *
 * Inputs: 
@@ -77,21 +77,20 @@ function generateColumnsObject(headerRef, columnArray=tableColumnArray, columnTy
     columnsObj.push(idObj);
     // replace the header name with the human readable name
     headers[0].textContent = idObj['readableName'];
-    // looping through the array of column names from the server 
-    for (column in columnArray) {  
+    // looping through the array of column names from the server
+    for (column in columnArray) {
         let inner = new Object();
         inner['name'] = columnArray[column];
         var text = columnArray[column];
-        // this little beauty uses voodoo to take a camelCase string and turn it into
-        // a Normal Case string. This makes everything more readable to everyone
+        // CamelCase -> Normal Case
         var result = text.replace( /([A-Z])/g, " $1" );
         var finalResult = result.charAt(0).toUpperCase() + result.slice(1);
         inner['readableName'] = finalResult;
         inner['htmlRef'] = headers[parseInt(column) + 1]; // to ignore the ID column
 
-        if (columnTypesObject.hasOwnProperty(columnArray[column])) { // if the column has a entry in the columnTypes array
+        if (columnTypesObject.hasOwnProperty(columnArray[column])) { // if the column has an entry in the columnTypes array
             var type = columnTypesObject[columnArray[column]];
-            
+
             inner['type'] = type['DATA_TYPE'];
             inner['nullable'] = ((type['IS_NULLABLE'] == 'YES') ? true : false);
             inner['maxChar'] = JSON.parse(type['CHARACTER_MAXIMUM_LENGTH']);
@@ -205,7 +204,7 @@ function placeInBeautifulRows(collection, container) {
     let grid = document.createElement('div');
     container.appendChild(grid);
     grid.classList.add('inputDaddyDiv');
-        // go over each item in the cellection array
+        // go over each item in the collection array
     for (let inputNum in collection) {
         // format the things
         let daddyDiv = document.createElement('div');
@@ -232,4 +231,3 @@ function mobileMenuClick(clicked) {
         if (checkbox.id != clicked.id) checkbox.checked = false; // if the checkbox is not the selected checkbox then uncheck it
     }
 }
-

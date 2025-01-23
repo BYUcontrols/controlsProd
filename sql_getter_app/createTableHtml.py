@@ -1,13 +1,33 @@
+# See pythonDocs.html under Creating Table HTML for more information about the fuctionality of this page.
+
+# High level summary of this page:
+# This is truly one giant class called tableHtml
+#   1. uses __init__ function to define some variables/values
+#   2. creates the table header and an array with the columns
+#   3. takes an array of sqlalchemy rowProxy objects and adds the data to the table html string
+#   4. puts a no data text message in the table
+#   5. takes a string for a column not to link, returns a dictionary containing the linked column data for the table (as obtained by self.getLinkedColumn())
+#   6. fetches linked data in the form of a dictionary from the server for a given colName string
+
 # a class to create the html for a table from a list of columns and sqlAlchemy resultProxys
+from flask.globals import request
+# below this is local module imports
 from .collection import camel_to_title
 class tableHtml(object):
 
-    def __init__(self, User, dbName, primaryKey):
+    def __init__(self, User, dbName, primaryKey, html=None):
         self.html = str()
         self.dName = dbName
         self.PK = primaryKey
         self.user = User
         self.testing = False
+        self.requests = dict()
+        # Use an if statement here to make it so that only when we create a service request does it execute this code.
+        #if primaryKey == 'serviceRequestId':
+            #self.non_persisted_column = kwargs['non_persisted_column']
+            #willBeMerged = False # This boolean represents the Checkbox marker that we will use to merge the service requests(see serviceRequests.py line 285).
+            #kwargs.pop('non_peristed_column')
+            #super().__init__(kwargs)
 
     # create the table head and create an array with the column names
     #   linkedDataTag -> for creating tables that aren't the primary table and passes the linked
@@ -15,36 +35,52 @@ class tableHtml(object):
     #   columnTypes -> to put in the linkedDataTag
     #   dontLink -> column not to link
     #   uneditableList -> A list of the columns that aren't to be editable
+
+    # This function creates the header of the table
     def newHeader(self, keys, linkedDataTag=False, columnTypes=None, dontLink=None, uneditableList=None):
+        # Store the keys provided to the function in an instance variable
         self.keys = keys
-        # so we can pass self.columnArray in the <tr> element
+        # Initialize an array to store column names and an empty string for headers
         self.columnArray = list()
         headersText = str()
-        # Add the Id Column
+
+        # Add the primary key (PK) column as the first header column
         headersText += f"<th>{self.PK}</th>"
-        # loop through all the rows
+
+        # Loop through each row in the keys array
         for row in keys:
             for cell in row:
-                if (self.PK != str(cell) and str(cell) != 'active'): # ignore the primary key column
-                    # insert the header cell
-                    headersText += "<th>" + camel_to_title(str(cell)) + "</th>"
-                    # add an element to the self.columnArray
-                    self.columnArray.append(str(cell))
-        # add an extra empty column for the buttons
+                # Filter columns if necessary, ignoring the primary key and 'active' column
+                if (self.PK != str(cell) and str(cell) != 'active'):
+                    # Special case for 'estimatedDueDate' column
+                    if str(cell) == 'estimatedDueDate':
+                        headersText += "<th>Estimate</th>"
+                        self.columnArray.append('Estimate')
+                    else:
+                        # Convert cell name to title case and add it to headers
+                        headersText += "<th>" + camel_to_title(str(cell)) + "</th>"
+                        # Add the column name to columnArray for tracking purposes
+                        self.columnArray.append(str(cell))
+
+        # Add an extra empty column for buttons in the table
         headersText += "<th class='noPrint'></th>"
-        # if we don't want to pass all the info in the header
-        if (not linkedDataTag): 
+
+        # Determine whether to add a linked data tag in the header row
+        if not linkedDataTag:
+            # Standard <tr> header row if linkedDataTag is not set
             self.html += '<thead><tr id="tableHead">'
-        # The linkedDataTag option passes all the data needed to load the table in the <tr> tag.
-        else: 
+        else:
+            # Imports required for handling linked data and testing
             import json
-            # so that we can stub out functions for testing
+            # Check if testing is disabled, in which case import getLinkedChildren function
             if self.testing is False:
                 from .crud import getLinkedChildren
             else:
+                # Use a stub function for testing
                 getLinkedChildren = self.getLinkedChildren
-            # pass the data required for a table to run, if you have questions look at crud.py/pull() where we pass this data and explain it
-            # to sanitize the data and make sure it will make it safe back to the javascript we send it as a JSON string (look it up)
+
+            # Append a <tr> with custom data attributes for the table if linkedDataTag is set
+            # Data attributes are populated with JSON strings for use in JavaScript
             self.html += f'''<thead><tr id="tableHead" 
                 data-linked=\'{json.dumps(self.linkedElements(dontLink))}\'
                 data-tableName=\'{self.dName}\'
@@ -54,51 +90,89 @@ class tableHtml(object):
                 data-linkedChildrenExist=\'{json.dumps(len(getLinkedChildren(self.dName)) > 0)}\'
                 data-uneditable=\'{json.dumps(uneditableList)}\'>'''
 
-        # append the headers html text
-        self.html += headersText + '</tr></thead>'
+        # Append the accumulated header HTML to the instance's html attribute and close the header row
+        self.html += headersText + '</tr></thead>' # The <thead> stands for the Table Head Element.
 
     # takes an array of sqlalchemy rowProxy objects and adds the data to the table html string
-    def content(self, table, showDeleted=False):
+    # turns a sqlalchemy query into a table
+    def content(self, table, html=None, showDeleted=False):
+        from .createTableHtmlSupport import makeRow, checkIfStatusIsOpen
+        import flask
         # the table body tag
         self.html += "<tbody id='tableBody'>"
-        
-        for row in table:
-    
-            # create a class string variable if we are showing deleted rows that indicates that the row is deleted (if it's deleted)
-            if (showDeleted and (row['active'] == False)): classString = 'class=\'deletedRow\' data-deleted=\'true\''
-            else: classString = ''
-            # the row tag (with the rowId)
-            self.html += f"<tr data-id='{str(row[self.PK])}' {classString}>"
-            # Add the Id column field
-            self.html += f"<td>{str(row[self.PK])}</td>"
-            # cast the row (rowProxy) as a dictionary
-            rowDictionary = row.items()
-            # iterate through the row
-            for pair in rowDictionary:
-                # if a row is not the primary key
-                if (pair[0] != self.PK and pair[0] != 'active'):
-                    # put the value into the table
-                    self.html += f"<td>{str(pair[1])}</td>"
-     
-            # create a cell where we can put the buttons and close the row
-            self.html += "<td class='noPrint'></td></tr>"
+
+        # PROBABLY DELETE LATER (maybe save code for print functionality) (Nov 2024)
+        # THIS KILLS THE LOAD TIME. Each check for permissions queries the db several times
+        # Create the view all / filtered service request table
+        # urlPath = flask.request.path
+        # if (self.PK == 'serviceRequestId'): # MASON: All this only runs if we are on the Service Request table
+        #     # necessary import for the requestor and assigned to functions about 10 lines below
+        #     from .user_class import user_session  
+        #     from .formFuncs import getServReqData  
+        #     import flask_login
+        #     User = flask_login.current_user
+        #     # MASON: This checks if the user is a technician or not. Useful for displaying the right rows later on.
+        #     userIsTech = user_session.checkIfUserIsTechnician(User)
+
+        #     for row in table:   # looping through each row in the tables
+        #         # MASON: These two check if the user is the requestor or assigned to technician of the service request for a particular row
+        #         userIsRequestor = user_session.checkIfUserIsRequestor(User, row, self.PK)
+        #         userIsAssignedTo = user_session.checkIfUserIsAssignedTo(User, row, self.PK)
+        #         # request is open if statusID is not closed, void, or resolved
+        #         requestIsOpen = checkIfStatusIsOpen(User, row, self.PK)
+
+        #         # MASON: Only displays the row under these conditions
+        #         # Show all open requests filter, for technicians
+        #         if (userIsTech and str(urlPath) == '/ServiceRequestShowAllOpenRequests'):
+        #             # show all open requests
+        #             print("userIsTech and str(urlPath) == '/ServiceRequestShowAllOpenRequests'")
+        #             if (requestIsOpen): 
+        #                 print("Open request")
+        #                 makeRow(self, row, showDeleted)
+        #                 # saving the SR data for the print functionality
+        #                 self.requests[row[0]] = getServReqData(row[0])
+
+        #         # Show all requests filter, for technicians. Shows all requests
+        #         elif (userIsTech and str(urlPath) == '/ServiceRequestShowAllRequests'): 
+        #             print("userIsTech and str(urlPath) == '/ServiceRequestShowAllRequests'")
+        #             makeRow(self, row, showDeleted)
+        #             # saving the SR data for the print functionality
+        #             self.requests[row[0]] = getServReqData(row[0])
+                
+        #         # Technician starting point
+        #         elif (userIsTech):
+        #             # Shows technicians SRs that they are requestor or assigned to that are open
+        #             if ((userIsRequestor or userIsAssignedTo) and requestIsOpen): 
+        #                 makeRow(self, row, showDeleted)
+        #                 # saving the SR data for the print functionality
+        #                 self.requests[row[0]] = getServReqData(row[0])
+                
+        #         # Non-Technician starting point
+        #         else:
+        #             # Shows non-techs the SRs that they are requestor for (even closed ones)
+        #             # if (userIsRequestor):
+        #             makeRow(self, row, showDeleted)
+        #             # saving the SR data for the print functionality
+        #             self.requests[row[0]] = getServReqData(row[0])
+
+        # else:   # This runs if we are on any table besides the Service Request table
+        for row in table: makeRow(self, row, showDeleted)
         # close the body
         self.html += "</tbody>"
 
     # puts a no data text message in the table
-    def noRows(self, message):
-        self.html += f"<tbody></tbody>"
+    def noRows(self, message="No data to display."):
+        self.html += f"<tbody>{message}</tbody>" # <tbody> stands for the Table Body Element.
 
     # takes a string for a column not to link
     #   returns a dictionary containing the linked column data for the table (as obtained by self.getLinkedColumn())
     def linkedElements(self, dontLink=None):
-        if self.testing is False:
+        if self.testing is False: # if we're not testing
             # fetch the list of which columns to link (it's refering to linkedData.py)
-            from linkedData import linkedColumns
+            from .linkedData import linkedColumns
         else: # a place where we can test different data
             linkedColumns = self.linkedColumnsStub
         
-
         links = dict()
         # loop through all the columns
         for key in self.keys:
@@ -106,9 +180,8 @@ class tableHtml(object):
             if str(key[0]) in linkedColumns and not key[0] == dontLink:
                 # get the data for that column
                 linkedColumn = self.getLinkedColumn(str(key[0]))
-                # if it returned sucessful then append the data to the links Dictionary
+                # if it returned successfully then append the data to the links Dictionary
                 if (linkedColumn): links.update(linkedColumn)
-
         return links
 
     # fetches linked data in the form of a dictionary from the server for a given colName string
@@ -125,12 +198,10 @@ class tableHtml(object):
     #      }
     #   }
     #}
-
     def getLinkedColumn(self, colName):
-        
         # import the list of columns to link
         if self.testing is False:
-            from linkedData import linkedColumns
+            from .linkedData import linkedColumns
         else:
             linkedColumns = self.linkedColumnsStub
         # fetch the initialized database
@@ -139,29 +210,33 @@ class tableHtml(object):
         # extract the requisite data from linkedColumns
         table = linkedColumns[colName][0]
         displayColumn = linkedColumns[colName][1]
-        replacementName = linkedColumns[colName][3]
         idColumn = linkedColumns[colName][2]
-        
+        replacementName = linkedColumns[colName][3]
+
         # verify that the user has permission to view the table
         if self.user.canView(table):
-            # get the were parameters (or lack thereof)
+            # get the where parameters (or lack thereof)
             if len(linkedColumns[colName]) > 4: 
                 if self.dName in linkedColumns[colName][4]: whereText = linkedColumns[colName][4][self.dName]
                 else: whereText = None
             else: whereText = None
+
             # condition where text
             if (not whereText): whereText = '' 
-            # Ask the database for the idColumn and displyColumn
-            result = db.engine.execute(f"SELECT [{idColumn}] as id, [{displayColumn}] as val FROM [{table}] WHERE active = 1 {whereText}").fetchall()
+            # Ask the database for the idColumn and displayColumn
+            if(whereText == ''):
+                result = db.engine.execute(f"SELECT [{idColumn}] as id, [{displayColumn}] as val FROM [{table}]").fetchall()
+            else:
+                result = db.engine.execute(f"SELECT [{idColumn}] as id, [{displayColumn}] as val FROM [{table}] WHERE active = 1 OR active = 0 {whereText}").fetchall()
             # the object to return
             converted = dict()
-                # loop thorugh the rows and turn them into dicts with the format {'idNum':'value'}
+                # loop through the rows and turn them into dictionaries with the format {'idNum':'value'}
             for row in result:
                 raw = dict(row.items())
                 data = dict()
                 data[str(raw['id'])] = str(raw['val'])
                 converted.update(data)
-
+                
                 # place info about the link into another dict
             info = dict()
             info['table'] = table
@@ -172,9 +247,7 @@ class tableHtml(object):
             # put the info entry into the converted dictionary
             converted.update(infoWrapper)
 
-            # another dictionary with { column Name To replace : converted}
+            # another dictionary with {column Name To replace : converted}
             wrapper = dict()
             wrapper[colName] = converted
             return wrapper
-
-        

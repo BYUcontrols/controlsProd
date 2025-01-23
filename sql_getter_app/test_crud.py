@@ -1,3 +1,11 @@
+# High level summary of this page:
+#   1. import modules
+#   2. defines test functions for CRUD
+#       a. Create
+#       b. Read
+#       c. Update
+#       d. Delete
+
 import sys
 # for production
 #sys.path.append('C:\\control-app\\appEnv\\sql_getter_app')
@@ -7,9 +15,9 @@ import sql_getter_app
 
 from .collection import db
 from .crud import pull
-from test_app import client, test_db, login, logout
+from .test_app import client, test_db, login, logout
 
-def test_read_user(client):
+def test_read_user(client=None):
            
     with sql_getter_app.app.test_client() as c:
         with sql_getter_app.app.app_context(): 
@@ -23,7 +31,7 @@ def test_read_user(client):
             assert 'johndoe' in results
             db.engine.execute("DELETE FROM [dbo].[User] WHERE userName = 'johndoe'")
 
-def test_create_user(client):
+def test_create_user(client=None):
     with sql_getter_app.app.app_context(): 
         results = db.engine.execute("SELECT userName FROM [dbo].[User] WHERE userName = 'johndoe'").fetchall()
         print(results)

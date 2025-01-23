@@ -18,156 +18,180 @@ Main Page
 {% block content %}
 <!-- the raw block makes it so that no jinja template code will be executed -->
 {% raw %}
+<style>
+    a:visited {
+        color: purple;
+    }
+
+    a:hover {
+        opacity: 0.6;
+    }
+</style>
+</style>
 <a name="top"></a>
 <pre style='background-color: white; padding: 10px;'>
-An operating manuel for the AC CONTROLS APP!!
+<h1>AC Controls Application Documentation</h1>
+<p>Written by Isaac Cutler and Joe Housley: 2021
+Updated by Mason Hunter: 4/18/2022
+Service Request portion updated by Ben Haggard: 11/2024</p>
 
-Written by Isaac Cutler and Joe Housley
-2021
-
-Here we will outline procedures for general operation of the web application
-
-Table of contents:
-<a href='#build'>Build pushing procedure</a>
-<a href='#addTable'>Add a table</a>
-<a href='#addlink'>Register a linked column in the application</a>
+<h3>Table of Contents:</h3>
+<a href='#build'>Build Pushing Procedure</a>
+<a href='#addTable'>Add a Table</a>
+<a href='#addlink'>Register a Linked Column in the Application</a>
 <a href='#setap'>Setup Apache</a>
 <a href='#testj'>Test Javascript</a>
 <a href='#testp'>Test Python</a>
+<a href='#testSel'>Testing in Selenium</a>
 <a href='#viewl'>View Logs</a>
-<a href='#newu'>Add a new user</a>
-<a href='#perm'>Change permissions for a table</a>
-<a href='#role'>Add new user role</a>
-<a href='#tabo'>Edit the tab order for tables</a>
-<a href='#siteStr'>Rearrange site structure</a>
+<a href='#newu'>Add a New User</a>
+<a href='#perm'>Change Permissions for a Table</a>
+<a href='#role'>Add New User Role</a>
+<a href='#tabo'>Edit the Tab Order for Tables</a>
+<a href='#siteStr'>Rearrange Site Structure</a>
 <a href='#modT'>Modify a Table</a>
 <a href='#certs'>Renew Certificates (for SSL)</a>
 <a href='#rest'>Restart the Apache Server</a>
-<a href='#apacheDeb'>Debug apache server errors</a>
+<a href='#apacheDeb'>Debug Apache Server Errors</a>
 
 
-<a name='build'></a><a href='#top'>Top of page</a>
-Build pushing procedure -##################################################################################################################################################################################
+<a name='build'></a><a href='#top'>Top of Page</a>
+<h2>Build Pushing Procedure</h2> -##################################################################################################################################################################################
 
-    This is the process of how to fix bugs or add features to our application
+    This is the process of how to fix bugs or add features to our application:
 
-    First: start the development environment
+    First: Start the Development Environment.
 
-        1. Remote into the vision vm
-        2. open VS Code (the ide we use)
-            - Make sure the root directory of the editor is set to 
+        1. Remote into the Vision VM.
+        2. Run the server.
+            - Open Visual Studio Code.
+            - Make sure the root directory of the editor is set to: 
                 C:\control-app-dev\appEnv
-        3. hit F5 to start the development server (runs on a command prompt so you can see errors and printed things)
-        4. Click the link on the command prompt to go to the dev server's site. (127.0.0.1:5000 at time of writing)
-            - To login we cannot use the byu login as that redirects to controls.byu.edu
-            - Instead login using 127.0.0.1:5000/testLogin this only works when the
-                flask config 'ENV' is set to 'development' (On the VS Code server, not the Apache server)
-        5. Do whatever it is you want to do with the app
-            - When you make changes to Python code or html hit F5 to restart the server
-            - When you make css or js changes click the reload button on the browser while holding the control key to restart the cache
-                ( the browser saves js and css files to make loading faster but you need to refresh those to reflect changes)
+            - start the virtual environment by typing 'env\Scripts\activate' in the terminal.
+            - run the server by typing 'python -m flask run' in the terminal.
+        4. Click the link on the command prompt to go to the dev server's site. (127.0.0.1:5000 at time of writing) 
+            - To login we cannot use the BYU login as that redirects to the controls.byu.edu site.
+            - Instead login using 127.0.0.1:5000/testLogin. This only works when the
+                flask config 'ENV' is set to 'development' (On the VS Code server, not the Apache server).
+                -> This happens on the launch.json page here in Visual Studios.
+        5. Do whatever it is you want to do with the app.
+            - To push it to the Development Environment, kill the terminal(not just minimize it) by hitting the trash icon in the bottom right corner,
+            make sure everything is saved, then either go to the Run tab(top left corner) and hit 'Run Without Debugging'(or you can do Ctrl+F5).
+            - When you make changes to Python code or HTML restart the server.
+            - When you make CSS or JS changes click ctrl-f5 to restart the cache.
+                (The browser saves CSS and JS files to make loading faster but you need to refresh those to reflect those changes).
         
-    Lastly: save and deploy your work
+    Second: Save and deploy your work to Test Environment.
 
-        1. Push the changes to the repository
-            - Make sure everything is saved
-            - Make sure sql_getter_app/collection.py/production is set to True 
-            - In VS code left hand bar click the source tree icon
-            - Commit by clicking the check mark, typing in a description of the changes and hitting Enter
-            - Push the changes to bitbucket by clicking the three dots, 'Push, Pull', 'Sync'
+        1. Push the changes to the repository(We use Bitbucket. Bitbucket is a version control system, similar to Git).
+            - Make sure everything is saved.
+            - Change the sql_getter_app/collection.py/production to False.
+            - Change the sql_getter_app/collection.py/testEnv to True. 
+            - In VS code left hand bar click the source tree icon(when highlighted it says 'Source Control').
+            - Commit by typing in a description of the changes, clicking the check mark, then hitting Enter.
+                -> To 'Commit' code means to upload it to a Version Control System(VCS), so multiple people 
+                can work on the same code base at the same time.
+            - Push the changes to Bitbucket(This is the VCS) by clicking the three dots, 'Push, Pull', 'Sync'
+        2. Test Deployment - restart the Apache server on the Vision Server(it is the app that looks like two gears called 'Services').
+
+    Lastly: Save and deploy your work to Production Environment.
+
+        1. See step 1 of deployment to Test Environment.
         2. Change the version number (IMPORTANT)
             - This also forces everyone's computers to reload their cache, avoiding compatibility errors with clients
                 using outdated javascript to process new python data.
-            - Don't forget to document your changes in the version control table! (Admin tab / version control)
-        3. Copy the files to the production server
-            - Go to the C:\control-app-dev\appEnv folder (or wherever the dev server files are)
-            - Copy the whole sql_getter_app folder
-            - Go to the C:\control-app-prod folder and delete the sql_getter_app folder already There
-            - Paste the updated sql_getter_app folder in C:\control-app-prod
-            - Start the 'Services' windows application, find the Apache2.4 service and restart it
+            - Don't forget to document your changes in the version control table! (Admin tab / version control).
+        3. See step 2 of deployment of Test Environment.
+        4. Production Deployment - Copy the files to the production server:
+            - Go to the C:\control-app-dev\appEnv folder (or wherever the dev server files are).
+            - Copy the entire sql_getter_app folder.
+            - Go to the C:\control-app-prod folder and delete the sql_getter_app folder already there.
+            - Paste the updated sql_getter_app folder in C:\control-app-prod.
+            - Start the 'Services' windows application(the icon is the two gears), find the Apache2.4 service and restart it.
 
-<a name='addTable'></a><a href='#top'>Top of page</a>
-Add a table -##################################################################################################################################################################################
+<a name='addTable'></a><a href='#top'>Top of Page</a>
+<h2>Add a Table</h2> -##################################################################################################################################################################################
 
-    1. Create the table in the sqlServer using sql commands
-        - Matt can help with this and if Matt isn't around anymore then... google and prayer should get the job done
-        - make sure you add the following columns:
-            1. userIdModified, integer ( Foreign Key column that references User.userId )
-            2. active, boolean (To add 'deleted' functionality without actually deleting anything)
-        - don't forget to add an audit table by ******************************************************************************************************
-    2. Create a url for that table
-        - navigate to sql_getter_app/tables.py
-        - add this code at the end:
+    1. Create the table in the SQL Server using SQL commands:
+        - Matt Bollard can help with this, but if Matt isn't around anymore... then google and prayer should get the job done.
+        - Make sure you add the following columns:
+            1. userIdModified, integer(Foreign Key column that references User.userId).
+            2. Active, boolean (To add 'deleted' functionality without actually deleting anything).
+        - Don't forget to add an audit table by ******************************************************************************************************
+    2. Create a url for that table.
+        - Navigate to sql_getter_app/tables.py file.
+        - Add this code at the end:
 
 @bp.route('/###sql name for the table###')
 @login_required
 def ###a unique function name for the table (no spaces)###():
     return pull("###sql name for the table###", "###human readable name for the table###")
 
-        - note that the url and first argument for pull() and the url MUST be the exact name for the table in sql
-    3. Add the table to the html menu
-        - navigate to sql_getter_app/menuCreation.py and find the rawMenu object
-        - pick the menu under which to put it (the first level is a list of menus)
-        - add an object of this format to the 'option' array for your chosen menu
+        - Note that the url and first argument for pull() and the url MUST be the exact name for the table in SQL.
+    3. Add the table to the HTML menu.
+        - Navigate to sql_getter_app/menuCreation.py and find the rawMenu object.
+        - Pick the menu under which to put it (the first level is a list of menus).
+        - Add an object of this format to the 'option' array for your chosen menu:
         
         { 'displayName':'##### name to display ######', 'func': '#### function location #####', 'sqlName': '#### exact sql name for the table ####' },
 
-        - the function location is the file name where the page is created, a '.', and the function name where it is created
-            for instance the Country table is defined in tables.py and has function name country() so the function location would be 'tables.country'
+        - The function location is the file name where the page is created, a '.', and the function name where it is created.
+            For instance the Country table is defined in tables.py and has function name country() so the function location would be 'tables.country'.
 
 
-<a name='addlink'></a><a href='#top'>Top of page</a>
-Register a linked column in the application -##################################################################################################################################################################################
+<a name='addlink'></a><a href='#top'>Top of Page</a>
+<h2> Register a Linked Column in the Application</h2> -##################################################################################################################################################################################
 
-    1. navigate to sql_getter_app/linkedData.py
-    2. add a line (with a comma) to the linkedColumns list in this format:
+    1. Navigate to 'sql_getter_app/linkedData.py'.
+    2. Add a line (with a comma) to the linkedColumns list in this format:
 
 'column Name To Link':('linked Table', 'linked column to replace it with', 'linked Id column', 'Human readable column name', {sql where object}),
 
-    3. the sql where object - sometimes you may not want to link all of a table (eg for the technician field in the service request table; we don't want to
+    3. The SQL where object - sometimes you may not want to link all of a table (e.g. for the technician field in the service request table; we don't want to
         display all the users, just the technicians). So this object is in the format {'tableName':'sql where string', 'othertableName':'different where clause'}
         with the keys for that object referring to specific tables you want to apply the filters to.
 
-<a name='setap'></a><a href='#top'>Top of page</a>
-Setup Apache -##################################################################################################################################################################################
+<a name='setap'></a><a href='#top'>Top of Page</a>
+<h2>Setup Apache</h2> -##################################################################################################################################################################################
 
-    Here we will outline how to setup the Apache server for this application on Windows 
+    (Apache has already been downloaded as far as 28 Oct. 2022, but if you have questions, you can always ask Matt Bollard.)
 
-    - Download and install the apache server from https://www.apachelounge.com/download/
-        Most builds of Apache should work, we aren't doing anything fancy here but stick with the official one
-        to be safe.
+    Here we will outline how to setup the Apache Server for this application on Windows:
 
-    - in Apache\conf\httpd.conf add the following lines
+    - Download and install the Apache Server from https://www.apachelounge.com/download/
+        Most builds of Apache should work, we aren't doing anything fancy here but stick with the official one to be safe.
+
+    - In Apache\conf\httpd.conf add the following lines:
         -- after all the #LoadModules put:
         
             LoadModule wsgi_module "C:\Python\Python39\Lib\site-packages\mod_wsgi\server\mod_wsgi.cp39-win_amd64.pyd"
 
-            # This file is automatically installed when you install the mod_wsgi module for python (using 'pip install mod_wsgi' in the command line)
-            # You may have to go hunting for it, or run this command 'mod_wsgi-express module-config' to find the path
-            # Tells apache where to load the wsgi module from
-            # If there are errors here the path has to be the .pyd file from the python mod-wsgi plugin
-            # We are using the python system one (not from one of our virtual environments) that way moving around the environments don't break this
+            # This file is automatically installed when you install the mod_wsgi module for python (using 'pip install mod_wsgi' in the command line).
+            # You may have to go hunting for it, or run this command 'mod_wsgi-express module-config' to find the path.
+            # Tells Apache where to load the wsgi module from.
+            # If there are errors here the path has to be the .pyd file from the python mod-wsgi plugin.
+            # We are using the Python system one (not from one of our Virtual Environments) that way moving around the environments won't break this.
 
         -- At the end of the file put:
         
-            # Include the mod_wsgi setup file
+            # Include the mod_wsgi setup file.
             Include conf/controls.conf
 
-    - in Apache\conf\ create controls.conf and put this at the top:
+    - In Apache\conf\ create controls.conf put this at the top:
 
-        # Load the SSl module (for secure certificates)
+        # Load the SSl module (for secure certificates).
 
         LoadModule ssl_module modules/mod_ssl.so
         
-        # tell apache to listen on ports 80 and 443
+        # Tell Apache to listen on ports 80 and 443.
         Listen 80
         Listen 443
 
-    - Then for each of our servers (production and dev and whatever else) add this (filling in the ###blanks###)
+    - Then for each of our servers (production and dev and whatever else) add this (filling in the ###blanks###):
 
         # THE VIRTUAL HOST FOR OUR ###site name#### site
         
-        # redirect requests from the unsecured port 80 to the secure https port 443
+        # Redirect requests from the unsecured port 80 to the secure https port 443
         &ltVirtualHost *:80>
             ServerName "###server url###"
             Redirect 301 / "https://###server url###"
@@ -176,17 +200,17 @@ Setup Apache -##################################################################
         &ltVirtualHost *:443>
             ServerName "###server url###"
 
-            # specify the python script that loads the environment and app
-            # The first argument is were in the site we are mounting our site (at the root in our case)
-            # The second argument is the path to the script that starts our app
+            # Specify the Python script that loads the environment and app.
+            # The first argument is were in the site we are mounting our site (at the root in our case).
+            # The second argument is the path to the script that starts our app.
 
             WSGIScriptAlias / C:\control-app-prod\appLoader.wsgi
 
-            # specify an application group (this keeps our multiple apps from mixing and getting tangled)
+            # Specify an application group (this keeps our multiple apps from mixing and getting tangled).
 
             WSGIApplicationGroup production
 
-            # specify the path to your app
+            # Specify the path to your app.
 
             &ltDirectory ###path to your root application directory (a level above sql_getter_app folder)###>
                 Require all granted
@@ -199,11 +223,11 @@ Setup Apache -##################################################################
                 SSLCertificateChainFile '### path to the cert providers .crt file (DigiCertCA.crt for instance)###'
         &lt/VirtualHost>
 
-    - lastly add this to the end of the file (to make sure that the n4 server running on vision.byu.edu is still accessible)
+    - Lastly add this to the end of the file (to make sure that the n4 server running on vision.byu.edu is still accessible):
 
-        # redirect requests to vision.byu.edu to port 8443 (niagara has been configured to listen on port 8443)
-        # We do this because a niagara sandbox also runs on this server and windows doesn't let two applications listen
-        # on the same port. So we configured niagara to listen on port 8443 and then redirect users there
+        # Redirect requests to vision.byu.edu to port 8443 (niagara has been configured to listen on port 8443).
+        # We do this because a niagara sandbox also runs on this server and Windows doesn't let two applications listen on the same port.
+        # So we configured niagara to listen on port 8443 and then redirect users there.
 
         &ltVirtualHost *:80>
             ServerName "vision.byu.edu"
@@ -217,96 +241,97 @@ Setup Apache -##################################################################
         
     - SSL SETUP:
 
-        See the 'Renew Certificates' entry in this manual
+        See the 'Renew Certificates' entry in this manual.
 
 
-<a name='setpy'></a><a href='#top'>Top of page</a>
-Setup Python -##################################################################################################################################################################################
+<a name='setpy'></a><a href='#top'>Top of Page</a>
+<h2>Setup Python</h2> -##################################################################################################################################################################################
 
-    How to install and properly setup python, the environment for our app, and other things needed for our app
+    How to install and properly setup Python, the environment for our app, and other things needed for our app:
 
-        1. make sure you have the latest python installed
-            - WHEN INSTALLING CHECK THE SET TO PATH BOX
-            - AND THE SETUP FOR ALL USERS (so that apache never has a problem accessing Python)
+        1. Make sure you have the latest Python installed
+            - WHEN INSTALLING CHECK THE SET TO PATH BOX.
+            - AND THE SETUP FOR ALL USERS (so that Apache never has a problem accessing Python).
             
-        2. create a new folder for the app
+        2. Create a new folder for the App.
 
         3. In that folder run 'pip install virtualenv' and 'virtualenv env' using command prompt
-            ( make sure the prompt is set to the the directory of the folder you just created )
+            (make sure the prompt is set to the the directory of the folder you just created).
 
-        4. activate the virtual environment if using visual studio code:
-            - File > Open Folder, choose the appEnv folder
-            - View > Command Palette, find 'Python: Select Interpreter', choose the one with '('env')'
-            - View > Command Palette, find 'Terminal: Create New Integrated Terminal'
-            if using the command line google it: python virtualenv command line activation
+        4. Activate the virtual environment if using visual studio code:
+            - File > Open Folder, choose the appEnv folder.
+            - View > Command Palette, find 'Python: Select Interpreter', choose the one with '('env')'.
+            - View > Command Palette, find 'Terminal: Create New Integrated Terminal'.
+            If using the command line google it: python virtualenv command line activation.
             
-        5. install the following necessary programs:
-            - the wkhtmltopdf tool https://wkhtmltopdf.org/downloads.html for printing
-            - the visual studio c++ compilers for mod_wsgi (apache talking to python)
+        5. Install the following necessary programs:
+            - The wkhtmltopdf tool https://wkhtmltopdf.org/downloads.html for printing.
+            - The visual studio c++ compilers for mod_wsgi (Apache talking to Python).
             
-        6. install the various modules for our app from requirements.txt: 
+        6. Install the various modules for our app from requirements.txt: 
             pip install -r requirements.txt
             
-        7. copy our 'sql_getter_app' folder into the main app
+        7. Copy our 'sql_getter_app' folder into the main app.
 
-        8. change the following paths:
-            - in appLoader.wsgi sys.path.append('\new\location\sql_getter_app') and
+        8. Change the following paths:
+            - In appLoader.wsgi sys.path.append('\new\location\sql_getter_app') and
                 activate_this = 'C:\\path\\to\\folder\\env\\Scripts\\activate_this.py'
-            - in crud.py/printFromHtml() change the 'path_wkhtmltopdf' to the wkhtmltopdf executable
+            - In crud.py/printFromHtml() change the 'path_wkhtmltopdf' to the wkhtmltopdf executable.
 
-        9. to configure the development environment in visual studio code
-            - hit f5
-            - click 'Flask'
-            - type 'sql_getter_app'
-            - hit Enter
-            - go to http://127.0.0.1:5000/
+        9. To configure the development environment in Visual Studio code.
+            - Jit f5,
+            - Click 'Flask',
+            - Type 'sql_getter_app',
+            - Hit Enter,
+            - Go to http://127.0.0.1:5000/
 
-<a name='testj'></a><a href='#top'>Top of page</a>
-Test Javascript -##################################################################################################################################################################################
+<a name='testj'></a><a href='#top'>Top of Page</a>
+<h2>Test Javascript</h2> -##################################################################################################################################################################################
 
-    1. Login to the application on chrome (it will probably work on other browsers but you're on your own)
-    2. go to the url ### whatever domain the app is located ###/test
-    3. right click on the page and select 'Inspect'
-    4. on the window that opens click the 'Console' tab
-    5. there you should see all the tests that ran and all the ones that failed should be highlighted in red 
-        - Every test has 2-3 lines 
-            1. the title for the test (' - something') clicking the location on the very 
-                right of that line will take you to the actual code for the test
-            2. what the test thought the object should be
-            3. If the test failed (red line) then what the actual value being tested was
+    1. Login to the application on Chrome (it will probably work on other browsers but you're on your own).
+    2. Go to the url ### whatever domain the app is located ###/test.
+    3. Right click on the page and select 'Inspect'.
+    4. On the window that opens click the 'Console' tab.
+    5. There you should see all the tests that ran and all the ones that failed should be highlighted in red. 
+        - Every test has 2-3 lines: 
+            1. The title for the test (' - something') clicking the location on the very 
+                right of that line will take you to the actual code for the test.
+            2. What the test thought the object should be.
+            3. If the test failed (red line) then what the actual value being tested was.
 
-<a name='testp'></a><a href='#top'>Top of page</a>
-Test Python -##################################################################################################################################################################################
+<a name='testp'></a><a href='#top'>Top of Page</a>
+<h2>Test Python</h2> -##################################################################################################################################################################################
 
-    Some notes about python testing:
-     - The python also tests the database layout
+    Some notes about Python testing:
+     - The Python also tests the database layout.
      - These tests are run on the controlsTest database, so for the most up to date tests copy the production
-    database into the test database before any tests
-     - If you update any table referenced directly by python (not by the user through a crud function: eg. User, TabOrder)
-    check to see if you need to update the test sql commands to match the new tables.
-    
+    database into the test database before any tests.
+     - If you update any table referenced directly by Python (not by the user through a crud function: eg. User, TabOrder)
+    check to see if you need to update the test SQL commands to match the new tables.
+    - 11/2024: Most of the tests do not work. I added several new tests for the service request portion of the app. (these work)
 
-<a name='viewl'></a><a href='#top'>Top of page</a>
-View Logs -##################################################################################################################################################################################
+<a name='viewl'></a><a href='#top'>Top of Page</a>
+<h2>View Logs</h2> -##################################################################################################################################################################################
 
     - Logs are found at /controls_app/logs
-    - there are two logs:
-        - activity.log logs all activity the server, requests, startup, errors etc.
-        - errors logs only the server errors
-    - they automatically create 10 logs of each as they fill up and auto delete the old ones
-    - if no logging is happening go to init.py and uncomment startLogging()
+    - There are two logs:
+        - Activity.log logs all activity the server, requests, startup, errors etc.
+        - Errors logs only the server errors.<!--I don't quite understand this.-->
+    - They automatically create 10 logs of each as they fill up and auto delete the old ones.
+    - If no logging is happening go to init.py and uncomment startLogging().
 
-<a name='newu'></a><a href='#top'>Top of page</a>
-Add a new user -##################################################################################################################################################################################
+<a name='newu'></a><a href='#top'>Top of Page</a>
+<h2>Add a New User</h2> -##################################################################################################################################################################################
 
-    - Have the user create a byu account (anybody can do this)
-    - Navigate to the 'Users' table
-    - Click '+ Item'
-    - fill the info in for the new user making sure that the userName field is their byuId (case sensitive)
-    - Click 'Save'
+    - Have the user create a BYU account (anybody can do this).
+    - Open Microsoft SQL server management studio
+    - Navigate to the 'Users' table. Path is SSVS470\Databases\Controls Test\Tables\dbo.User
+    - Click '+ Item'.
+    - Fill the info in for the new user making sure that the userName field is their byuId (case sensitive).
+    - Click 'Save'.
 
-<a name='perm'></a><a href='#top'>Top of page</a>
-Change permissions for a table -##################################################################################################################################################################################
+<a name='perm'></a><a href='#top'>Top of Page</a>
+<h2>Change Permissions for a Table</h2> -##################################################################################################################################################################################
 
     - Navigate to the Table Permissions table
     - Find the row that represents your table (you can use crtl-f or the filter button)
@@ -321,34 +346,34 @@ Change permissions for a table -################################################
         The database is polled once on startup for the viewing level of all the tables instead of
         every request to reduce database load.
 
-<a name='role'></a><a href='#top'>Top of page</a>
-Add new user role -##################################################################################################################################################################################
+<a name='role'></a><a href='#top'>Top of Page</a>
+<h2>Add New User Role</h2> -##################################################################################################################################################################################
 
-    - navigate to the 'Role' table
-    - Add a role
-        - click '+item'
-        - create the role
-        - save
+    - Navigate to the 'Role' table.
+    - Add a Role:
+        - Click '+item',
+        - Create the Role,
+        - Save.
 
 
-<a name='tabo'></a><a href='#top'>Top of page</a>
-Edit the tab order for tables -##################################################################################################################################################################################
+<a name='tabo'></a><a href='#top'>Top of Page</a>
+<h2>Edit the Tab Order for the Tables</h2> -##################################################################################################################################################################################
 
-    - navigate to the 'Tab Order' table
-    - use the filter button and filter add filter:
-        tableName  Equals  ### whatever table you want to change ###
-    - click 'apply'
-    - when the page reloads click edit for all the rows
-    - arrange the tabOrder integer to reflect the new order you want
-    - save everything
+    - Navigate to the 'Tab Order' table.
+    - Use the filter button and filter add filter:
+        tableName  equals  ### whatever table you want to change ###.
+    - Click 'apply'.
+    - When the page reloads click edit for all the rows.
+    - Arrange the tabOrder integer to reflect the new order you want.
+    - Save everything.
 
-<a name='siteStr'></a><a href='#top'>Top of page</a>
-Rearrange site structure -##################################################################################################################################################################################
-    The menus in our site are defined by the sql_getter_app/menuCreation.py/rawMenu object. Rearranging here will rearrange everywhere
+<a name='siteStr'></a><a href='#top'>Top of Page</a>
+<h2>Rearrange Site Structure</h2> -##################################################################################################################################################################################
+    The menus in our site are defined by the sql_getter_app/menuCreation.py/rawMenu object. Rearranging here will rearrange everywhere.
 
-    + Add a new menu tab (things on the navigation bar)
+    + Add a new menu tab (things on the navigation bar):
 
-    -- 1. navigate to sql_getter_app/menuCreation.py and find the rawMenu object
+    -- 1. Navigate to sql_getter_app/menuCreation.py and find the rawMenu object,
     -- 2. Add another dictionary to that list in the format...
 
         {
@@ -356,63 +381,62 @@ Rearrange site structure -######################################################
             'options': [### a list of the options ###]
         }
 
-    -- 3. Add options to the menu (in the 'options' list)
+    -- 3. Add options to the menu (in the 'options' list),
     -- 4. Options are in the format...
 
     { 'displayName':'##### name to display ######', 'func': '#### function location #####', 'sqlName': '#### exact sql name for the table ####' }
 
-    -- 5. Restart the server for the changes to take place
+    -- 5. Restart the server for the changes to take place.
 
-    + Rearrange tables within menus
+    + Rearrange tables within menus:
 
-    -- 1. Navigate to the sql_getter_app/menuCreation.py/rawMenu
-    -- 2. Move the option dictionaries within the menu's 'options' field
-    -- 3. Restart the server for the changes to take place
+    -- 1. Navigate to the sql_getter_app/menuCreation.py/rawMenu,
+    -- 2. Move the option dictionaries within the menu's 'options' field,
+    -- 3. Restart the server for the changes to take place.
 
-<a name='modT'></a><a href='#top'>Top of page</a>
-Modify a table -##################################################################################################################################################################################
+<a name='modT'></a><a href='#top'>Top of Page</a>
+<h2>Modify a Table</h2> -##################################################################################################################################################################################
 
-    This really should not be done if at all possible. It could cause a lot of problems like a domino effect.
+    This really should not be done if at all possible. It could cause a lot of problems.
 
     There are several things that need to be updated when modifying a table structure.
-    1. Update the Audit Table
-    2. Update the trigger rules
+    1. Update the Audit Table,
+    2. Update the Trigger Rules.
 
-<a name='certs'></a><a href='#top'>Top of page</a>
-Renew Certificates (for SSL) -##################################################################################################################################################################################
+<a name='certs'></a><a href='#top'>Top of Page</a>
+<h2>Renew Certificates (for SSL) </h2> -##################################################################################################################################################################################
 
-    The SSL certificates for our site expires every 5 years or so and needs to be renewed otherwise the browser will freak out.
-    First off if you are reading this that means that the app made it another 5 years, which is exiting! Good job to whoever
-    is brave enough to maintain it. It's been fun to write this application and I hope that it hasn't been a pain to maintain.
-    To renew the cert...
+    The SSL certificates for our site expires every 5 years or so and needs to be renewed.
 
-    1. generate a <a href='https://www.google.com/search?q=windows+apache+csr+generation'>CSR request</a> from apache using the command prompt
-    2. Go find the tech guy for physical facilities, or whoever maintains the vision vm (or whatever machine you are running this on)
-        - when in doubt call OIT, they are usually helpful (make sure to call tho and get them to open a ticket, emails don't work and they HATE
-            having unresolved tickets)
-    3. Give your guy the CSR and tell him you need a certificates (he can probably help you generate the CSR)
-    4. When the certificates come back put them in c:\Apache24\conf\SSL (probably get rid of the old certs in there first)
-    5. Change the file names that point to these certs in C:\Apache24\conf\controls.conf
+    To renew the certificates:
 
-    If you run into any trouble along the way ask your guy for help, he's going to know a lot more then I do about Apache and certs
+    1. Generate a <a href='https://www.google.com/search?q=windows+apache+csr+generation'>CSR request</a>(Certificate Signing Request) from Apache using the command prompt,
+    2. Go find the tech person (Gary Prior) for physical facilities, or whoever maintains the Vision VM (vision.byu.edu or whatever machine you are running this on)
+        - When in doubt call OIT, they are usually helpful (make sure to call them and get them to open a ticket, emails don't work and they HATE
+            having unresolved tickets),
+    3. Give them the CSR and tell him you need a certificates (he can help you generate the CSR),
+    4. When the certificates come back put them in 'C:\Apache24\conf\SSL' (probably get rid of the old certs in there first),
+    5. Change the file names that point to these certificates in 'C:\Apache24\conf\controls.conf'.
 
-<a name='rest'></a><a href='#top'>Top of page</a> 
-Restart the server -##################################################################################################################################################################################
+    If you run into any trouble along the way ask Gary/OIT for help, they are going to know a lot more about Apache and certificates.
 
-    When you make changes to the python of the server or add a table you will need to restart the server. This is done by finding
-    the windows 'Services' tool and clicking 'Apache' and restarting/stopping/starting it. 
+<a name='rest'></a><a href='#top'>Top of Page</a> 
+<h2>Restart the Server </h2> -##################################################################################################################################################################################
 
-<a name='apacheDeb'></a><a href='#top'>Top of page</a>
-Debugging the apache server -##################################################################################################################################################################################
+    When you make changes to the Python in the server or add a table, you will need to restart the server. This is done by finding
+        the windows 'Services' tool and clicking 'Apache' and restarting/stopping/starting it. (You might not have permissions to do this)
 
-        If there is an apache server error (not a python error) it can usually be found in Apache24/logs/error.log
-        And scrolling to the bottom. If there is no log there but the server keeps crashing then... 
+<a name='apacheDeb'></a><a href='#top'>Top of Page</a>
+<h2>Debugging the Apache Server</h2> -##################################################################################################################################################################################
+
+        If there is an Apache Server error (not a Python error) it can usually be found in Apache24/logs/error.log
+            and scrolling to the bottom. If there is no log there but the server keeps crashing then:
         
-        1. find and start the windows tool 'Event Viewer'
-        2. under the 'Summary of Administrative Events' section expand the 'Error' section
-        3. Click 'Apache Service' (hopefully you will find the errors here. If there isn't anything here
-            good luck.)
-        4. Take a look at your errors
+        1. Find and start the windows tool 'Event Viewer',
+        2. Under the 'Summary of Administrative Events' section expand the 'Error' section,
+        3. Find and click 'Apache Service'. If there is nothing there then errors are logged to C:/Apache24/logs/errors.txt
+        4. Take a look at your errors and problem solve from there.
+<br><br>
 </pre>
 {% endraw %}
 {% endblock %}

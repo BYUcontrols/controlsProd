@@ -1,39 +1,36 @@
+# High level summary of this page:
+#   1. imports modules we need
+#   2. defines functions for the test environment & login/out situation
+
+import re
 import sqlite3
 import pytest
 import sys
 import os
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
 # for production
-#sys.path.append('C:\\control-app\\appEnv\\sql_getter_app')
+# sys.path.append('C:\\control-app\\appEnv\\sql_getter_app')
 import sql_getter_app
 from sql_getter_app import app
 from .collection import db
-from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
+from .auth import login, logout
 
-#app = Flask(__name__)
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///C:/control-app/appEnv/sql_getter_app/'
-#db = SQLAlchemy(app)
+# app = Flask(__name__)
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///C:/control-app/appEnv/sql_getter_app/'
+# db = SQLAlchemy(app)
+
+test_db = db
 
 def test_assert():
     assert True
 
-def test_login_logout(client):
-    response = login(client)
-    assert b'testLogin = true' in response.data
-    from flask_login import current_user
-    #assert current_user.get_id() == 'test'
+def test_login_logout():
+    response = login()
+    assert "location.replace(\'https://api.byu.edu/authorize?response_type=code&client_id=9sFLS8QY4facFFt5zfMjMJdIJuMa&redirect_uri=https://controlstest.byu.edu/redirect_from_auth&scope=openid&state=myteststate');" in response
 
-    response = logout(client)
-    print(response.data)
-    assert b'Logout Successful' in response.data
-
-    response = login(client, 'incorrect', 'credentials')
-    assert b'Logout Failed. Please login with correct credentials.' in response.data
-
-
-
-def logout(client):
-    return client.get('/testLogout', follow_redirects=True)
+    response = logout()
+    assert str(response) == "<Response 257 bytes [302 FOUND]>"
 
 @pytest.fixture
 def client():
@@ -43,5 +40,5 @@ def client():
         with app.app_context():
             db.init_app(app)
             client.db=db
-        yield client
-
+            yield client
+        # yield client

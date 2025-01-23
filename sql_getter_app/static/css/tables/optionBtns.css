@@ -1,22 +1,22 @@
 /* reactive Option button and menu */
  /* The container for the option menu */
  .optionDiv {
-    margin-top: 3px; /* Nice spaceing */
+    margin-top: 3px; /* Nice spacing */
     margin-bottom: 3px;
     margin-left: 3px;
     background-color: var(--contrastColor); /* So that when the option menu closes the background of everything is still gold */
-    border-radius: 3px;  /* so we can dide behind the button */
+    border-radius: 3px;  /* so we can hide behind the button */
     width: 60px; /* have it be the same width as the button that way the gold color is hidden */
 }
  /* The style for the actual button */
 .optionsBtn {
     display: block;
-    width: 60px;  /* some nice abslute width that way the other buttons can fit inside it */
+    width: 60px;  /* some nice absolute width that way the other buttons can fit inside it */
 }
  /* The container that the other buttons live inside of */
 .optionContainer {
-    max-height: 0; /* That way it is sqished down to nothing and we can animate it open and closed */
-    overflow: hidden;  /* That way the squising dosent leave anything showing */
+    max-height: 0; /* That way it is squished down to nothing and we can animate it open and closed */
+    overflow: hidden;  /* That way the squishing doesn't leave anything showing */
     width: 60px; /* so that it looks nice with the button (same width) */
     transition: max-height .8s; /* Transition max-height changes so that we slide close nicely */
     display: block; /* So that we cas set the height */

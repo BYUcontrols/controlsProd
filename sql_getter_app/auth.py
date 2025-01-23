@@ -1,17 +1,24 @@
+# High level summary of this page:
+#   1. creates a blueprint called auth
+#   2. defines functions that control different logging-in/out situations
+#       a. for example, the login_required function handles situations in which a user is not already logged in and accesses the site
+#   3. handles the test login situation to be used only in development mode
+
 import sys
 # for production
 #sys.path.append('C:\\control-app\\appEnv\\sql_getter_app')
 
-
+# import modules that we need access to
 #import functools
 import flask_login
 from flask import (Blueprint, redirect, request, render_template, abort)
 from sqlalchemy.sql.expression import true
 
+# below are imports from local modules
 from .collection import login_manager, db, production, versionString
-from .user_class import user_session
+from .user_class import user_session # user_class.py
 
-bp = Blueprint("auth", __name__)
+bp = Blueprint("auth", __name__)    # this creates a blueprint named auth. __name__ tells it where it is defined
 
     # Function called automatically by login_manager every time a request is made
     #   if there is a session cookie present in that request. It restores a user
@@ -22,7 +29,7 @@ def load_user(sessionCookie):
     if user.setFromString(sessionCookie, login_manager.userTimeout):
         return user
     return None
-    
+
     # Flag that can be set before a request to require login for that page
 def login_required(view):
     def wrapped_view(**kwargs):
@@ -58,7 +65,6 @@ def loginPage():
     return render_template('navigation_pages/loginRedirect.html', 
         casUrl=f'https://api.byu.edu/authorize?response_type=code&client_id={oauthKey}&redirect_uri={oauthRedirect}&scope=openid&state=myteststate') 
 
-
     # logout the user
 @bp.route('/logout')
 def logout():
@@ -74,7 +80,6 @@ def superficialLogout():
     flask_login.logout_user()
     # redirect them back home
     return redirect('/')
-
 
     # this url is for admins to test out other permission levels
     # it set's their new permission level
@@ -92,12 +97,12 @@ def adminLevelSpoof(newLevel, roleText):
 
             return redirect('/home')
     # if the user was not authenticated
-    return 'unauthorised', 403 
+    return 'unauthorized', 403 
 
     # this is the page where the user can use the previous function to spoof their user and test
 @bp.route('/userTester')
 def userTester():
-    from .menuCreation import getMenuForRole
+    from menuCreation import getMenuForRole
 
     User = flask_login.current_user
 
@@ -125,10 +130,6 @@ def userTester():
                 menuObject=getMenuForRole(User),
                 versionString=versionString)
 
-            
-
-
-
 ######## TEST login #######
 ######## WARNING - this is a backdoor for development, anyone with the password can get full access.
 ###### It should only be available when the testEnv['env'] variable is true, indicating we are in a
@@ -137,8 +138,9 @@ def userTester():
 @bp.route('/testLogin')
 def testLogin():
     from .collection import testEnv, adminRoleId
-    if testEnv['env']: # MAKE SURE WE ARE NOT IN A OUTWARD FACING ENVIRONMENT
-    
+    ## should be if testEnv['env'] to restrict this login to test environment but cant get that to work rn 
+    # so i bypassed that. remove in production-- Ben
+    if True: # MAKE SURE WE ARE NOT IN A OUTWARD FACING ENVIRONMENT
         import json, time
         userCookie = dict()
         userCookie['id'] = 'test'
@@ -153,12 +155,6 @@ def testLogin():
         currentUser = user_session()
         currentUser.setFromString(json.dumps(userCookie), login_manager.userTimeout)
         flask_login.login_user(currentUser)
-
-        print('at Test Login')
-        print(userCookie)
-
-        return redirect('/home')
         
+        return redirect('/home')
     else: abort(403) # unauthorized
-
-

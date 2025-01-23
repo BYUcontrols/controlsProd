@@ -3,7 +3,7 @@
 /* The container for all the table functions */
 .tableFunctions {
     font-family: 'HCo Ringside Narrow SSm', Arial, sans-serif;
-    margin: 15px; /* Some nice whiespace along the edges of the tableFunctions container */
+    margin: 10px; /* Some nice whitespace along the edges of the tableFunctions container */
 }
 /* class for each individual function (container for each function) */
 .tableFunction {
@@ -28,7 +28,7 @@
 .accendingButton {
     font-size: 24px;
     display: inline;
-    position: absolute; /* So that we can position it absolutly */
+    position: absolute; /* So that we can position it absolutely */
     border: none;  /* get rid of all the trappings */
     background: none;
     padding: 0px;
@@ -70,7 +70,7 @@ We do this in a css hover way because the html <select> elements can't have chec
     background-color: var(--contrastColor);
     width: 200px;
     z-index: 10;
-    border-radius: 4px; /* give it a noce border */
+    border-radius: 4px; /* give it a nice border */
 }
  /* The inputs within the displayDropdown-content container */
 .displayDropdown-content input {
@@ -86,7 +86,7 @@ We do this in a css hover way because the html <select> elements can't have chec
  /* Style for the dropdownBtn while the parent div is hovered over by the mouse  */
 .displayDropdown:hover .displayDropbtn {
     background-color:  var(--contrastColor); /* color change */
-    color: black; /* text color */
+    color: white; /* text color */
     border-radius: 4px 4px 0 0; /* Set the bottom corners as sharp that way we blend with the content dropdown */
     text-decoration: underline; /* underline the text */
 }
@@ -100,4 +100,39 @@ We do this in a css hover way because the html <select> elements can't have chec
 /* for the container that holds the sortSelect and accending button */
 .sortSelectOption {
     display: inherit;
+}
+
+/* for the functionalities on the SR page */
+#srTableFunctions {
+    height: 35px;
+    width: 95%;
+}
+
+/* a class to show things we want to see and stay */
+.visible {
+    visibility: visible;
+}
+
+/* a class to hide things that we want to disappear and go away */
+.invisible {
+    display: none!important;
+}
+
+/* Media query for screens less than 375px */
+@media (max-width: 368px) {
+    #srTableFunctions {
+        padding: 5px;  /* Reduce padding for smaller screens */
+    }
+
+    #srTableFunctions .BYUbutton {
+        width: 100%;  /* Set buttons to 20% of the screen width */
+        overflow: hidden; /* Hide overflow text */
+        margin: 2px 0;  /* Add margin to space out buttons */
+    }
+
+    /* Center the buttons when they wrap */
+    .tableFunction {
+        width: 30%;
+        margin-right: 5px;
+    }
 }

@@ -3,19 +3,25 @@
 
            Written by: 
       Isaac Cutler 12/1/2020
+           Updated by:
+      Mason Hunter 4/18/2022
     Property of the BYU A/C Shop
 */
 
 // A custom init function for the service request table
 function serviceRequestInit() {
-    console.log('%%%%%%%%%%%%%%%%% STARTING CONTROLS-APP JAVASCRIPT V 0.1.0 (service requests) %%%%%%%%%%%%%%%%%')
+    displayTechnicianFunctionalities(userIsTech);
+    showOpenButtonTransformation(urlPath);
+    showAllButtonTransformation(urlPath);
+    generateFilterButton();
+    generatePrintButton(document.getElementById('srTableFunctions'));
+
     urlParams = new URLSearchParams(window.location.search);
         // set the page to automatically run data passed to history.pushState as a function when
         // the user hits the back button.
     window.historyStateActionArray = new Array();
     history.replaceState('data', 'windowOpened', '');
     window.onpopstate = function(event) { 
-        console.log(event); 
         let functionToExecute = window.historyStateActionArray[event.state.arrayPos];
         if (functionToExecute) functionToExecute();  
     };
@@ -32,35 +38,34 @@ function serviceRequestInit() {
 
         // generate the columns object
     window.columnsInfo = generateColumnsObject(document.getElementById('tableHead'));
-    console.log(window.columnsInfo);
         // initialize the rows of the table
     window.rowCollection = serviceReqInitializeRows(document.getElementById('tableBody'), window.columnsInfo);
 
         // execute various functions
-    generateSortSelect();
+    // MASON: UNCOMMENT BELOW FOR SORT SELECT    
+    //generateSortSelect();
         // custom initial displayed columns if you want to easily change this:
         //  use 'Displayed Columns' and then go to the devConsole for chrome, 
         //  Application, Local Storage, https://whateverTheServerIs, /serviceRequest, and copy the text for 'display'
     generateDisplaySelect({"0":true,"1":true,"2":true,"3":true,"4":true,"5":true,"6":true,"7":false,"8":false,"9":false,"10":false,"11":false,"12":true,"13":true});
-    generatePrintButton();
-    generateFilterButton();
+    
+    
+
         // start the pagination engine
-    document.getElementById('tableFunctions').appendChild(new paginationEngine(rowCollection));
+    // document.getElementsByClassName('tableFunctions')[0].appendChild(new paginationEngine(rowCollection));
 
         // restore scroll position
     if (isStorageItem('scroll')) {
         yPosition = num(getStorageItem('scroll'));
         window.scrollTo(0, yPosition);
     }
-    
-        // generate the input new page
-    generateNewServiceRequest()
-    
+
+    // generate the input new page
+    generateNewServiceRequest();
+
         // define a function to run when the page is closed
     window.addEventListener('unload', updateSaveCookies);
-
 }
-
 
 /* function that initializes all the rows with the rowEngine() class
  * but custom built for the service request table
@@ -73,6 +78,9 @@ function serviceRequestInit() {
  */
 
 function serviceReqInitializeRows(tableBodyRef, columnsInfo) {
+    // FIXME
+    // This is where the a UI bug is happening. The tableBodyRef is a table with just the numeric FK values in it
+    // The user sees the numbers displayed for a split second while this function runs and changes to actual values
     if (!tableBodyRef.rows) throw 'Invalid table htmlElement passed';
 
     let rows = tableBodyRef.rows;
@@ -94,7 +102,9 @@ function serviceReqInitializeRows(tableBodyRef, columnsInfo) {
             // make the description field also expand the column
         placeholder.fields[0].htmlRef.onclick = servReqWindow.bind(placeholder);
         placeholder.fields[0].htmlRef.style.cursor = 'pointer';
+        placeholder.fields[0].htmlRef.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512"><path d="M384 224v184a40 40 0 01-40 40H104a40 40 0 01-40-40V168a40 40 0 0140-40h167.48" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/><path d="M459.94 53.25a16.06 16.06 0 00-23.22-.56L424.35 65a8 8 0 000 11.31l11.34 11.32a8 8 0 0011.34 0l12.06-12c6.1-6.09 6.67-16.01.85-22.38zM399.34 90L218.82 270.2a9 9 0 00-2.31 3.93L208.16 299a3.91 3.91 0 004.86 4.86l24.85-8.35a9 9 0 003.93-2.31L422 112.66a9 9 0 000-12.66l-9.95-10a9 9 0 00-12.71 0z"/></svg>';
             // place that rowEngine in the rowsObject
+        placeholder.fields[0].htmlRef.style.cursor = 'pointer';
         rowsObject[placeholder.id] = placeholder;
     }
 
@@ -102,13 +112,27 @@ function serviceReqInitializeRows(tableBodyRef, columnsInfo) {
 }
 
 // called when a user clicks on a service request row.
-// It is passed the context (this) of the rowEngine of that row
-// It reveals a service request window if one has been created and creates one
-// using createServReqWindow()
 function servReqWindow() {
+    // MASON: edited so that clicking the ID field auto populates the NewServiceRequest page with the right information
+    // this gets the id of the row that was clicked
+    var servReqId = parseInt(this.id);
 
-    if (this.servReqClone) window.srContainerObject[this.id].openModal();
-    else createServReqWindow(this);
+    // FIXME this should be a seperate route and not use a form. (it works though) Dec 2024
+    // the only way I know how to talk to python from js is with a form, therefore I made an invisible form with which I send the ID to python
+    let form = document.createElement('form');
+    form.id = 'servReqIdForm';
+    form.classList = 'invisible';
+    form.method = 'post';
+    form.action = $SCRIPT_ROOT + '/NewServiceRequest';
+    document.body.appendChild(form);
+
+    let input = document.createElement('input');
+    input.name = 'servReqId';
+    input.id = 'servReqId';
+    input.value = servReqId;
+    form.appendChild(input);
+
+    form.submit();
 }
 
 // this one is a bit of a monster, sorry it's probably bad practice to have a 300+ line function (but at least 200 lines of that are comments)
@@ -125,8 +149,6 @@ function createServReqWindow(originEngine, newItem=false) {
     // store the clone windowEngine in the original engine
     originEngine.servReqClone = windowEngine;   
     // log the windowEngine
-    console.log("WINDOW ENGINE");
-    console.log(windowEngine);
 
     // create the display container and save it in the clone
     // if the window is a new item then the id of the window will be 'newWindow' otherwise '[id]reqWindow'
@@ -281,11 +303,11 @@ function createServReqWindow(originEngine, newItem=false) {
     printBtn.classList.add('srBtn');
 
     // create the save button with its attached save functionality.
+    // generateByuButton: (text, onClick)
     let saveBtn = generateByuButton('Save', 
         function() {
             // we save the service request by calling the save function on the original row's rowEngine using the data from the window
             // that way the row reflects the changes
-            console.log('We made it this far');
             originEngine.saveRow.bind(originEngine)('nada', windowEngine.getValues(), 
                 function() {
                         // this function is run on successful return of the saveRow request to the server
@@ -300,9 +322,7 @@ function createServReqWindow(originEngine, newItem=false) {
                                 // save the row, first adding the 'serviceRequestId' field to the fields we will save
                             let returnObj = engineToSave.getValues()
                             Object.assign(returnObj, {'serviceRequestId':this.responseText})
-                            engineToSave.saveRow(null, returnObj);  
-                            console.log('REQUEST SENT FOR');
-                            console.log(engineToSave);
+                            engineToSave.saveRow(null, returnObj);
                         }  
                             // if the engineToSave has been deleted and if the engine already has an Id (actually exists in the table) delete it
                         if (engineToSave.isDeleted && !isNaN(engineToSave.id) && engineToSave.wasModified) engineToSave.deleteRow();
@@ -407,4 +427,3 @@ function generateNewServiceRequest() {
     });
     document.getElementById("title").appendChild(button);
 }
-
