@@ -3,6 +3,12 @@
 # specify where everything is
 import sys
 sys.path.append('C:\\control-app-prod\\sql_getter_app')
+# Add the virtual environment's site-packages to sys.path
+venv_site_packages = 'C:\\control-app-prod\\venv\\Lib\\site-packages'
+sys.path.insert(0, venv_site_packages)
+
+# Now Python will search the virtual environment's site-packages first
+# this will prevent conflicts with globally installed packages.
 
 # start the virtual environment
 activate_this = 'C:\\control-app-prod\\venv\\Scripts\\activate_this.py' # update path
