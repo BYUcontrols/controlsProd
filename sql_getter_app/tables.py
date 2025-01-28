@@ -18,11 +18,11 @@ from markupsafe import escape
 from sqlalchemy import false
 import json
 # below are local module imports
-from .crud import pull
-from .auth import login_required
-from .createTableHtml import tableHtml
-from .collection import production, versionString
-from .menuCreation import getMenuForRole
+from crud import pull
+from auth import login_required
+from createTableHtml import tableHtml
+from collection import production, versionString
+from menuCreation import getMenuForRole
 
 
 bp = Blueprint("tables", __name__)  # sets up the blueprint with name tables defined at __name__
@@ -39,7 +39,7 @@ def siteTest():
 
     # create a fake user (not saved to any cookies or valid at all beyond the test) 
 
-    from .user_class import user_session
+    from user_class import user_session
     import json, time
 
     userCookie = dict()

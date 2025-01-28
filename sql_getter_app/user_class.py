@@ -19,8 +19,8 @@ class user_session(object):
         # define the default permission values for an table (if the sql permission query fails)
     def __init__(self): # __init__ function is first called whenever the class is instantiated
                         # the self argument referres to the object we are manipulating when calling the class
-        from .collection import adminRoleId  # gets adminRoleId from .collection.py
-        self.adminRoleId = adminRoleId      # assigns adminRoleId of the object we're manipulating to adminRoleId from .collection.py
+        from collection import adminRoleId  # gets adminRoleId from collection.py
+        self.adminRoleId = adminRoleId      # assigns adminRoleId of the object we're manipulating to adminRoleId from collection.py
         
         pass    # passes by without executing any code
 
@@ -29,7 +29,7 @@ class user_session(object):
         #   from the sql server based on self.byuId and sets them to default
         #   values if the byuId is not in the 'User' table
     def getData(self):
-        from .collection import db
+        from collection import db
         # get from engine
         try:
             # get the User's roleId and hierarchy number from the database
@@ -78,7 +78,7 @@ class user_session(object):
     #   string - the name for the table you want to know the permissions for
     #   int - the default level (if something goes wrong)
     def accessTableAccessLevel(self, column, tableName):
-        from .collection import db
+        from collection import db
         from sqlalchemy import text
         from flask import abort
 
@@ -155,7 +155,7 @@ class user_session(object):
         #   it all in one
     def getPermissionsObject(self, table):
         
-        from .collection import db
+        from collection import db
         from sqlalchemy import text
         from flask import abort
             # first check to see if the user is an admin, if they are give them full access
@@ -294,7 +294,7 @@ class user_session(object):
     def setFromTolken(self, token):
  
         import certifi, requests
-        from .collection import oauthKey, oauthSecret, oauthRedirect
+        from collection import oauthKey, oauthSecret, oauthRedirect
         from flask import abort
             # sets the arguments for the request to the token api
         data = {'grant_type': 'authorization_code', 'code': token, 'redirect_uri': oauthRedirect} # callback URL
@@ -366,7 +366,7 @@ class user_session(object):
         return not equal
 
     def returnUserName(self):
-        from .collection import db
+        from collection import db
         return self.byuId
 
     def returnFullName(self):
@@ -375,7 +375,7 @@ class user_session(object):
 
     # MASON: Checking if a user is a technician, for the service request functionality
     def checkIfUserIsTechnician(self):
-        from .collection import db, userTechId
+        from collection import db, userTechId
         self.techId = db.engine.execute(f"SELECT [technician] FROM [User] WHERE userName='{self.byuId}';").fetchone()
 
         if (str(self.techId) == userTechId):
@@ -385,7 +385,7 @@ class user_session(object):
 
     # tells us if the user is the requestor of a service request or not
     def checkIfUserIsRequestor(self, row, PK):
-        from .collection import db
+        from collection import db
         self.requestorId = db.engine.execute(f"SELECT [userIdRequestor] FROM [serviceRequest] WHERE serviceRequestId='{str(row[PK])}';").fetchone()
         self.userId = db.engine.execute(f"SELECT [userId] FROM [User] WHERE userName='{self.byuId}';").fetchone()
         if (self.requestorId == self.userId):
@@ -395,7 +395,7 @@ class user_session(object):
             
     # tells us if the user is the Assigned To technician for a service request or not
     def checkIfUserIsAssignedTo(self, row, PK):
-        from .collection import db
+        from collection import db
         self.assignedId = db.engine.execute(f"SELECT [userIdTechnician] FROM [serviceRequest] WHERE serviceRequestId='{str(row[PK])}';").fetchone()
         self.userId = db.engine.execute(f"SELECT [userId] FROM [User] WHERE userName='{self.byuId}';").fetchone()
 

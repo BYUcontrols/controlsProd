@@ -12,7 +12,7 @@
 # a class to create the html for a table from a list of columns and sqlAlchemy resultProxys
 from flask.globals import request
 # below this is local module imports
-from .collection import camel_to_title
+from collection import camel_to_title
 class tableHtml(object):
 
     def __init__(self, User, dbName, primaryKey, html=None):
@@ -74,7 +74,7 @@ class tableHtml(object):
             import json
             # Check if testing is disabled, in which case import getLinkedChildren function
             if self.testing is False:
-                from .crud import getLinkedChildren
+                from crud import getLinkedChildren
             else:
                 # Use a stub function for testing
                 getLinkedChildren = self.getLinkedChildren
@@ -96,7 +96,7 @@ class tableHtml(object):
     # takes an array of sqlalchemy rowProxy objects and adds the data to the table html string
     # turns a sqlalchemy query into a table
     def content(self, table, html=None, showDeleted=False):
-        from .createTableHtmlSupport import makeRow, checkIfStatusIsOpen
+        from createTableHtmlSupport import makeRow, checkIfStatusIsOpen
         import flask
         # the table body tag
         self.html += "<tbody id='tableBody'>"
@@ -107,8 +107,8 @@ class tableHtml(object):
         # urlPath = flask.request.path
         # if (self.PK == 'serviceRequestId'): # MASON: All this only runs if we are on the Service Request table
         #     # necessary import for the requestor and assigned to functions about 10 lines below
-        #     from .user_class import user_session  
-        #     from .formFuncs import getServReqData  
+        #     from user_class import user_session  
+        #     from formFuncs import getServReqData  
         #     import flask_login
         #     User = flask_login.current_user
         #     # MASON: This checks if the user is a technician or not. Useful for displaying the right rows later on.
@@ -169,7 +169,7 @@ class tableHtml(object):
     def linkedElements(self, dontLink=None):
         if self.testing is False: # if we're not testing
             # fetch the list of which columns to link (it's refering to linkedData.py)
-            from .linkedData import linkedColumns
+            from linkedData import linkedColumns
         else: # a place where we can test different data
             linkedColumns = self.linkedColumnsStub
         
@@ -201,11 +201,11 @@ class tableHtml(object):
     def getLinkedColumn(self, colName):
         # import the list of columns to link
         if self.testing is False:
-            from .linkedData import linkedColumns
+            from linkedData import linkedColumns
         else:
             linkedColumns = self.linkedColumnsStub
         # fetch the initialized database
-        from .collection import db
+        from collection import db
 
         # extract the requisite data from linkedColumns
         table = linkedColumns[colName][0]

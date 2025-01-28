@@ -97,7 +97,7 @@ rawMenu = [
 # FIXME: This was throwing a ton of errors, so I commented it out for now. (Nov 2024)
 def createMenus(app):
     pass
-#     from .collection import db   # pulls in db object from the collection module
+#     from collection import db   # pulls in db object from the collection module
 #     import json                 # imports the json (JavaScript Object Notation) module... json is a lightweight data interchange format inspired by JavaScript object literal syntax
 #         # first fetch the default configuration from tablePermissions 'DEFAULT' (from the tables module)
 #         # we will use this for all tables that do not have an entry in the tablePermissions table
@@ -137,7 +137,7 @@ def createMenus(app):
 
 # This one is passed the current user class and returns the menu object for that user's level
 def getMenuForRole(user):
-    from .menuCreation import rawMenu    # this must have been copied from another module because we are in the menuCreation module: not sure why they are importing from it here
+    from menuCreation import rawMenu    # this must have been copied from another module because we are in the menuCreation module: not sure why they are importing from it here
     import copy # the copy module lets us make shallow copies of objects
 
     newMenuList = list()

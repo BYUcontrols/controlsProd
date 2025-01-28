@@ -11,11 +11,11 @@ import sql_getter_app
 import flask_login
 from flask import app, url_for, request
 
-from .collection import db, login_manager
-from .user_class import user_session
-from .auth import load_user, login_required, redirect_from_auth, logout
+from collection import db, login_manager
+from user_class import user_session
+from auth import load_user, login_required, redirect_from_auth, logout
 from .test_app import client
-from .conftest import test_app_context
+from conftest import test_app_context
 
 def test_load_user():
     # patch the user_session.setFromString (returns True)

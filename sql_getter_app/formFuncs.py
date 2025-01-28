@@ -7,8 +7,8 @@
 from sqlalchemy.sql import null
 import flask_login
 # below are local module imports
-from .collection import db, devUserName
-from .user_class import user_session
+from collection import db, devUserName
+from user_class import user_session
 
 # takes the info submitted by the user to create a new requestor and sumbits it to the database to save it
 def newReqHelper(userName, firstName, lastName, technician, phone, email, vendorId, userIdModified, fullName, userRoleId):

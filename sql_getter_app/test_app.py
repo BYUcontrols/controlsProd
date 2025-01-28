@@ -13,8 +13,8 @@ from flask_sqlalchemy import SQLAlchemy
 # sys.path.append('C:\\control-app\\appEnv\\sql_getter_app')
 import sql_getter_app
 from sql_getter_app import app
-from .collection import db
-from .auth import login, logout
+from collection import db
+from auth import login, logout
 
 # app = Flask(__name__)
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///C:/control-app/appEnv/sql_getter_app/'

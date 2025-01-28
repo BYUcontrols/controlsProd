@@ -24,7 +24,7 @@ def makeRow(self, row, showDeleted):
     
 # tells us if the row has an open status or not
 def checkIfStatusIsOpen(self, row, PK):
-    from .collection import db
+    from collection import db
     self.rowStatus = db.engine.execute(f"SELECT [statusId] FROM [serviceRequest] WHERE serviceRequestId='{str(row[PK])}';").fetchone()
 
     closedId = db.engine.execute(f"SELECT [statusId] FROM [Status] WHERE status='Closed';").fetchone()

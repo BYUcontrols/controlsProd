@@ -15,7 +15,7 @@ from . import test_sr
 
 # important context for certain test cases
 from .test_app import client
-from .conftest import test_app_context
+from conftest import test_app_context
 
 # a function to set up the test environment and run all the python tests
 def runAllTests():

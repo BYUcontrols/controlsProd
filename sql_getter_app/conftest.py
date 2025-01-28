@@ -10,7 +10,7 @@ import os
 #sys.path.append('C:\\control-app\\appEnv\\sql_getter_app')
 import sql_getter_app
 from sql_getter_app import app
-from .collection import db
+from collection import db
 from flask import Flask, appcontext_pushed
 from flask_sqlalchemy import SQLAlchemy
 
@@ -39,7 +39,7 @@ def test_app_context():
         
 def testLoginUser():
     # start an instance of the user_session class and fake log it in
-    from .user_class import user_session
+    from user_class import user_session
     testUser = user_session()
     testUser.logged_in = True
     testUser.byuId = 'test_net_id'

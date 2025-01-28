@@ -7,10 +7,10 @@ import flask_login
 from flask import (Flask, redirect, render_template, request, session, url_for, Blueprint)
 from markupsafe import escape
 # below are local module imports
-from .crud import pull
-from .auth import login_required
-from .collection import production, versionString
-from .menuCreation import getMenuForRole
+from crud import pull
+from auth import login_required
+from collection import production, versionString
+from menuCreation import getMenuForRole
 
 bp = Blueprint("navigationPages", __name__) # sets up the blueprint with name navigationPages defined at __name__
 

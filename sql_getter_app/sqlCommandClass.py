@@ -29,7 +29,7 @@ class sqlCommands:
     def __init__(self, tableName, testing=False, getKeysStub=None):
         self.testing = testing
         # stub getKeys if testing, else import it from crud
-        if self.testing is False: from .crud import getKeys
+        if self.testing is False: from crud import getKeys
         else: getKeys = getKeysStub
 
         self.keys = getKeys(tableName)
@@ -38,7 +38,7 @@ class sqlCommands:
     # takes data from the client and turn it into segments of sql command strings
     def values(self, valuesDict):
 
-        if self.testing is False: from .crud import verifyColumn
+        if self.testing is False: from crud import verifyColumn
         else: verifyColumn = self.verifyColumn
         # create variables to populate
         sqlInsertCol = str() # store columns as a comma list
@@ -72,7 +72,7 @@ class sqlCommands:
     #}
     # the options for operation are: containsOr, containsAnd, isNot, range, is, and bool
     def where(self, rawWhereDict):
-        if self.testing is False: from .crud import verifyColumn
+        if self.testing is False: from crud import verifyColumn
         else: verifyColumn = self.verifyColumn
         import json
         if (rawWhereDict):

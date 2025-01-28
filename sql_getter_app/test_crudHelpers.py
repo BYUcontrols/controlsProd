@@ -8,8 +8,8 @@
 from unittest.mock import patch, MagicMock
 import sql_getter_app
 
-from .collection import db
-from .crud import getKeys, swapPositions, getOrderedKeys, getColumnTypes, getIdColumn, verifyColumn, verifyTableName, a
+from collection import db
+from crud import getKeys, swapPositions, getOrderedKeys, getColumnTypes, getIdColumn, verifyColumn, verifyTableName, a
 
 ### unit tests
 
