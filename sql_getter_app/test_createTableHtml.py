@@ -5,7 +5,7 @@
 
 # here lie the unit tests for the tableHtml class
 from flask_login import login_manager
-from createTableHtml import tableHtml
+from sql_getter_app.createTableHtml import tableHtml
 # Here lie the functions that we use to settup these tests
 class fakeUserForTest:
     def __init__(self, state):
@@ -142,7 +142,7 @@ def test_getLinkedColumn():
         'test2':('User', 'fullName', 'userId', 'ToReplace', {'Device':'WHERE forDevices = \'true\'', 'ServiceRequest':'WHERE forServiceRequests = \'true\''}),
         'test3':('User', 'fullName', 'userId', 'ToReplace')
     }
-    from collection import db
+    from sql_getter_app.collection import db
     # insert two rows into the User table (deleting them first just in case)
     db.engine.execute("DELETE FROM [dbo].[User] WHERE userName = 'johndoe1'")
     db.engine.execute("""INSERT INTO [dbo].[User] (userName, firstName, lastName, technician, phone, eMail, vendorId, userIdModified, userRoleId, fullName) 

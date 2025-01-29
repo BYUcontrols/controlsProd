@@ -24,7 +24,7 @@ from sqlalchemy import create_engine            # engines are the starting point
 
 # TRUE if we are in a production environment, declaring this variable
 # p.s. You have to set this to True before deploying it to production
-production = True
+production = False
 
 # set the version string, declaring this variable
 # This is important to change as it forces browsers to reload their cashed js and css files, removing compatability errors
@@ -41,7 +41,6 @@ testEnv = {'env':True}
 # start a sqlAlchemy session to handle database access
 db = SQLAlchemy(session_options={'echo':True})
 
-# FIXME (the api.byu.edu/store does not exist anymore)
 # YOU NEED TO SUBSCRIBE TO THE BYU /token API WHEN CHANGING URLS:
 #   1. api.byu.edu/store
 #   2. Login using your byu account

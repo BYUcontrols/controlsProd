@@ -20,13 +20,13 @@ from werkzeug.exceptions import HTTPVersionNotSupported
 from werkzeug.utils import header_property
 from sqlalchemy import text
 # below are local module imports
-from crud import getColumnTypes, pull
-from auth import login_required
-from createTableHtml import tableHtml
-from collection import db, production, versionString
-from formFuncs import newReqHelper, newSRHelper, getServReqData, submitEdits, submitNewItem, addItem, addNote, saveReqItemEdits, saveReqNoteEdits
-from user_class import user_session
-from tables import item, tablePermissions
+from sql_getter_app.crud import getColumnTypes, pull
+from sql_getter_app.auth import login_required
+from sql_getter_app.createTableHtml import tableHtml
+from sql_getter_app.collection import db, production, versionString
+from sql_getter_app.formFuncs import newReqHelper, newSRHelper, getServReqData, submitEdits, submitNewItem, addItem, addNote, saveReqItemEdits, saveReqNoteEdits
+from sql_getter_app.user_class import user_session
+from sql_getter_app.tables import item, tablePermissions
 
 import json
 
@@ -232,7 +232,7 @@ def newServiceRequest():
 
 # returns the correct NewServiceRequest page
 def newSrRenderTemplate(newRequestor=None, servReq=None, message=None, userIsTech=None, itemDesc=None):
-    from menuCreation import getMenuForRole
+    from sql_getter_app.menuCreation import getMenuForRole
     return render_template('newServiceRequest.html',
                             menuObject=getMenuForRole(flask_login.current_user),
                             requestors=ListOfNames(None, None, 'New Requestor'),
@@ -272,12 +272,12 @@ def serviceRequest():
 #       mask = the display name of the table
 def serviceRequestPull(mask, html):
 
-    from menuCreation import getMenuForRole
+    from sql_getter_app.menuCreation import getMenuForRole
 
     User = flask_login.current_user
     # db table name
     dName = 'ServiceRequest'
-    from sqlCommandClass import sqlCommands
+    from sql_getter_app.sqlCommandClass import sqlCommands
 
     # get the permissions object for the table
     tablePermissions = User.getPermissionsObject(dName)
@@ -607,7 +607,7 @@ def printFromHtml():
 
 # function used to get a list of all the values for a particular edit/new SR page dropdown
 def ListOfValues(idCol, valCol, table, specialVal=None, where=None):
-    from collection import db
+    from sql_getter_app.collection import db
     if(not where):
         # Ask the database for the idColumn and displayColumn
         result = db.engine.execute(f"SELECT [{idCol}] as id, [{valCol}] as val FROM [{table}] WHERE active = 1").fetchall()
@@ -654,7 +654,7 @@ def ListOfValues(idCol, valCol, table, specialVal=None, where=None):
 
 # function used to get a list of all the names for a particular edit/new SR page dropdown
 def ListOfNames(column=None, value=None, specialVal=None):
-    from collection import db
+    from sql_getter_app.collection import db
     # Ask the database for the idColumn and displayColumn
     if (column != None and value != None):
         result = db.engine.execute(f"SELECT [userId] as id, [fullName] as val FROM [User] WHERE active = 1 AND {column} = {value}").fetchall()

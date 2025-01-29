@@ -9,9 +9,9 @@ from unittest.mock import MagicMock, patch
 import sql_getter_app
 from requests import status_codes
 
-from collection import db
-from crud import pull
-from user_class import user_session
+from sql_getter_app.collection import db
+from sql_getter_app.crud import pull
+from sql_getter_app.user_class import user_session
 
 # basic init function that returns a fresh user_session
 def userSession_testInit():

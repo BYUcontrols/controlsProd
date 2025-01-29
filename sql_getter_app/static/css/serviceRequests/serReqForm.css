@@ -157,7 +157,7 @@ input[type="number"] {
   width: 400px;
   max-width: 90%;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  overflow: hidden;
+  overflow: auto;
 }
 
 .modal-content h2 {
@@ -170,11 +170,25 @@ input[type="number"] {
 .modal-content label,
 .modal-content input[type="text"],
 .modal-content input[type="number"],
-.modal-content select {
+.modal-content input[type="email"] {
   display: block;
   width: 100%;
   padding: 10px;
   box-sizing: border-box;
+}
+
+.modal-content select {
+  display: block;
+  width: 100%;
+  height: 36px;
+  font-size: 1rem;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  color: black;
+}
+
+select#vendorId {
+  max-width: 60%;
 }
 
 .modal-content input[type="submit"],

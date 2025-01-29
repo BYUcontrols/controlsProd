@@ -15,8 +15,8 @@ from flask import (Blueprint, redirect, request, render_template, abort)
 from sqlalchemy.sql.expression import true
 
 # below are imports from local modules
-from collection import login_manager, db, production, versionString
-from user_class import user_session # user_class.py
+from sql_getter_app.collection import login_manager, db, production, versionString
+from sql_getter_app.user_class import user_session # user_class.py
 
 bp = Blueprint("auth", __name__)    # this creates a blueprint named auth. __name__ tells it where it is defined
 
@@ -58,7 +58,7 @@ def login():
     # in essence this is the pre login page. 
 @login_manager.unauthorized_handler
 def loginPage():
-    from collection import oauthRedirect, oauthKey
+    from sql_getter_app.collection import oauthRedirect, oauthKey
     # return the loginRedirect.html template (it saves the url the user was trying to access in the localStorage then sends them
     # to the casUrl we passed to them)
     # the casUrl is the url for the byu login api 
@@ -137,7 +137,7 @@ def userTester():
 ################ if the link somehow gets lost here it is
 @bp.route('/testLogin')
 def testLogin():
-    from collection import testEnv, adminRoleId
+    from sql_getter_app.collection import testEnv, adminRoleId
     ## should be if testEnv['env'] to restrict this login to test environment but cant get that to work rn 
     # so i bypassed that. remove in production-- Ben
     if True: # MAKE SURE WE ARE NOT IN A OUTWARD FACING ENVIRONMENT

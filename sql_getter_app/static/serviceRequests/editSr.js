@@ -114,10 +114,14 @@ function CreateForm() {
       isFormDirty = true;
     });
   */
+
+  // this is to warn the user that their inputs won't be saved if they reload or leave the page, but it got really annoying 
+  /*
   window.addEventListener('beforeunload', (event) => {
     const confirmationMessage = "this text doens't matter";
     event.returnValue = confirmationMessage;
   });
+  */
 
   let idText = document.createElement("div");
   if (servReq == null) {
@@ -281,6 +285,7 @@ function CreateForm() {
   ccInput.id = "cc";
   ccInput.name = "cc";
   ccInput.placeholder = "email@example.com";
+  ccInput.tabIndex = "11"
   editForm.appendChild(ccInput);
 
   // line break for aesthetics
@@ -409,7 +414,7 @@ function CreateForm() {
   addnote.value = "+ Note";
   addnote.classList = "BYUbutton";
   addnote.id = "add-note-btn";
-  addnote.tabIndex = 15;
+  addnote.tabIndex = 13;
   addnote.onclick = function () {
     addNotePop.open(); //addNotePop defined in srNotes.js
     document.body.style.overflow = "hidden"; // Prevent scrolling when the modal is open
@@ -505,7 +510,7 @@ function CreateForm() {
   additem.value = "+ Item";
   additem.classList = "BYUbutton";
   additem.id = "add-item-btn";
-  additem.tabIndex = 15;
+  additem.tabIndex = 14;
   additem.onclick = function () {
     itempop.open();
     document.body.style.overflow = "hidden";
@@ -531,7 +536,7 @@ function CreateForm() {
   submit.type = "submit";
   submit.value = "Save";
   submit.classList = "BYUbutton";
-  submit.tabIndex = 14;
+  submit.tabIndex = 15;
   submit.onclick = function () {
     // if there is a service request, then it is an edit
     // set the saved message box to hidden after 3 seconds
@@ -539,42 +544,13 @@ function CreateForm() {
 
   }
   buttonContainer.appendChild(submit);
-  // Attach the submit handler to the form
-  if (editForm) {
-    editForm.addEventListener("submit", function(event) {
-      if (!servReq){
-        event.preventDefault(); // Prevent the default form submission behavior
-        
-        // Collect notes and items to submit with the service request
-        const formData = new FormData(event.target); // Extract form data
-        console.log("Form data:", formData);
-        formJSON = Object.fromEntries(formData)
-        // Structure the data into a single json object
-        const requestData = {...formJSON, newSRNotes, newSRItems};
-        console.log("Request data:", requestData);
-        // API call
-        fetch("/NewServiceRequest", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(requestData)
-        })
-        .then(response => response.json())
-        .catch(error => {
-            console.error("Error:", error);
-        });
-        window.location.href = $SCRIPT_ROOT + "/ServiceRequest";
-      }
-    });
-  } else { // if the form is not found, log an error
-      console.error("Form not found. Unable to attach submit new SR event handler.");
-  }
 
   //Cancel (Go back to the list page without saving what you did in the form)
   let cancel = document.createElement("input");
   cancel.type = "button";
   cancel.value = "Cancel";
   cancel.classList = "BYUbutton";
-  cancel.tabIndex = 15;
+  cancel.tabIndex = 16;
   cancel.onclick = function () {
       window.location.href = $SCRIPT_ROOT + "/ServiceRequest";
   };
@@ -587,7 +563,7 @@ function CreateForm() {
     deletebtn.type = "button";
     deletebtn.value = "Delete";
     deletebtn.classList = "BYUbutton";
-    deletebtn.tabIndex = 16;
+    deletebtn.tabIndex = 17;
     // creates an invisible form, gives it the servReqId, submits to server via post request
     deletebtn.onclick = function () {
       console.log("delete btn clicked");
@@ -614,13 +590,45 @@ function CreateForm() {
     print.type = "button";
     print.value = "Print";
     print.classList = "BYUbutton";
-    print.tabIndex = 17;
+    print.tabIndex = 18;
     print.onclick = function () {
       // printFunc is imported via script tags in the html (). Located in printSr.js
       printFunc(servReq);
       console.log("FIXME print func called");
     };
     buttonContainer.appendChild(print);
+  }
+
+  
+  // Attach the submit handler to the form
+  if (editForm) {
+    editForm.addEventListener("submit", function(event) {
+      if (!servReq){
+        event.preventDefault(); // Prevent the default form submission behavior
+
+        // Collect notes and items to submit with the service request
+        const formData = new FormData(event.target); // Extract form data
+        console.log("Form data:", formData);
+        formJSON = Object.fromEntries(formData)
+        // Structure the data into a single json object
+        const requestData = {...formJSON, newSRNotes, newSRItems};
+        console.log("Request data:", requestData);
+        // API call
+
+        fetch("/NewServiceRequest", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(requestData)
+        })
+        .then(response => response.json())
+        .catch(error => {
+            console.error("Error:", error);
+        });
+        window.location.href = $SCRIPT_ROOT + "/ServiceRequest";
+      }
+    });
+  } else { // if the form is not found, log an error
+      console.error("Form not found. Unable to attach submit new SR event handler.");
   }
 
   // put the form in the div that holds it

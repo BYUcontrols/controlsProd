@@ -9,7 +9,7 @@ import sys
 from flask import Blueprint, render_template
 from sqlalchemy import text
 # below are local module imports
-from collection import db, flask_login, production
+from sql_getter_app.collection import db, flask_login, production
 
 bp = Blueprint("errors", __name__)  # sets up the blueprint with name errors defined at __name__
 

@@ -35,11 +35,14 @@ function generateFilterButton(container = document.getElementsByClassName('table
 function filterMenu() {
   if (document.getElementById('filterMenu')) {
     window.filterMenuContainer.openModal();
+    document.body.style.overflow = "hidden";
   } else {
     let urlArgEngine = new URLSearchParams(window.location.search);
+    document.body.style.overflow = "hidden";
     // create display box
     window.filterMenuContainer = createDisplayContainer('filterMenu', false, 'filterModal');
     window.filterMenuContainer.openModal();
+    document.body.style.overflow = 'hidden';
     // create the title
     let title = document.createElement('h1');
     title.classList.add('filterTitle');
@@ -105,7 +108,10 @@ function filterMenu() {
     buttonApply.appendChild(document.createTextNode('Apply'));
     buttonApply.classList.add('BYUbutton');
     buttonApply.classList.add('filterFunctionButtons');
-    buttonApply.onclick = function() { applyFilter(filterDataArray); };
+    buttonApply.onclick = function() { 
+      applyFilter(filterDataArray);
+      document.body.style.overflow = "auto";
+    };
     setTooltip(buttonApply, 'Apply the selected filters to this page');
     buttonRow.appendChild(buttonApply);
 
@@ -117,6 +123,7 @@ function filterMenu() {
     buttonClear.onclick = function() {
       // reload the page with removed filter
       window.location.href = window.location.pathname;
+      document.body.style.overflow = "auto";
     }
     setTooltip(buttonClear, 'Clear any filters associated with this page');
     buttonRow.append(buttonClear);

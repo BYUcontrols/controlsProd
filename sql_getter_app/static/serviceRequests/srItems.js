@@ -156,6 +156,7 @@ function addItemModal() {
   // create the Item label
   const itemDiv = document.createElement("div");
   itemDiv.id = "itemDiv";
+  itemDiv.class
   itemDiv.classList.add("textInput");
   createLabel("items", "Items", itemDiv);
   createDropdownElement("items", "items", itemDiv); // onclick clear the input field
@@ -193,9 +194,6 @@ function addItemModal() {
   createLabel("inputBy", "Input By", inputByDiv);
   createInputElement("text", "inputBy", inputByDiv);
   itempopForm.appendChild(inputByDiv);
-  itempopForm.appendChild(document.createElement("br"));
-
-  // line break for aesthetics
   itempopForm.appendChild(document.createElement("br"));
 
   createInputElement("number", "servReqId", itempopForm);
@@ -236,8 +234,10 @@ function addItemModal() {
         document.body.style.overflow = "auto";
         // update UI
         const itemsTable = document.getElementById("tableBody");
-        const newRow = `<tr>
-          <td></td>
+        const newRow = `<tr id="itemsrow">
+          <td onclick="sendNoteId()" style="cursor: pointer;"><svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512">
+          //<path d="M384 224v184a40 40 0 01-40 40H104a40 40 0 01-40-40V168a40 40 0 0140-40h167.48" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/>
+          //<path d="M459.94 53.25a16.06 16.06 0 00-23.22-.56L424.35 65a8 8 0 000 11.31l11.34 11.32a8 8 0 0011.34 0l12.06-12c6.1-6.09 6.67-16.01.85-22.38zM399.34 90L218.82 270.2a9 9 0 00-2.31 3.93L208.16 299a3.91 3.91 0 004.86 4.86l24.85-8.35a9 9 0 003.93-2.31L422 112.66a9 9 0 000-12.66l-9.95-10a9 9 0 00-12.71 0z"/></svg></td>
           <td></td>
           <td>${items}</td>
           <td>${inputBy}</td>
@@ -489,6 +489,7 @@ function editItemModal() {
   //submit
   let edititemsubmit = document.createElement("input");
   edititemsubmit.type = "submit";
+  edititemsubmit.id = "editItemPopSubmit";
   edititemsubmit.value = "Save";
   editItemPopForm.appendChild(edititemsubmit);
 
@@ -515,12 +516,14 @@ function editItemModal() {
     remove.type = "text";
     remove.name = "deleteItem";
     remove.value = document.getElementById("requestItemId").value;
+    remove.display = "hidden";
     deleteitemForm.appendChild(remove);
 
     let servReqId = document.createElement("input");
     servReqId.type = "number";
     servReqId.name = "servReqId";
     servReqId.value = servReq["servReqId"];
+    remove.display = "hidden";
     deleteitemForm.appendChild(servReqId);
 
     deleteitemForm.submit();
@@ -541,6 +544,17 @@ function editItemModal() {
       servReq["items"][id]["quantity"];
   };
   editItemPop.open = openFunction;
+
+
+  // Enter or Return key sumbits edit note pop form
+  editItemPopForm.addEventListener("keydown", function(enter_key_pressed) {
+    if (enter_key_pressed.key === "Enter" || enter_key_pressed.key === "Return") { // when enter or return is pressed, it will submit the note
+      enter_key_pressed.preventDefault();
+      document.getElementById("editItemPopSubmit").click();
+    }
+  });
+
+  
 }
 
 function editItemCancel() {

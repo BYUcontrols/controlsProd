@@ -1,6 +1,6 @@
 /************* home screen image ****************/
 .homeImage {
-    width: 100vw; /* set div to occupy the whole page */
+    width: 100%; /* set div to occupy the whole page */
     height: 100vh;
     background-position: center center;  /* center the background image */
     background-repeat: no-repeat;  /* make sure we don't try the tile the image in the background */

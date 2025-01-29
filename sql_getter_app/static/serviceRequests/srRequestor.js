@@ -204,6 +204,8 @@ function createNewReqSupport() {
     phone.type = 'tel';
     phone.id = 'phone';
     phone.name = 'phone';
+    phone.style.height = "32px";
+    phone.style.fontSize = "1rem";
     phone.required = true;
     //phone.setAttribute('onblur', 'checkPhoneNum()');
     phone.pattern = '[0-9]{3}-[0-9]{3}-[0-9]{4}';
@@ -212,10 +214,15 @@ function createNewReqSupport() {
     popForm.appendChild(phone);
 
     // line break for aesthetics
-    popForm.appendChild(document.createElement('br'));    
+    popForm.appendChild(document.createElement('br'));  
+    
+    // this is for breaks that aren't working
+    let breakReplacement = document.createElement('div');
+    breakReplacement.style.height = '13.5px';
+    popForm.appendChild(breakReplacement);
 
     //email
-    createLabel('email', 'eMail', popForm);
+    createLabel('email', 'Email', popForm);
     let email = document.createElement('input');
     email.setAttribute('type', 'email');
     email.setAttribute('id', 'email');
@@ -267,6 +274,7 @@ function createNewReqSupport() {
     let fullName = document.createElement('input');
     fullName.id = "fullName";
     fullName.name = 'fullName';
+    fullName.type = 'text';
     fullName.required = true;
     popForm.appendChild(fullName);
 
@@ -279,6 +287,8 @@ function createNewReqSupport() {
     userRoleId.id = 'userRoleId';
     userRoleId.name = 'userRoleId';
     userRoleId.required = true;
+    userRoleId.style.height = "32px";
+    userRoleId.style.fontSize = "1rem";
     popForm.appendChild(userRoleId);
 
     for (key in roles) {
@@ -294,11 +304,19 @@ function createNewReqSupport() {
 
     // line break for aesthetics
     popForm.appendChild(document.createElement('br'));
+
+    // this is for breaks that aren't working
+    let breakReplacement2 = document.createElement('div');
+    breakReplacement2.style.height = '13.5px';
+    popForm.appendChild(breakReplacement2);
    
     //submit
     let submit = document.createElement('input');
     submit.type = 'submit';
     submit.value = 'Create';
+    submit.onclick = function () {
+        document.body.style.overflow = "auto";
+    };
     popForm.appendChild(submit);
 
     //cancel
@@ -325,6 +343,7 @@ function cancelCloser() {
     document.getElementById('phone').value = '';
     document.getElementById('email').value = '';
     document.getElementById('fullName').value = '';
+    document.body.style.overflow = "auto";
     popup.style.display = "none";
 
     let requestor = document.querySelector('#requestor');

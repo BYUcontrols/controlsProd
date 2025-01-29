@@ -125,7 +125,6 @@ tr.deletedRow:nth-child(odd) {
 }
 
 .tableWrapper {
-    width: 100%; /* Ensure the table wrapper spans the entire width */
     overflow-x: auto;
 }
 
@@ -175,7 +174,7 @@ th:focus, td:focus {
 
     th, td {
         white-space: nowrap; /* Prevent wrapping to maintain table structure */
-    }
+    } 
 }
 
 /* For very small screens (up to 400px) */
@@ -242,3 +241,19 @@ th:focus, td:focus {
     }
 }
 
+
+/************* MOBILE VIEW REMOVING COLUMNS *************/
+@media (max-width: 740px) {
+    /* removes "Status" and "Estimate" columns on mobile view */
+    table#srtable thead tr th:nth-child(6), table#srtable thead tr th:nth-child(7) {
+        display: none;
+    }
+
+    table#srtable tbody tr td:nth-child(6), table#srtable tbody tr td:nth-child(7) {
+        display: none;
+    }
+}
+
+table#srtable tbody tr:hover {
+    background-color: #d4d4d4;
+}

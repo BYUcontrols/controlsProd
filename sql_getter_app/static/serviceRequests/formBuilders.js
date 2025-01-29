@@ -12,6 +12,8 @@ function createLabel(forId, labelText, form) {
   lab.id = "for" + forId;
   //set what the label says
   lab.innerText = labelText + ": ";
+  //standardize font size for all labels
+  lab.style.fontSize = "1rem";
   //insert the label
   form.appendChild(lab);
 }
@@ -94,11 +96,16 @@ function createInputElement(type, id, form) {
   } else if (id == "inputBy") {
     input.value = userName;
     input.readOnly = true;
+    input.tabIndex = -1;
   } else if (id == "noteinputBy") {
     input.readOnly = true;
+    input.tabIndex = -1;
   } else if (id == "modDate") {
     input.value = new Date().toDateInputValue();
     input.readOnly = true;
+    input.tabIndex = -1;
+    input.style.height = "32px";
+    input.style.fontSize = "1rem";
   } else if (id == "public") {
     input.checked = true;
     input.required = false;
@@ -113,8 +120,12 @@ function createInputElement(type, id, form) {
     id == "noteinputDate" ||
     id == "requestNoteId" ||
     id == "noteCreator" ||
-    id == "editnotetoday"
-  ) {
+    id == "editnotetoday" ||
+    id == "phone" ||
+    id == "email" ||
+    id == "fullname"
+    ) {
+    input.style.height = "32px"
     input.required = false;
     input.readOnly = true;
   } else if (id == "edititemvoid") {
@@ -163,6 +174,12 @@ function createDropdownElement(list, id, form) {
       drop.value = servReq["requestor"];
     }
     drop.tabIndex = 1;
+    // clear the value in the dropdown when it is clicked on
+    drop.onclick = function () {
+      drop.value = "";
+    };
+  } else if (id == "items") {
+    drop.style.height = "32px";
     // clear the value in the dropdown when it is clicked on
     drop.onclick = function () {
       drop.value = "";
@@ -220,6 +237,24 @@ function createDropdownElement(list, id, form) {
     drop.onclick = function () {
       drop.value = "";
     };
+  } else if (id == "itemStat") {
+    // clear the value in the dropdown when it is clicked on
+    drop.onclick = function () {
+      drop.value = "";
+    };
+    drop.style.height = "32px";
+  } else if (
+    id == "itemStat" ||
+    id == "newitemVendor" ||
+    id == "newitemManu" ||
+    id == "newitemdeviceType" ||
+    id == "newitemdeviceSubType"
+  ) {
+    // clear the value in the dropdown when it is clicked on
+    drop.onclick = function () {
+      drop.value = "";
+    };
+    drop.style.height = "32px";
   }
 
   // checks that it is a valid input when the focus moves off of the element
@@ -244,6 +279,7 @@ function createDropdownElement(list, id, form) {
           document.getElementById(inputId).focus();
         } else if (inputVal == "New Requestor") {
           createNewRequestor();
+          document.body.style.overflow = "hidden";
         } else if (inputVal == "New Item") {
           newitempop.open();
         }

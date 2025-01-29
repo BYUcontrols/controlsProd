@@ -23,9 +23,9 @@ from flask import Flask                 # makes code that builds web apps w/ fla
 from flask_sqlalchemy import SQLAlchemy # makes SQLAlchemy code available. same as above (flask/Flask) but with SQLAlchemy
 from sqlalchemy import create_engine    # gets the create_engine function from sqlalchemy module
 # local imports
-from collection import db as sqlDB      # this pulls from collection.py the db variable which can be referenced in this module as sqlDB
-from collection import (login_manager, oauthKey, oauthRedirect, startLogging, production, testEnv)
-from menuCreation import createMenus    # final description in case you don't understand: makes the createMenus function from the menuCreation.py module available in this module
+from sql_getter_app.collection import db as sqlDB      # this pulls from collection.py the db variable which can be referenced in this module as sqlDB
+from sql_getter_app.collection import (login_manager, oauthKey, oauthRedirect, startLogging, production, testEnv)
+from sql_getter_app.menuCreation import createMenus    # final description in case you don't understand: makes the createMenus function from the menuCreation.py module available in this module
 
 
 def create_app(test_config = None):     #def keyword defines a function | def name(parameters): | inside function is indented. fun ends with return statement.
@@ -77,19 +77,19 @@ def create_app(test_config = None):     #def keyword defines a function | def na
     # These are portals by which flask can search various files for @route() tags
     # these are not classes, but blueprints for classes
 
-    from crud import bp as crudbp
+    from sql_getter_app.crud import bp as crudbp
     app.register_blueprint(crudbp)
-    from auth import bp as authbp
+    from sql_getter_app.auth import bp as authbp
     app.register_blueprint(authbp)
-    from tables import bp as tablesbp
+    from sql_getter_app.tables import bp as tablesbp
     app.register_blueprint(tablesbp)
-    from tableLinks import bp as tableLinksbp
+    from sql_getter_app.tableLinks import bp as tableLinksbp
     app.register_blueprint(tableLinksbp)
-    from errors import bp as errorsbp
+    from sql_getter_app.errors import bp as errorsbp
     app.register_blueprint(errorsbp)
-    from serviceRequests import bp as serviceRequestBp
+    from sql_getter_app.serviceRequests import bp as serviceRequestBp
     app.register_blueprint(serviceRequestBp)
-    from navigationPages import bp as navigationPagesBp
+    from sql_getter_app.navigationPages import bp as navigationPagesBp
     app.register_blueprint(navigationPagesBp)
 
     # create the menu templates for the various roles from menuCreation module

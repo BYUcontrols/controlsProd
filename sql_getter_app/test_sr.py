@@ -3,7 +3,7 @@ import pytest
 import json
 
 # local imports
-from collection import db
+from sql_getter_app.collection import db
 from sql_getter_app import app
 from datetime import datetime
 

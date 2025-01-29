@@ -15,10 +15,10 @@ from flask import request, Blueprint
 from sqlalchemy.sql.expression import true
 from sqlalchemy import text
 # below are local module imports
-from collection import db
-from createTableHtml import tableHtml
-from crud import getKeys, getIdColumn, verifyTableName, getColumnTypes, verifyColumnAndTableName
-from auth import login_required
+from sql_getter_app.collection import db
+from sql_getter_app.createTableHtml import tableHtml
+from sql_getter_app.crud import getKeys, getIdColumn, verifyTableName, getColumnTypes, verifyColumnAndTableName
+from sql_getter_app.auth import login_required
 
 bp = Blueprint("tableLinks", __name__)  # sets up the blueprint with name tableLinks defined at __name__
 

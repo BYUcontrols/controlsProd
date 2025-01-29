@@ -5,8 +5,8 @@
 import pytest
 import sql_getter_app
 
-from collection import db
-from sqlCommandClass import sqlCommands
+from sql_getter_app.collection import db
+from sql_getter_app.sqlCommandClass import sqlCommands
 
 # stub functions
 

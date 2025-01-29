@@ -30,11 +30,11 @@ from urllib import parse # to decode the base 64 encoded filter string on a url
 import pdfkit # this is a wraper for the wkhtmltopdf tool https://wkhtmltopdf.org/downloads.html
 
 # below here are imports from local modules
-from collection import db, production, versionString
-from menuCreation import getMenuForRole
-from createTableHtml import tableHtml
-from auth import login_required
-from sqlCommandClass import sqlCommands
+from sql_getter_app.collection import db, production, versionString
+from sql_getter_app.menuCreation import getMenuForRole
+from sql_getter_app.createTableHtml import tableHtml
+from sql_getter_app.auth import login_required
+from sql_getter_app.sqlCommandClass import sqlCommands
 
 bp = Blueprint("crud", __name__)    # sets up the blueprint with name crud defined at __name__
 LOG = logging.getLogger(__name__)   # makes it obvious where events are logged because of the __name__

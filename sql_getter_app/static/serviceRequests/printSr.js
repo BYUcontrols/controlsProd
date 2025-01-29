@@ -94,6 +94,7 @@ function printFunc(servReq) {
     let descTable = document.createElement('table');
     descTable.id = 'descTable';
     descTable.classList = 'printThis noBorders';
+    descTable.setAttribute("style", "display: none")
     body.appendChild(descTable);
 
     let descTableHead = document.createElement('thead');

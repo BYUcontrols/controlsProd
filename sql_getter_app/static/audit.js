@@ -64,6 +64,7 @@ function createDisplayContainer(id='displayContainer', dynamic=true, additionalC
             closeBox.divToClose.remove();
         }
         closeBox.divToClose.style.display = 'none';
+        document.body.style.overflow = 'auto';
     }
 
     let openFunction = function() {
