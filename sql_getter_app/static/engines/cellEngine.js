@@ -379,9 +379,10 @@ class cellEngine {
     restoreCell_linked(val=this.getVal()) {
         this.htmlRef.innerHTML = '';
         if (val && val != 'None') {
-            if(!document.getElementById("srtable")){
-                this.htmlRef.appendChild(createInspectIcon(val, this.linkTable));
-            }
+            // this is to call the "quick look" function which makes the row of a certain cell in a table
+            // if(!document.getElementById("srtable")){
+            //     this.htmlRef.appendChild(createInspectIcon(val, this.linkTable));
+            // }
             this.linkedIndex = val;
             this.linkedText = this.linkObject[val]
             this.htmlRef.appendChild(document.createTextNode(this.linkObject[val]));

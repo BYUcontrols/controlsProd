@@ -117,8 +117,6 @@ class sortMenu {
         // columnsInfo - the columnsInfo object generated in initialization
         // tableToSort - the html Node for the table we will be sorting
     constructor(columnsInfo, tableToSort, rows) {
-        console.log("SORT ENGINE")
-        console.log(this);
         this.columnsInfo = columnsInfo;
         this.table = tableToSort;
         this.rowCollection = rows;
@@ -137,10 +135,10 @@ class sortMenu {
         div.classList = 'tableFunction';
         let divContainer = document.createElement('div');
         divContainer.classList = 'displayDropdown';
-        divContainer.style.marginRight = '20px';
         div.appendChild(divContainer);
             // create the big button (with first select)
         let bigButton = document.createElement('div');
+        bigButton.style.width = '270px';
         bigButton.classList.add('displayDropbtn');
         divContainer.append(bigButton);
         
@@ -228,7 +226,6 @@ class sortMenu {
             if (level.isSet) preppedArray.push({column:level.sortCol, reversed:level.reverse});
         });
 
-        console.log(preppedArray);
             // do the actual sorting
             // Actually sort the table
         let tb = this.table.tBodies[0],
@@ -244,9 +241,6 @@ class sortMenu {
 
     actuallySortTheTable(tr, sortData) {
         // sorts a given array of rowEngine objects by the sortCol
-
-
-        
         // sort array of rows with custom compare function
         tr = tr.sort(function (aRaw, bRaw) {
                 // THE ULTIMATE COMPARE FUNCTION TO ALPHABETIZE THAT CAN DO IP ADDRESSES

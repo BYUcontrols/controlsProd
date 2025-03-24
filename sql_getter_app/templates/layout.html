@@ -14,7 +14,7 @@
         <link rel="stylesheet" media="screen" type="text/css" href="{{ url_for('static', filename='css/site.css') }}?version={{versionString}}" />
         <link rel="stylesheet" media="screen" type="text/css" href="../static/css/tables/inputNew.css" />
 
-        <link rel="icon" href="{{ url_for('static', filename='images/favicon.ico') }}?version={{versionString}}"/>
+        <link rel="icon" href="{{ url_for('static', filename='images/byuicon.png') }}?version={{versionString}}"/>
 
         <!-- define the color scheme for the site based on of the database is in production or not -->
         <style>
@@ -24,6 +24,7 @@
                 --backgroundColor: #C7C9C7;
             }
         </style>
+        {% block extra_styles %}{% endblock %}
 
     </head>
     <!-- runs the javascript startup function when the body loads ( the page onload string is passed in the javascript )-->

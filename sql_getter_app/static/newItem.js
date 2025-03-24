@@ -11,11 +11,6 @@
  */
 function generateInput() {
     if (permissionsObject.canAdd) {
-            // create the '+ item' button
-        let button = generateByuButton(null, null);
-        button.setAttribute("id", "viewSwitchButton");
-        document.getElementById("title").appendChild(button);
-            // load the '+ item' button
         showTable();
             // create a new rowEngine for the input new
         window.inputEngine = new rowEngine(columnsInfo, tableName, permissionsObject, linkedChildrenExist, true);
@@ -24,34 +19,36 @@ function generateInput() {
     }
 }
 
+// Delete later
 // Function that hides the table div, reveals the inputNew div and calls the new item function
 function hideTable() {
-        // Hide table
-    table = document.getElementById("displayTable");
-    table.hidden = true
-        // Show input new
-    input = document.getElementById("inputNew");
-    input.hidden = false
-        // switch the + Item button to a Table button
-    let newBtn = document.getElementById("viewSwitchButton")
-    setTooltip(newBtn, 'Go back to the table');
-    newBtn.innerHTML = "Table";
-    newBtn.setAttribute("onClick", "showTable()");
+    //     // Hide table
+    // table = document.getElementById("displayTable");
+    // table.hidden = true
+    //     // Show input new
+    // input = document.getElementById("inputNew");
+    // input.hidden = false
+    //     // switch the + Item button to a Table button
+    // let newBtn = document.getElementById("viewSwitchButton")
+    // setTooltip(newBtn, 'Go back to the table');
+    // newBtn.innerHTML = "Table";
+    // newBtn.setAttribute("onClick", "showTable()");
 }
 
+// Delete later
 // The sister function to hideTable, does the reverse.
 function showTable() {
         // Show Table
-    table = document.getElementById("displayTable");
-    table.hidden = false;
-        // Hide input new
-    input = document.getElementById("inputNew");
-    input.hidden = true;
-        // switch the + Item button to a Table button
-    let newBtn = document.getElementById("viewSwitchButton")
-    setTooltip(newBtn, 'Create a new row');
-    newBtn.innerHTML = "+ Item";
-    newBtn.setAttribute("onClick", "hideTable()");
+    // table = document.getElementById("displayTable");
+    // table.hidden = false;
+    //     // Hide input new
+    // input = document.getElementById("inputNew");
+    // input.hidden = true;
+    //     // switch the + Item button to a Table button
+    // let newBtn = document.getElementById("viewSwitchButton")
+    // setTooltip(newBtn, 'Create a new row');
+    // newBtn.innerHTML = "+ Item";
+    // newBtn.setAttribute("onClick", "hideTable()");
 }
 
 

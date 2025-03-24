@@ -1,259 +1,274 @@
 /************* GENERAL TABLE STYLE *************/
-table, .body-content {
-    color: #666;
-    font-size: 12px;
-    font-weight: normal;
-    border: 1px solid #666;
-    vertical-align: middle;
-    font-family: 'Gotham A', 'Gotham B', Helvetica, sans-serif;
-    padding: 10px;
-    border-collapse: collapse; /* Eliminate spacing between table borders */
-    width: 100%; /* Make the table span the entire width of the page */
-    text-align: left;
-    background-color: #fff;
-    overflow-wrap: break-word; /* Ensure text wraps properly */
-    table-layout: auto; /* Allow column widths to adjust based on content */
+table,
+.body-content {
+  color: #666;
+  font-size: 12px;
+  font-weight: normal;
+  border: 1px solid #666;
+  vertical-align: middle;
+  font-family: "Gotham A", "Gotham B", Helvetica, sans-serif;
+  padding: 10px;
+  border-collapse: collapse; /* Eliminate spacing between table borders */
+  width: 100%; /* Make the table span the entire width of the page */
+  text-align: left;
+  background-color: #fff;
+  overflow-wrap: break-word; /* Ensure text wraps properly */
+  table-layout: auto; /* Allow column widths to adjust based on content */
 }
 
 /************* SERVICE REQUEST TABLE *************/
 #srtable {
-    margin: 0 auto 2.5%; /* Center the table and add bottom spacing */
-    width: 97.5%; /* Slightly reduce width for a cleaner layout */
-    border-width: 2px 5px 5px 5px; /* Remove the top border */
-    border-color: #002e5d; /* Match the header color */
+  margin: 0 auto 2.5%; /* Center the table and add bottom spacing */
+  width: 97.5%; /* Slightly reduce width for a cleaner layout */
+  border-width: 2px 5px 5px 5px; /* Remove the top border */
+  border-color: #002e5d; /* Match the header color */
 }
 
 #tableBodyContainer {
-    border-radius: 10px;
+  border-radius: 10px;
 }
 
 /************* TABLE HEADERS *************/
 th {
-    background-color: #002e5d;
-    color: white;
-    font-weight: bold;
-    font-size: 14px;
-    padding: 5px 10px; /* Add spacing around text */
-    position: sticky; /* Sticky headers for better UX */
-    top: 0; /* Required for sticky positioning */
-    z-index: 2; /* Ensure headers stay above table content */
-    border-bottom: 2px solid #002e5d; /* Add a bottom border for separation */
+  background-color: #002e5d;
+  color: white;
+  font-weight: bold;
+  font-size: 14px;
+  padding: 5px 10px; /* Add spacing around text */
+  position: sticky; /* Sticky headers for better UX */
+  top: 0; /* Required for sticky positioning */
+  z-index: 2; /* Ensure headers stay above table content */
+  border-bottom: 2px solid #002e5d; /* Add a bottom border for separation */
 }
 
 /************* TABLE CELLS *************/
 td {
-    padding: 10px;
-    font-weight: 500;
-    vertical-align: middle;
-    max-width: 400px; /* Limit cell width */
-    white-space: nowrap; /* Prevent content from wrapping */
-    overflow: hidden; /* Hide overflowing content */
-    text-overflow: ellipsis; /* Add ellipsis for truncated content */
+  padding: 10px;
+  font-weight: 500;
+  vertical-align: middle;
+  max-width: 400px; /* Limit cell width */
+  white-space: nowrap; /* Prevent content from wrapping */
+  overflow: hidden; /* Hide overflowing content */
+  text-overflow: ellipsis; /* Add ellipsis for truncated content */
 }
 
 /************* ALTERNATING ROW COLORS *************/
 tr:nth-child(even) {
-    background-color: #f9f9f9;
+  background-color: #f9f9f9;
 }
 
 tr:nth-child(odd) {
-    background-color: #e9ecef;
+  background-color: #e9ecef;
 }
 
 tr.deletedRow:nth-child(even) {
-    background-color: rgba(255, 0, 0, 0.25); /* Red with transparency */
+  background-color: rgba(255, 0, 0, 0.25); /* Red with transparency */
 }
 
 tr.deletedRow:nth-child(odd) {
-    background-color: rgba(255, 0, 0, 0.35); /* Slightly darker red */
+  background-color: rgba(255, 0, 0, 0.35); /* Slightly darker red */
 }
 
 /************* PRINT STYLING *************/
 .noPrint {
-    display: none; /* Hide elements with this class when printing */
+  display: none; /* Hide elements with this class when printing */
 }
 
 /************* EDITABLE ROWS *************/
 .editable {
-    background-color: var(--contrastColor) !important; /* Highlight editable rows */
-    transition: background-color 0.3s ease; /* Smooth transition for clarity */
+  background-color: var(
+    --contrastColor
+  ) !important; /* Highlight editable rows */
+  transition: background-color 0.3s ease; /* Smooth transition for clarity */
 }
 
 /************* ICON STYLING *************/
 .icon {
-    padding: 1px 3px;
-    border: none;
-    background: none;
-    font-size: 13px;
-    font-family: -webkit-pictograph; /* Best for magnifying glass icon */
-    cursor: pointer;
-    color: #000; /* Black color for contrast */
+  padding: 1px 3px;
+  border: none;
+  background: none;
+  font-size: 13px;
+  font-family: -webkit-pictograph; /* Best for magnifying glass icon */
+  cursor: pointer;
+  color: #000; /* Black color for contrast */
 }
 
 /************ IONICONS STYLING *************/
-.ionicon{
-    width: 16px; /* Adjust size as needed */
-    height: 16px;
+.ionicon {
+  width: 16px; /* Adjust size as needed */
+  height: 16px;
 }
 
 /************* DELETED ROW TOGGLE *************/
 .showDeletedCheckbox {
-    vertical-align: middle;
+  vertical-align: middle;
 }
 
 .showDeletedLabel {
-    font-size: 11px;
-    vertical-align: middle;
+  font-size: 11px;
+  vertical-align: middle;
 }
 
 /************* RESPONSIVE DESIGN *************/
 @media (hover: none) and (pointer: coarse) {
-    /* Touchscreen/tablet-friendly table */
-    .tableWrapper {
-        overflow: auto; /* Enable horizontal and vertical scrolling */
-        max-height: 80vh; /* Limit table height to 80% of viewport */
-    }
+  /* Touchscreen/tablet-friendly table */
+  .tableWrapper {
+    overflow: auto; /* Enable horizontal and vertical scrolling */
+    max-height: 80vh; /* Limit table height to 80% of viewport */
+  }
 }
 
 /************* SCROLLABLE TABLE *************/
 .scrollTable {
-    overflow-x: auto !important;  /* Enable horizontal scrolling */
-    overflow-y: auto; /* Enable vertical scrolling */
-    white-space: nowrap; /* Prevent content wrapping */
-    max-width: 100%; /* Limit to the container width */
-    border: 1px solid #ccc; /* Optional: Border for clarity */
+  overflow-x: auto !important; /* Enable horizontal scrolling */
+  overflow-y: auto; /* Enable vertical scrolling */
+  white-space: nowrap; /* Prevent content wrapping */
+  max-width: 100%; /* Limit to the container width */
+  border: 1px solid #ccc; /* Optional: Border for clarity */
 }
 
 .tableWrapper {
-    overflow-x: auto;
+  overflow-x: auto;
+}
+
+.notesTableWrapper,
+.itemsTableWrapper {
+  width: 100%;
 }
 
 .scrollTable table {
-    width: 100%; /* Ensures the table fills the container */
-    min-width: 800px; /* Set a minimum width for the table */
-    border-collapse: collapse;
+  width: 100%; /* Ensures the table fills the container */
+  min-width: 800px; /* Set a minimum width for the table */
+  border-collapse: collapse;
 }
 
 /************* TABLE MESSAGES *************/
 h2.tableMessage {
-    font-family: 'HCo Ringside Narrow SSm', sans-serif;
-    font-size: 15px;
-    margin-left: 15px;
-    max-width: 800px;
-    color: #002e5d; /* Match table header color */
+  font-family: "HCo Ringside Narrow SSm", sans-serif;
+  font-size: 15px;
+  margin-left: 15px;
+  max-width: 800px;
+  color: #002e5d; /* Match table header color */
 }
 
 /************* ACCESSIBILITY IMPROVEMENTS *************/
 table {
-    border-spacing: 0; /* Prevent gaps between table cells */
+  border-spacing: 0; /* Prevent gaps between table cells */
 }
 
-th, td {
-    border: 1px solid #ddd; /* Add subtle cell borders */
-    overflow: hidden;       /* Prevent overflow */
-    text-overflow: ellipsis; /* Add "..." for truncated text */
-    white-space: nowrap;    /* Avoid wrapping; combine with ellipsis for truncation */
-    word-break: break-word; /* Break long words */
+th,
+td {
+  border: 1px solid #ddd; /* Add subtle cell borders */
+  overflow: hidden; /* Prevent overflow */
+  text-overflow: ellipsis; /* Add "..." for truncated text */
+  white-space: nowrap; /* Avoid wrapping; combine with ellipsis for truncation */
+  word-break: break-word; /* Break long words */
 }
 
-th:focus, td:focus {
-    outline: 2px solid #0056b3; /* Highlight focused cell for accessibility */
+th:focus,
+td:focus {
+  outline: 2px solid #0056b3; /* Highlight focused cell for accessibility */
 }
 
 /************* MEDIA QUERIES *************/
 
 /* For small screens (up to 600px) */
 @media (max-width: 600px) {
-    table {
-        font-size: 10px; /* Reduce font size for better visibility */
-    }
+  table {
+    font-size: 10px; /* Reduce font size for better visibility */
+  }
 
-    .tableWrapper {
-        overflow-x: auto; /* Enable horizontal scrolling */
-    }
+  .tableWrapper {
+    overflow-x: auto; /* Enable horizontal scrolling */
+  }
 
-    th, td {
-        white-space: nowrap; /* Prevent wrapping to maintain table structure */
-    } 
+  th,
+  td {
+    white-space: nowrap; /* Prevent wrapping to maintain table structure */
+  }
 }
 
 /* For very small screens (up to 400px) */
 @media (max-width: 400px) {
-    table {
-        font-size: 9px; /* Further reduce font size for smaller screens */
-    }
+  table {
+    font-size: 9px; /* Further reduce font size for smaller screens */
+  }
 
-    th, td {
-        padding-left: 3px;
-        padding-right: 3px; /* Reduce horizontal padding */
-    } 
+  th,
+  td {
+    padding-left: 3px;
+    padding-right: 3px; /* Reduce horizontal padding */
+  }
 
-    .icon {
-        font-size: 11px; /* Reduce icon size */
-    }
+  .icon {
+    font-size: 11px; /* Reduce icon size */
+  }
 
-    .noPrint {
-        display: none; /* Hide non-essential elements like buttons on tiny screens */
-    }
+  .noPrint {
+    display: none; /* Hide non-essential elements like buttons on tiny screens */
+  }
 
-    .tableWrapper {
-        margin: 0 5px; /* Reduce side margins */
-    }
+  .tableWrapper {
+    margin: 0 5px; /* Reduce side margins */
+  }
 }
 
 /* For tablets or medium screens (601px to 768px) */
 @media (min-width: 601px) and (max-width: 768px) {
-    table {
-        font-size: 11px; /* Slightly reduce font size */
-    }
+  table {
+    font-size: 11px; /* Slightly reduce font size */
+  }
 
-    th, td {
-        padding-left: 5px;
-        padding-right: 5px; /* horizontal padding between text and cell wall */
-    }
+  th,
+  td {
+    padding-left: 5px;
+    padding-right: 5px; /* horizontal padding between text and cell wall */
+  }
 
-    td {
-        max-width: 200px; /* Limit cell width to ensure readability */
-    }
+  td {
+    max-width: 200px; /* Limit cell width to ensure readability */
+  }
 }
 
 /* For touchscreens with coarse pointers */
 @media (hover: none) and (pointer: coarse) {
-    table {
-        font-size: 12px; /* Maintain legibility on touch devices */
-    }
-    
-    .tableWrapper {
-        max-height: 70vh;
-        overflow-y: auto;
-    }
+  table {
+    font-size: 12px; /* Maintain legibility on touch devices */
+  }
+
+  .tableWrapper {
+    max-height: 70vh;
+    overflow-y: auto;
+  }
 }
 
 /* For landscape mode on mobile devices */
 @media (max-height: 500px) and (orientation: landscape) {
-    table {
-        font-size: 10px; /* Reduce font size for landscape view */
-    }
+  table {
+    font-size: 10px; /* Reduce font size for landscape view */
+  }
 
-    .tableWrapper {
-        max-height: 60vh; /* Restrict height to avoid overflow */
-        overflow-y: auto; /* Enable vertical scrolling */
-    }
+  .tableWrapper {
+    max-height: 60vh; /* Restrict height to avoid overflow */
+    overflow-y: auto; /* Enable vertical scrolling */
+  }
 }
-
 
 /************* MOBILE VIEW REMOVING COLUMNS *************/
 @media (max-width: 740px) {
-    /* removes "Status" and "Estimate" columns on mobile view */
-    table#srtable thead tr th:nth-child(6), table#srtable thead tr th:nth-child(7) {
-        display: none;
-    }
+  /* removes "Status" and "Estimate" columns on mobile view */
+  table#srtable thead tr th:nth-child(6),
+  table#srtable thead tr th:nth-child(7) {
+    display: none;
+  }
 
-    table#srtable tbody tr td:nth-child(6), table#srtable tbody tr td:nth-child(7) {
-        display: none;
-    }
+  table#srtable tbody tr td:nth-child(6),
+  table#srtable tbody tr td:nth-child(7) {
+    display: none;
+  }
 }
 
-table#srtable tbody tr:hover {
-    background-color: #d4d4d4;
+/************* MAKE TABLE ROWS DARKER WITH HOVER *************/
+tr:hover {
+  background-color: #d4d4d4;
 }

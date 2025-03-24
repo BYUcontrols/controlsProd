@@ -144,19 +144,56 @@ function addItemModal() {
   title.innerHTML = "Add Item";
   itempopCon.appendChild(title);
 
-/////////////////////// START ADD ITEM FORM   ////////////////////////////
+  // Create the SVG element for the close button
+  let xButton = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  xButton.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+  xButton.setAttribute("viewBox", "0 0 512 512");
+  xButton.classList.add("ionicon"); // Optional, if you want to add styling class
+  // Create the path element inside the SVG
+  let path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  path.setAttribute(
+    "d",
+    "M400 145.49L366.51 112 256 222.51 145.49 112 112 145.49 222.51 256 112 366.51 145.49 400 256 289.49 366.51 400 400 366.51 289.49 256 400 145.49z"
+  );
+  // Append the path to the SVG element
+  xButton.appendChild(path);
+  // Add event listener to close button (SVG)
+  xButton.onclick = function () {
+    itemCancel();
+  };
+  // Add the SVG button to the modal content
+  itempopCon.appendChild(xButton);
+
+
+  /////////////////////// START ADD ITEM FORM   ////////////////////////////
 
   // create the form
   let itempopForm = document.createElement("form");
   document.getElementById("itempopup-content").appendChild(itempopForm);
   itempopForm.setAttribute("id", "addItemForm");
   itempopForm.method = "post";
+
+  // if it's a new service request form, each item is given a temporary id
+  if (!servReq) {
+    // newItemTempId
+    const newItemTempIdDiv = document.createElement("div");
+    newItemTempIdDiv.id = "newNoteTempIdDiv";
+    newItemTempIdDiv.style.display = "none"; // makes it so the temporary item id exists but is not shown on screen
+    createLabel("newItemTempId", "Request Item Temporary ID", newItemTempIdDiv);
+    let newItemTemp = createInputElement(
+      "number",
+      "newItemTempId",
+      newItemTempIdDiv
+    );
+    itempopForm.appendChild(newItemTempIdDiv);
+    // addNotePopForm.appendChild(document.createElement("br"));
+  }
   itempopForm.action = $SCRIPT_ROOT + "/NewServiceRequest";
 
   // create the Item label
   const itemDiv = document.createElement("div");
   itemDiv.id = "itemDiv";
-  itemDiv.class
+  itemDiv.class;
   itemDiv.classList.add("textInput");
   createLabel("items", "Items", itemDiv);
   createDropdownElement("items", "items", itemDiv); // onclick clear the input field
@@ -174,6 +211,7 @@ function addItemModal() {
   input.setAttribute("type", "number");
   // give the input an id
   input.setAttribute("id", "itemquantity");
+  input.setAttribute("required", "required");
   input.name = "itemquantity";
   input.min = 0;
   quantityDiv.appendChild(input);
@@ -198,7 +236,7 @@ function addItemModal() {
 
   createInputElement("number", "servReqId", itempopForm);
 
-//////////////////////////  END ADD ITEM FORM    ///////////////////////////
+  //////////////////////////  END ADD ITEM FORM    ///////////////////////////
 
   //submit
   let itemsubmit = document.createElement("input");
@@ -207,14 +245,18 @@ function addItemModal() {
   itempopForm.appendChild(itemsubmit);
   itemsubmit.onclick = function () {
     // save scroll position to restore after reload
-    localStorage.setItem("scrollPosition", window.scrollY || document.documentElement.scrollTop);
-  }
-  if(!servReq) {
+    localStorage.setItem(
+      "scrollPosition",
+      window.scrollY || document.documentElement.scrollTop
+    );
+  };
+  if (!servReq) {
     itempopForm.addEventListener("submit", function (event) {
       if (!servReq) {
         event.preventDefault();
         document.getElementById("itemsTableHeader").style.display = "";
         // Get the values from the form
+        const newItemTempId = document.getElementById("newItemTempId").value;
         const items = document.getElementById("items").value;
         const inputBy = document.getElementById("inputBy").value;
         const itemquantity = document.getElementById("itemquantity").value;
@@ -222,32 +264,41 @@ function addItemModal() {
 
         // Create a new item object
         const newItem = {
-          items, itemquantity, voided, inputBy,
+          newItemTempId: newItemTempId,
+          items: items,
+          itemquantity: itemquantity,
+          inputBy: inputBy,
+          voided: voided,
         };
         newSRItems.push(newItem);
 
-        // Add the new item to the service request form
-        // FIXME (write logic here)
+        // Gives newNoteCounter counter for newNoteTempId one more each time a new item is submitted
+        window.newServiceRequestItemCounter++;
+        
         // Close the modal
         itemCancel();
         // enable scrolling
         document.body.style.overflow = "auto";
         // update UI
-        const itemsTable = document.getElementById("tableBody");
-        const newRow = `<tr id="itemsrow">
-          <td onclick="sendNoteId()" style="cursor: pointer;"><svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512">
-          //<path d="M384 224v184a40 40 0 01-40 40H104a40 40 0 01-40-40V168a40 40 0 0140-40h167.48" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/>
-          //<path d="M459.94 53.25a16.06 16.06 0 00-23.22-.56L424.35 65a8 8 0 000 11.31l11.34 11.32a8 8 0 0011.34 0l12.06-12c6.1-6.09 6.67-16.01.85-22.38zM399.34 90L218.82 270.2a9 9 0 00-2.31 3.93L208.16 299a3.91 3.91 0 004.86 4.86l24.85-8.35a9 9 0 003.93-2.31L422 112.66a9 9 0 000-12.66l-9.95-10a9 9 0 00-12.71 0z"/></svg></td>
-          <td></td>
-          <td>${items}</td>
-          <td>${inputBy}</td>
-          <td>${itemquantity}</td>
-          <td>${voided ? "Yes" : "No"}</td>
-        </tr>`;
-        itemsTable.innerHTML += newRow;
+        if (!servReq) {
+          populateItemsTable(document.getElementById("tableBody"));
+        }
+        // c
+        // const itemsTable = document.getElementById("tableBody");
+        // const newRow = `<tr id="itemsrow">
+        //   <td onclick="sendNoteId()" style="cursor: pointer;"><svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512">
+        //   //<path d="M384 224v184a40 40 0 01-40 40H104a40 40 0 01-40-40V168a40 40 0 0140-40h167.48" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/>
+        //   //<path d="M459.94 53.25a16.06 16.06 0 00-23.22-.56L424.35 65a8 8 0 000 11.31l11.34 11.32a8 8 0 0011.34 0l12.06-12c6.1-6.09 6.67-16.01.85-22.38zM399.34 90L218.82 270.2a9 9 0 00-2.31 3.93L208.16 299a3.91 3.91 0 004.86 4.86l24.85-8.35a9 9 0 003.93-2.31L422 112.66a9 9 0 000-12.66l-9.95-10a9 9 0 00-12.71 0z"/></svg></td>
+        //   <td></td>
+        //   <td>${items}</td>
+        //   <td>${inputBy}</td>
+        //   <td>${itemquantity}</td>
+        //   <td>${voided ? "Yes" : "No"}</td>
+        // </tr>`;
+        // itemsTable.innerHTML += newRow;
       }
     });
-  };
+  }
 
   //cancel
   let itemcancel = document.createElement("input");
@@ -263,6 +314,11 @@ function addItemModal() {
   let openFunction = function () {
     itempop.style.display = "block";
     document.getElementById("inputBy").value = userName;
+    if (!servReq) {    
+      document.getElementById("newItemTempId").value =
+        window.newServiceRequestItemCounter; // Set the counter value
+    };
+    closeModalByClickingOutside();
   };
   itempop.open = openFunction;
 }
@@ -273,6 +329,7 @@ function itemCancel() {
   document.getElementById("itemvoid").checked = false;
   document.getElementById("inputBy").value = "";
   itempop.style.display = "none";
+  document.body.style.overflow = "auto"; // Enable scrolling when the modal is closed
 }
 
 function newItemModal() {
@@ -285,6 +342,29 @@ function newItemModal() {
 
   // create popup content
   let newitempopCon = document.createElement("div");
+
+  // Create the SVG element for the close button
+  let xButton = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  xButton.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+  xButton.setAttribute("viewBox", "0 0 512 512");
+  xButton.classList.add("ionicon"); // Optional, if you want to add styling class
+  // Create the path element inside the SVG
+  let path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  path.setAttribute(
+    "d",
+    "M400 145.49L366.51 112 256 222.51 145.49 112 112 145.49 222.51 256 112 366.51 145.49 400 256 289.49 366.51 400 400 366.51 289.49 256 400 145.49z"
+  );
+  // Append the path to the SVG element
+  xButton.appendChild(path);
+  // Add event listener to close button (SVG)
+  xButton.onclick = function () {
+    newitemCancel();
+  };
+  // Add the SVG button to the modal content
+  newitempopCon.appendChild(xButton);
+  
+  let outsideClick = document.getElementById("newitempop");
+
   document.getElementById("newitempop").appendChild(newitempopCon);
   newitempopCon.classList = "modal-content";
   newitempopCon.setAttribute("id", "newitempop-content");
@@ -300,8 +380,8 @@ function newItemModal() {
 
   // title
   const title = document.createElement("h2");
-  title.innerText = "Create Item"
-  newitempopForm.appendChild(title)
+  title.innerText = "Create Item";
+  newitempopForm.appendChild(title);
 
   // description
   createLabel("newitemdescription", "Description", newitempopForm);
@@ -321,7 +401,18 @@ function newItemModal() {
 
   // minimumToStock
   createLabel("newitemMinStock", "Minimum To Stock", newitempopForm);
-  createInputElement("number", "newitemMinStock", newitempopForm);
+  // createInputElement("number", "newitemMinStock", newitempopForm);
+  // Create the input element
+  let minStockInput = document.createElement("input");
+  // Set the input type
+  minStockInput.setAttribute("type", "number");
+  // Give the input an id
+  minStockInput.setAttribute("id", "newitemMinStock");
+  minStockInput.setAttribute("min", "0");
+  minStockInput.name = "newitemMinStock";
+  // Append the input to the form
+  newitempopForm.appendChild(minStockInput);
+
   newitempopForm.appendChild(document.createElement("br"));
 
   // manufacturerId
@@ -367,8 +458,11 @@ function newItemModal() {
 
   newitemsubmit.onclick = function () {
     // save scroll position to restore after reload
-    localStorage.setItem("scrollPosition", window.scrollY || document.documentElement.scrollTop);
-  }
+    localStorage.setItem(
+      "scrollPosition",
+      window.scrollY || document.documentElement.scrollTop
+    );
+  };
 
   //cancel
   let newitemcancel = document.createElement("input");
@@ -382,6 +476,7 @@ function newItemModal() {
   // function that opens the popup
   let openFunction = function () {
     newitempop.style.display = "block";
+    closeModalByClickingOutside();
   };
   newitempop.open = openFunction;
 }
@@ -398,10 +493,18 @@ function newitemCancel() {
   newitempop.style.display = "none";
 }
 
+// opens the editor form with a specific item loaded from the notes table in a new service request form
+
 function sendItemId() {
-  let reqitemid = parseInt(this.id);
-  editItemPop.open(reqitemid);
-}
+  document.body.style.overflow = "hidden"; // Prevent scrolling when the modal is open
+  if (servReq) {
+    let reqitemid = parseInt(this.id);
+    editItemPop.open(reqitemid);
+  } else if (!servReq){
+    let newSRItem = this;
+    editItemPop.open(newSRItem);
+  };
+};
 
 function editItemModal() {
   // create popup
@@ -436,6 +539,12 @@ function editItemModal() {
   editItemPopCon.classList = "modal-content";
   editItemPopCon.setAttribute("id", "editItemPop-content");
 
+  // create the title
+  
+  let title = document.createElement("h2");
+  title.innerHTML = "Edit Item";
+  editItemPopCon.appendChild(title);
+
   // create the form
   let editItemPopForm = document.createElement("form");
   editItemPopCon.appendChild(editItemPopForm);
@@ -451,23 +560,34 @@ function editItemModal() {
   editItemPopForm.appendChild(document.createElement("br"));
 
   // itemId
-  createLabel("itemId", "Item ID", editItemPopForm);
-  createInputElement("number", "itemId", editItemPopForm);
-  editItemPopForm.appendChild(document.createElement("br"));
-
+  if (servReq) {
+    createLabel("itemId", "Item ID", editItemPopForm);
+    createInputElement("number", "itemId", editItemPopForm);
+  } else if (!servReq) {
+    createLabel("itemId", "Item", editItemPopForm);
+    createInputElement("text", "itemId", editItemPopForm);
+  };
+  
   editItemPopForm.appendChild(document.createElement("br"));
 
   // This is editable by the user
   // voided
   createLabel("edititemvoid", "Void", editItemPopForm);
   createInputElement("checkbox", "edititemvoid", editItemPopForm);
-  editItemPopForm.appendChild(document.createElement("br"));
+
+  // this is for breaks that aren't working
+  let breakReplacement = document.createElement('div');
+  breakReplacement.style.height = '13.5px';
+  editItemPopForm.appendChild(breakReplacement);
 
   // status
-  createLabel("itemStat", "Status", editItemPopForm);
-  createDropdownElement("itemStatList", "itemStat", editItemPopForm);
-  createDatalistElement("itemStatList", itemStatus, editItemPopForm);
-  editItemPopForm.appendChild(document.createElement("br"));
+  if (servReq) {
+    createLabel("itemStat", "Status", editItemPopForm);
+    createDropdownElement("itemStatList", "itemStat", editItemPopForm);
+    createDatalistElement("itemStatList", itemStatus, editItemPopForm);
+    editItemPopForm.appendChild(document.createElement("br"));  
+  };
+
 
   // quantity
   createLabel("itemQuan", "Quantity", editItemPopForm);
@@ -477,6 +597,7 @@ function editItemModal() {
   input.setAttribute("type", "number");
   // give the input an id
   input.setAttribute("id", "itemQuan");
+  input.setAttribute("required", "required");
   input.name = "itemQuan";
   input.min = 0;
   editItemPopForm.appendChild(input);
@@ -488,23 +609,55 @@ function editItemModal() {
 
   //submit
   let edititemsubmit = document.createElement("input");
-  edititemsubmit.type = "submit";
+  if (servReq) {
+    edititemsubmit.type = "submit";
+  } else if (!servReq) {
+    edititemsubmit.type = "button";
+    edititemsubmit.onclick = function () {
+      // Get the value of the item ID to be edited (newNoteTempId)
+      let itemIdToEdit = document.getElementById("requestItemId").value;
+
+      // Find the index of the map in the newSRNotes array using the newNoteTempId
+      let itemIndex = newSRItems.findIndex(item => item.newItemTempId == itemIdToEdit);
+
+      // If the item with the matching newNoteTempId is found
+      if (itemIndex !== -1) {
+        // Update the item with the new values
+        if (document.getElementById("edititemvoid").checked) {
+          newSRItems[itemIndex].voided = true;
+        } else {
+          newSRItems[itemIndex].voided = false;
+        };
+        newSRItems[itemIndex].itemquantity = document.getElementById("itemQuan").value;
+      };
+      // reload the items table to reflect the changes
+      populateItemsTable(document.getElementById("tableBody"));
+      // close the window
+      editItemCancel();
+    };
+  };
   edititemsubmit.id = "editItemPopSubmit";
   edititemsubmit.value = "Save";
   editItemPopForm.appendChild(edititemsubmit);
 
-  edititemsubmit.onclick = function () {
-    // save scroll position to restore after reload
-    localStorage.setItem("scrollPosition", window.scrollY || document.documentElement.scrollTop);
-  }
+  edititemsubmit.addEventListener("submit", () => {
+    // Store the current scroll position (this will be used to restore position on reload)
+    let scrollPosition = window.scrollY || document.documentElement.scrollTop;
+    localStorage.setItem("scrollPosition", scrollPosition);
+  });
 
   //delete
   let edititemdelete = document.createElement("input");
   edititemdelete.type = "button";
+  edititemdelete.id = "deletebutton";
   edititemdelete.value = "Delete";
   edititemdelete.onclick = function () {
-    // save scroll position to restore after reload
-    localStorage.setItem("scrollPosition", window.scrollY || document.documentElement.scrollTop);
+    if (servReq) {
+      // save scroll position to restore after reload
+    localStorage.setItem(
+      "scrollPosition",
+      window.scrollY || document.documentElement.scrollTop
+    );
     // create the form
     let deleteitemForm = document.createElement("form");
     body.appendChild(deleteitemForm);
@@ -527,34 +680,71 @@ function editItemModal() {
     deleteitemForm.appendChild(servReqId);
 
     deleteitemForm.submit();
+    } else if (!servReq) {
+      // Get the value of the item ID to be deleted (newItemTempId)
+      let itemIdToDelete = document.getElementById("requestItemId").value;
+
+      // Find the index of the map in the newSRItems array using the newItemTempId
+      let itemIndex = newSRItems.findIndex(item => item.newItemTempId == itemIdToDelete);
+
+      // If the item with the matching newItemTempId is found
+      if (itemIndex !== -1) {
+        // Remove the map from the newSRItems array
+        newSRItems.splice(itemIndex, 1);
+      };
+
+      // Store the current scroll position
+      let scrollPosition = window.scrollY || document.documentElement.scrollTop;
+      console.log("scrollPosition", scrollPosition);
+      localStorage.setItem("scrollPosition", scrollPosition);
+      // reload the notes table to reflect the changes
+      populateItemsTable(document.getElementById("tableBody"));
+      // close the window
+      editItemCancel();
+      
+    };
   };
   editItemPopForm.appendChild(edititemdelete);
 
   // function that opens the popup
   let openFunction = function (id) {
-    editItemPop.style.display = "block";
-    document.getElementById("requestItemId").value =
-      servReq["items"][id]["reqItemId"];
-    document.getElementById("itemId").value = servReq["items"][id]["itemId"];
-    if (servReq["items"][id]["void"]) {
-      document.getElementById("edititemvoid").checked = true;
-    }
-    document.getElementById("itemStat").value = servReq["items"][id]["status"];
-    document.getElementById("itemQuan").value =
-      servReq["items"][id]["quantity"];
+    if (servReq) {
+      editItemPop.style.display = "block";
+      document.getElementById("requestItemId").value =
+        servReq["items"][id]["reqItemId"];
+      document.getElementById("itemId").value = servReq["items"][id]["itemId"];
+      if (servReq["items"][id]["void"]) {
+        document.getElementById("edititemvoid").checked = true;
+      };
+      document.getElementById("itemStat").value = servReq["items"][id]["status"];
+      document.getElementById("itemQuan").value =
+        servReq["items"][id]["quantity"];
+    } else if (!servReq) {
+      editItemPop.style.display = "block";
+      document.getElementById("requestItemId").value =
+        id["newItemTempId"];
+      document.getElementById("itemId").value = id["items"];
+      if (id["voided"]) {
+        document.getElementById("edititemvoid").checked = true;
+      };
+      document.getElementById("itemQuan").value =
+        id["itemquantity"];
+    };
+    closeModalByClickingOutside();
   };
   editItemPop.open = openFunction;
 
-
-  // Enter or Return key sumbits edit note pop form
-  editItemPopForm.addEventListener("keydown", function(enter_key_pressed) {
-    if (enter_key_pressed.key === "Enter" || enter_key_pressed.key === "Return") { // when enter or return is pressed, it will submit the note
+  // Enter or Return key sumbits edit item pop form
+  editItemPopForm.addEventListener("keydown", function (enter_key_pressed) {
+    if (
+      enter_key_pressed.key === "Enter" ||
+      enter_key_pressed.key === "Return"
+    ) {
+      // when enter or return is pressed, it will submit the item
       enter_key_pressed.preventDefault();
       document.getElementById("editItemPopSubmit").click();
     }
   });
-
-  
 }
 
 function editItemCancel() {
@@ -562,6 +752,9 @@ function editItemCancel() {
   document.getElementById("requestItemId").value = "";
   document.getElementById("itemId").value = "";
   document.getElementById("edititemvoid").checked = false;
-  document.getElementById("itemStat").value = "";
+  if (servReq) {
+    document.getElementById("itemStat").value = "";
+  };
   document.getElementById("itemQuan").value = "";
+  document.body.style.overflow = "auto"; // Enable scrolling when the modal is closed
 }

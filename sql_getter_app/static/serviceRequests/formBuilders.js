@@ -136,6 +136,8 @@ function createInputElement(type, id, form) {
       input.style.display = "none";
       document.getElementById("foreditpublic").style.display = "none";
     }
+  } else if (id == "newNoteTempId") {
+    input.readOnly = true;
   }
   //put the input in the form
   form.appendChild(input);

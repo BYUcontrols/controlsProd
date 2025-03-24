@@ -1,1 +1,2 @@
 FLASK_APP=sql_getter_app
+FLASK_ENV=production

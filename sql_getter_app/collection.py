@@ -12,19 +12,19 @@
 #   11. defines a function to change things in camel case to title case
 #   12. experiments with some code to work with email services
 
-import sys      # sys module is a set of functions which provide crucial information about how your Python script is interacting with the host system
-# for production
-# sys.path.append('C:\\control-app\\appEnv\\sql_getter_app')
 
 # this file is for initializing services for the app, these were moved from __init__
 # so that we don't have children referencing resources from their parent
 import flask_login                              # flask_login holds the settings for logging in
 from flask_sqlalchemy import SQLAlchemy         # makes SQLAlchemy code available
-from sqlalchemy import create_engine            # engines are the starting point for SQLAlchemy.. create_engine() lets you create them
+import os
 
-# TRUE if we are in a production environment, declaring this variable
-# p.s. You have to set this to True before deploying it to production
-production = False
+
+
+
+# variable to be passed into other files to run things based on production status
+production = os.environ.get('FLASK_ENV') == 'production'
+    
 
 # set the version string, declaring this variable
 # This is important to change as it forces browsers to reload their cashed js and css files, removing compatability errors
@@ -39,7 +39,7 @@ versionString = '1.1.3'
 testEnv = {'env':True}
 
 # start a sqlAlchemy session to handle database access
-db = SQLAlchemy(session_options={'echo':True})
+db = SQLAlchemy()
 
 # YOU NEED TO SUBSCRIBE TO THE BYU /token API WHEN CHANGING URLS:
 #   1. api.byu.edu/store

@@ -19,14 +19,16 @@ Main Page
 <!-- the raw block makes it so that no jinja template code will be executed -->
 {% raw %}
 <style>
-    a:visited {
-        color: purple;
-    }
-
     a:hover {
         opacity: 0.6;
     }
-</style>
+    body {
+        overflow-x: hidden; /* Disable horizontal scrolling */
+        word-wrap: break-word; /* Ensure text wraps within its container */
+    }
+    pre {
+        white-space: pre-wrap; /* Preserve formatting */
+    }
 </style>
 <a name="top"></a>
 <pre style='background-color: white; padding: 10px;'>
@@ -37,12 +39,12 @@ Service Request portion updated by Ben Haggard: 11/2024</p>
 
 <h3>Table of Contents:</h3>
 <a href='#build'>Build Pushing Procedure</a>
+<a href='#localhost'>Running Flask Locally</a>
 <a href='#addTable'>Add a Table</a>
 <a href='#addlink'>Register a Linked Column in the Application</a>
 <a href='#setap'>Setup Apache</a>
 <a href='#testj'>Test Javascript</a>
 <a href='#testp'>Test Python</a>
-<a href='#testSel'>Testing in Selenium</a>
 <a href='#viewl'>View Logs</a>
 <a href='#newu'>Add a New User</a>
 <a href='#perm'>Change Permissions for a Table</a>
@@ -108,7 +110,18 @@ Service Request portion updated by Ben Haggard: 11/2024</p>
             - Go to the C:\control-app-prod folder and delete the sql_getter_app folder already there.
             - Paste the updated sql_getter_app folder in C:\control-app-prod.
             - Start the 'Services' windows application(the icon is the two gears), find the Apache2.4 service and restart it.
-
+<a name='localhost'></a><a href='#top'>Top of Page</a>
+<h2>
+    1. use the .flaskenv file to set environment variables
+        - should look like This
+        FLASK_APP=sql_getter_app
+        FLASK_ENV=development # set to development for dev and production for deployment
+        - when FLASKENV = development flask will start in debug mode and reload when it detects changes, otherwise you have to do this manually
+    2. run using the command "python -m flask run"
+    3. navigate to http://127.0.0.1/testLogin (only works when in development mode)
+        - this will log you in as a test user and allow access to the site
+        - your login info is saved in cookies and you wont have to login again until it times out
+</h2>
 <a name='addTable'></a><a href='#top'>Top of Page</a>
 <h2>Add a Table</h2> -##################################################################################################################################################################################
 

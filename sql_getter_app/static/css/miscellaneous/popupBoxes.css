@@ -110,11 +110,11 @@
   }
 
   /* when the close button is moused over it scales up a little */
-  .close:hover, .close:focus {
+  /* .close:hover, .close:focus {
     transform: scale(1.1);
     text-decoration: none;
     cursor: pointer;
-  }
+  } */
 
   /* when the print icon is moused over it scales up a little */
   .printIcon:hover, .printIcon:focus {

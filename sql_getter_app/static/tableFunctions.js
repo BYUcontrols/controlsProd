@@ -242,7 +242,9 @@ function generateDisplaySelect(suppliedColumns = null) {
     dropdown.appendChild(dropdownBtn);
     dropdown.appendChild(dropdownContent);
     div.appendChild(dropdown);
+    if (!document.getElementById('srtable')) {
     document.getElementById('tableFunctions').appendChild(div);
+    };
     
     // Creates a Select all option
         // set option text as the column names

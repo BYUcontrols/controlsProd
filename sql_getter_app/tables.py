@@ -13,16 +13,17 @@ import sys
 #sys.path.append('C:\\control-app\\appEnv\\sql_getter_app')
 
 import flask_login
-from flask import Flask, redirect, render_template, request, session, url_for, Blueprint
-from markupsafe import escape
-from sqlalchemy import false
-import json
+from flask import render_template, Blueprint, request, jsonify
+from flask_login import login_required
+from sqlalchemy import text # Safe way to execute raw SQL queries
+
 # below are local module imports
 from sql_getter_app.crud import pull
 from sql_getter_app.auth import login_required
 from sql_getter_app.createTableHtml import tableHtml
-from sql_getter_app.collection import production, versionString
+from sql_getter_app.collection import versionString, production, db
 from sql_getter_app.menuCreation import getMenuForRole
+# from sql_getter_app.static import historyTable
 
 
 bp = Blueprint("tables", __name__)  # sets up the blueprint with name tables defined at __name__
@@ -40,7 +41,7 @@ def siteTest():
     # create a fake user (not saved to any cookies or valid at all beyond the test) 
 
     from sql_getter_app.user_class import user_session
-    import json, time
+    import json
 
     userCookie = dict()
     userCookie['id'] = 'test'
@@ -266,6 +267,241 @@ def VersionControl():
     text = "Add a row here for every new Build of the application or every time you change the production site"
     return pull("table.html","VersionControl", "Version Control", message=text)
 
+# this route queries the db to get all the values (display name and id) that will go into the dropdowns for the modals to CRUD 
+# the items in the tables
+@bp.route('/GetModalDropdownData', methods=['POST'])
+@login_required
+def GetModalDropdownData():
+
+    try:
+        # Get JSON payload
+        data = request.get_json()
+        tableInfo = data.get("tableInfo")
+
+        foreignKeys = {}
+
+        # Query all foreign keys
+        for item in tableInfo:
+            table_name = item.get("table")
+            fk_column = item.get("fk")
+            display_column = item.get("display")
+
+            if not all([table_name, fk_column, display_column]):
+                return jsonify({"error": "Missing table, fk, or display field in the modalConfig object "}), 400
+
+            query = text(f"SELECT {fk_column}, {display_column} FROM {table_name} ORDER BY {display_column}")
+
+            result = db.engine.execute(query)
+            foreignKeys[table_name] = [dict(row) for row in result.fetchall()]
+
+        return jsonify(foreignKeys)
+
+    except Exception as e:
+        print("Error:", str(e), flush=True)
+        return jsonify({"error": str(e)}), 500
+    
+
+@bp.route('/GetPhoneNumberTypeData', methods=['GET'])
+@login_required
+def GetPhoneNumberTypeData():
+    try:
+        query = text(f"SELECT phoneNumberTypeId, phoneNumberType FROM PhoneNumberType WHERE active = 1")
+        result = db.engine.execute(query)
+        dictionaried_result = dict(result.fetchall())
+        return jsonify(dictionaried_result)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+# this dictionary of sets is for the security of the dynamic routes below. It defines what tables and columns can be passed into the routes
+allowed_tables = {
+    "Item": {"itemId", "description", "modelNumber", "vendorId", "minimumToStock", "active", "manufacturerId", "deviceTypeId", "deviceSubTypeId", "userIdModified"},
+    "Inventory": {"inventoryId", "itemId", "inStock", "location", "userIdModified", "active"},
+    "User": {"userId", "userName", "firstName", "lastName", "technician", "phone", "eMail", "vendorId", "userIdModified", "fullName", "userRoleId", "active"},
+    "TabOrder": {"tabOrderId", "tableName", "columnName", "tabOrder", "userIdModified", "active"},
+    "Role": {"roleId", "role", "userIdModified", "active"},
+    "Building": {"buildingId", "buildingName", "buildingAbbreviation", "tornDown", "userIdModified", "bacnetNetworkNumber", "notes", "active"},
+    "Device": {"deviceId", "deviceName", "deviceTypeId", "deviceSubTypeId", "modelNumber", "serialNumber", "cnaId", "byuId", "statusId", "buildingId", "location", "devicesManaged", "oldJaceName", "oldAlias", "notes", "manufacturerId", "macAddress", "userIdModified", "active"},
+    "DNS": {"dnsId", "dns1", "dns2", "domain", "userIdModified", "active"},
+    "Failure": {"failureId", "failureTypeId", "failureDate", "deviceId", "notes", "userIdModified", "active"},
+    "NCRSNode": {"ncrsNodeId", "deviceId", "ln", "pn", "dln", "ipConnection", "userIdModified", "active"},
+    "OITJack": {"oitJackId", "jackNumber", "buildingId", "room", "jackLocation", "deviceId", "notes", "isDHCP", "userIdModified", "active"},
+    "PatchPanel": {"patchPanelId", "oitJackIdSource", "oitJackIdDestination", "patchPanelTypeId", "deviceId", "effectiveDate", "userIdModified", "active"},
+    "PhoneNumber": {"phoneNumberId", "phoneNumber", "oitJackId", "description", "buildingId", "phoneNumberTypeId", "userIdModified", "active"},
+    "Vendor": {"vendorId", "name", "address1", "address2", "city", "stateId", "zip", "phone", "contact", "active", "userIdModified"},
+    "VMCloudDirector": {"vmCloudDirectorId", "webAddress", "userIdModified", "active"},
+    "IP": {"ipId", "ipAddress", "gateway", "subnetMask", "oitJackId", "deviceId", "oitMonitored", "notes", "buildingId", "effectiveDate", "statusId", "userIdModified", "active"},
+    "DeviceLicense": {"deviceLicenseId", "deviceId", "license", "hostId", "serialNumber", "modelNumber", "class", "notes", "active", "effectiveDate", "manufacturerId", "userIdModified"},
+    "Country": {"countryId", "country", "code", "userIdModified", "active"},
+    "DeviceType": {"deviceTypeId", "deviceType", "userIdModified", "active"},
+    "DeviceSubType": {"deviceSubTypeId", "deviceSubType", "userIdModified", "active"},
+    "FailureType": {"failureTypeId", "failureType", "userIdModified", "active"},
+    "Manufacturer": {"manufacturerId", "name", "active", "userIdModified"},
+    "PatchPanelType": {"patchPanelTypeId", "patchPanelType", "userIdModified", "active"},
+    "PhoneNumberType": {"phoneNumberTypeId", "phoneNumberType", "userIdModified", "active"},
+    "Priority": {"priorityId", "priority", "userIdModified", "sla", "slaHours", "active"},
+    "State": {"stateId", "state", "code", "countryId", "userIdModified", "active"},
+    "Status": {"statusId", "status", "userIdModified", "forServiceRequest", "active", "forDevices", "forItems"},
+    "VersionControl": {"versionId", "versionControl", "userIdModified", "active"},
+    "TablePermissions": {"tablePermissionsId", "tableName", "viewingLevel", "editingLevel", "addingLevel", "deletingLevel", "userIdModified", "undeletingLevel", "auditingLevel", "active"},
+    "BBMD": {"bbmdId", "deviceId", "ipId", "buildingId", "oldSiteName", "deviceNumber", "siteName", "siteDeviceNumber", "bbmdUdpPort", "active"}
+}
+
+@bp.route('/AddTableRow', methods=['POST'])    
+@login_required
+def AddTableRow():
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify({"error": "No data submitted"}), 400
+        table = data.pop("Table")
+        if not table:
+            return jsonify({"error": "No table included"}), 400
+
+        # Validate table and columns
+        if table not in allowed_tables:
+            return jsonify({"error": "Invalid table name" + table}), 400
+        valid_columns = allowed_tables[table]
+        if not all(col in valid_columns for col in data.keys()):
+            return jsonify({"error": "Invalid columns for this table"}), 400
+
+        # Set default value for 'active' column if not provided
+        if 'active' in valid_columns and 'active' not in data:
+            data['active'] = 1
+
+        # Build dynamic INSERT query
+        columns = ', '.join(data.keys())
+        values_placeholders = ', '.join(f":{col}" for col in data.keys())
+        query = text(f"INSERT INTO [{table}] ({columns}) VALUES ({values_placeholders})")
+
+        # Execute securely
+        with db.engine.begin() as conn:
+            conn.execute(query, data)
+
+        return jsonify({"message": "Item added successfully"}), 201
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@bp.route('/EditTableRow', methods=['PUT'])    
+@login_required
+def EditTableRow():
+    print("EditTableRow route hit")
+    
+    try:
+        # Get JSON data from request
+        data = request.get_json()
+        if not data:
+            return jsonify({"error": "No data submitted"}), 400
+        
+        # Confirm data is a dictionary
+        if not isinstance(data, dict):
+            return jsonify({"error": "Data must be a dictionary"}), 400
+
+        # Extract table and primary key (pk) from data
+        table = data.pop("Table", None)
+        pk = data.pop("pk", None)
+
+        if not table or not pk:
+            return jsonify({"error": "Missing table name or primary key"}), 400
+
+        pk_value = data.pop(pk, None)
+        if not pk_value:
+            return jsonify({"error": f"Primary key value for {pk} is required"}), 400
+
+        # Validate table and columns
+        if table not in allowed_tables:
+            return jsonify({"error": f"Invalid table name: {table}"}), 400
+        valid_columns = allowed_tables[table]
+        invalid_columns = [col for col in data.keys() if col not in valid_columns]
+        if invalid_columns:
+            return jsonify({"error": f"Invalid columns for this table: {', '.join(invalid_columns)}"}), 400
+
+        # Build dynamic UPDATE query binding params to values (submit a dictionary to conn.execute)
+        update_values = ", ".join(f"{col} = :{col}" for col in data.keys())  # Using bindparams with column names
+        query = text(f"UPDATE {table} SET {update_values} WHERE {pk} = :pk")  # Use named :pk for the primary key
+        print('Generated query:', query)
+
+        # Prepare data for query execution (mapping column names to values, adding pk_value)
+        query_values = {**data, "pk": pk_value}  # Creating a dictionary with data and pk value
+        print('Query values:', query_values)
+
+        # Execute query securely
+        with db.engine.begin() as conn:
+            conn.execute(query, query_values)  # Passing parameters in a dictionary
+
+        return jsonify({"message": "Item updated successfully"}), 201
+
+    except Exception as e:
+        print(e)
+        return jsonify({"error": str(e)}), 500
+
+
+@bp.route('/DeleteTableRow', methods=['DELETE'])
+@login_required
+def DeleteTableRow():
+    print("DeleteTableRow route hit")
+    # data submitted should be in form {Table : "", "pk": "", pk-value: ""}
+    try:
+        # Get JSON data from request
+        data = request.get_json()
+        if not data:
+            return jsonify({"error": "No data submitted"}), 400
+        
+        # Extract table and primary key (pk) from data
+        table = data.pop("table", None)
+        pk = data.pop("pk", None)
+        pk_value = data.pop("pk_value", None)
+
+        if not table or not pk:
+            return jsonify({"error": "Missing table name or primary key"}), 400
+
+        if not pk_value:
+            return jsonify({"error": f"Primary key value is required"}), 400
+
+        # Validate table and columns
+        if table not in allowed_tables:
+            return jsonify({"error": f"Invalid table name: {table}"}), 400
+
+        # The DELETE query doesn't need to validate column names, only table and pk.
+        
+        # Build dynamic DELETE query
+        query = text(f"UPDATE {table} SET active = 0 WHERE {pk} = :pk")
+        print('Generated query:', query)
+
+        # Prepare data for query execution
+        query_values = {"pk": pk_value}  # Mapping pk value to the placeholder :pk
+        print('Query values:', query_values)
+
+        # Execute query securely
+        with db.engine.begin() as conn:
+            conn.execute(query, query_values)
+
+        return jsonify({"message": "Item deleted successfully"}), 200
+
+    except Exception as e:
+        print(e)
+        return jsonify({"error": str(e)}), 500
+
+
+@bp.route('/history')
+@login_required
+def history():
+    print("history route hit")
+    audit_table_name = request.args.get('audit_table_name')
+    pk_column = request.args.get('pk_column')
+    item_id = request.args.get('item_id')
+
+    if not audit_table_name or not pk_column or not item_id:
+        print("Missing required parameters")
+    
+    query = text(f"SELECT * FROM {audit_table_name} WHERE {pk_column} = {item_id}")
+    result = db.engine.execute(query)
+    data = [dict(row) for row in result.fetchall()]
+    # historyTable(data)
+    return jsonify(data)
+
+
 @bp.route('/TablePermissions')
 @login_required
 def tablePermissions():
@@ -410,35 +646,3 @@ def newGuy():
     else:
         from flask import abort
         abort(401)
-
-@bp.route('/sendEmail')
-@login_required
-def sendEmailTest():
-    from collection import sendEmails
-
-    sender_email = "ijc24@byu.edu"
-    receiver_email = "isaac.the.cool@gmail.com"
-    message = """\
-    Subject: Hi there
-
-    This message is sent from Python."""
-
-    sendEmails.sendmail(sender_email, receiver_email, message)
-
-    return 'Message sent'
-
-@bp.route('/checkEmails')
-@login_required
-def checkEmailsTest():
-    from collection import receiveEmails
-
-    msg = 'Here are your emails: \n'
-
-    tmp, data = receiveEmails.search(None, 'ALL')
-    for num in data[0].split():
-        tmp, data = receiveEmails.fetch(num, '(RFC822)')
-        msg += 'Message: {0}\n'.format(num)
-        msg += data[0][1] + '\n'
-        break
-
-    return msg

@@ -92,19 +92,18 @@ function serviceReqInitializeRows(tableBodyRef, columnsInfo) {
             // load the row up but skip the buttons (the fourth argument)
         placeholder.loadRow(row, false, null, false);
             // create the options button
-        let optionsData = placeholder.createOptionsButtons(true); // just return the empty options container
-            // place the option menu in it's place
-        placeholder.buttonCell.append(optionsData.parent)
-            // make the 'Expand' request button
-        optionsData.container.append(createButton('Edit', servReqWindow.bind(placeholder), 'Click here to expand and edit this service request'));
-            // make the audit button if the user has audit permissions
-        if (placeholder.permissions.canAudit) optionsData.container.append(createButton('Audit', auditTable.bind(placeholder), 'View a list of changes made to this row'));
-            // make the description field also expand the column
+        // let optionsData = placeholder.createOptionsButtons(true); // just return the empty options container
+        //     // place the option menu in it's place
+        // placeholder.buttonCell.append(optionsData.parent)
+        //     // make the 'Expand' request button
+        // optionsData.container.append(createButton('Edit', servReqWindow.bind(placeholder), 'Click here to expand and edit this service request'));
+        //     // make the audit button if the user has audit permissions
+        // if (placeholder.permissions.canAudit) optionsData.container.append(createButton('Audit', auditTable.bind(placeholder), 'View a list of changes made to this row'));
+        //     // make the description field also expand the column
         placeholder.fields[0].htmlRef.onclick = servReqWindow.bind(placeholder);
         placeholder.fields[0].htmlRef.style.cursor = 'pointer';
         placeholder.fields[0].htmlRef.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512"><path d="M384 224v184a40 40 0 01-40 40H104a40 40 0 01-40-40V168a40 40 0 0140-40h167.48" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/><path d="M459.94 53.25a16.06 16.06 0 00-23.22-.56L424.35 65a8 8 0 000 11.31l11.34 11.32a8 8 0 0011.34 0l12.06-12c6.1-6.09 6.67-16.01.85-22.38zM399.34 90L218.82 270.2a9 9 0 00-2.31 3.93L208.16 299a3.91 3.91 0 004.86 4.86l24.85-8.35a9 9 0 003.93-2.31L422 112.66a9 9 0 000-12.66l-9.95-10a9 9 0 00-12.71 0z"/></svg>';
             // place that rowEngine in the rowsObject
-        placeholder.fields[0].htmlRef.style.cursor = 'pointer';
         rowsObject[placeholder.id] = placeholder;
     }
 
@@ -116,8 +115,7 @@ function servReqWindow() {
     // MASON: edited so that clicking the ID field auto populates the NewServiceRequest page with the right information
     // this gets the id of the row that was clicked
     var servReqId = parseInt(this.id);
-
-    // FIXME this should be a seperate route and not use a form. (it works though) Dec 2024
+    
     // the only way I know how to talk to python from js is with a form, therefore I made an invisible form with which I send the ID to python
     let form = document.createElement('form');
     form.id = 'servReqIdForm';
@@ -137,6 +135,8 @@ function servReqWindow() {
 
 // this one is a bit of a monster, sorry it's probably bad practice to have a 300+ line function (but at least 200 lines of that are comments)
 // Here we create a service request window from the rowEngine for it's counterpart in the table and a boolean to tell us if it a new item or not
+
+let modals = [];
 
 function createServReqWindow(originEngine, newItem=false) {
 
@@ -367,7 +367,6 @@ function createServReqWindow(originEngine, newItem=false) {
     // load the requestor table
     loadRequestors(requestorTable, originEngine.id, windowEngine)
     console.log(windowEngine);
-    
 }
 
 // takes an array and two strings and searches through the array to find the first object
@@ -426,4 +425,21 @@ function generateNewServiceRequest() {
         window.srContainerObject.new.openModal();
     });
     document.getElementById("title").appendChild(button);
+}
+
+// add an event listener so if the user clicks outside any modal it will close
+function closeModalByClickingOutside() {
+    modals = document.getElementsByClassName('modal');
+    for (let modal of modals) {
+        modal.onclick = function(event) {
+            if (event.target === modal) {
+                editItemCancel();
+                editNoteCancel();
+                notePopCancel();
+                newitemCancel(); 
+                itemCancel();
+                cancelCloser();
+            }
+        };
+    }
 }

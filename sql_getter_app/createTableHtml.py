@@ -9,9 +9,8 @@
 #   5. takes a string for a column not to link, returns a dictionary containing the linked column data for the table (as obtained by self.getLinkedColumn())
 #   6. fetches linked data in the form of a dictionary from the server for a given colName string
 
-# a class to create the html for a table from a list of columns and sqlAlchemy resultProxys
-from flask.globals import request
-# below this is local module imports
+
+# local module imports
 from sql_getter_app.collection import camel_to_title
 class tableHtml(object):
 
@@ -58,12 +57,12 @@ class tableHtml(object):
                         self.columnArray.append('Estimate')
                     else:
                         # Convert cell name to title case and add it to headers
-                        headersText += "<th>" + camel_to_title(str(cell)) + "</th>"
+                        headersText += f"<th class='{cell}'>" + camel_to_title(str(cell)) + "</th>"
                         # Add the column name to columnArray for tracking purposes
                         self.columnArray.append(str(cell))
 
         # Add an extra empty column for buttons in the table
-        headersText += "<th class='noPrint'></th>"
+        headersText += "<th class='editTableColumn'>Edit</th>"
 
         # Determine whether to add a linked data tag in the header row
         if not linkedDataTag:
@@ -96,66 +95,9 @@ class tableHtml(object):
     # takes an array of sqlalchemy rowProxy objects and adds the data to the table html string
     # turns a sqlalchemy query into a table
     def content(self, table, html=None, showDeleted=False):
-        from sql_getter_app.createTableHtmlSupport import makeRow, checkIfStatusIsOpen
-        import flask
+        from sql_getter_app.createTableHtmlSupport import makeRow
         # the table body tag
         self.html += "<tbody id='tableBody'>"
-
-        # PROBABLY DELETE LATER (maybe save code for print functionality) (Nov 2024)
-        # THIS KILLS THE LOAD TIME. Each check for permissions queries the db several times
-        # Create the view all / filtered service request table
-        # urlPath = flask.request.path
-        # if (self.PK == 'serviceRequestId'): # MASON: All this only runs if we are on the Service Request table
-        #     # necessary import for the requestor and assigned to functions about 10 lines below
-        #     from sql_getter_app.user_class import user_session  
-        #     from sql_getter_app.formFuncs import getServReqData  
-        #     import flask_login
-        #     User = flask_login.current_user
-        #     # MASON: This checks if the user is a technician or not. Useful for displaying the right rows later on.
-        #     userIsTech = user_session.checkIfUserIsTechnician(User)
-
-        #     for row in table:   # looping through each row in the tables
-        #         # MASON: These two check if the user is the requestor or assigned to technician of the service request for a particular row
-        #         userIsRequestor = user_session.checkIfUserIsRequestor(User, row, self.PK)
-        #         userIsAssignedTo = user_session.checkIfUserIsAssignedTo(User, row, self.PK)
-        #         # request is open if statusID is not closed, void, or resolved
-        #         requestIsOpen = checkIfStatusIsOpen(User, row, self.PK)
-
-        #         # MASON: Only displays the row under these conditions
-        #         # Show all open requests filter, for technicians
-        #         if (userIsTech and str(urlPath) == '/ServiceRequestShowAllOpenRequests'):
-        #             # show all open requests
-        #             print("userIsTech and str(urlPath) == '/ServiceRequestShowAllOpenRequests'")
-        #             if (requestIsOpen): 
-        #                 print("Open request")
-        #                 makeRow(self, row, showDeleted)
-        #                 # saving the SR data for the print functionality
-        #                 self.requests[row[0]] = getServReqData(row[0])
-
-        #         # Show all requests filter, for technicians. Shows all requests
-        #         elif (userIsTech and str(urlPath) == '/ServiceRequestShowAllRequests'): 
-        #             print("userIsTech and str(urlPath) == '/ServiceRequestShowAllRequests'")
-        #             makeRow(self, row, showDeleted)
-        #             # saving the SR data for the print functionality
-        #             self.requests[row[0]] = getServReqData(row[0])
-                
-        #         # Technician starting point
-        #         elif (userIsTech):
-        #             # Shows technicians SRs that they are requestor or assigned to that are open
-        #             if ((userIsRequestor or userIsAssignedTo) and requestIsOpen): 
-        #                 makeRow(self, row, showDeleted)
-        #                 # saving the SR data for the print functionality
-        #                 self.requests[row[0]] = getServReqData(row[0])
-                
-        #         # Non-Technician starting point
-        #         else:
-        #             # Shows non-techs the SRs that they are requestor for (even closed ones)
-        #             # if (userIsRequestor):
-        #             makeRow(self, row, showDeleted)
-        #             # saving the SR data for the print functionality
-        #             self.requests[row[0]] = getServReqData(row[0])
-
-        # else:   # This runs if we are on any table besides the Service Request table
         for row in table: makeRow(self, row, showDeleted)
         # close the body
         self.html += "</tbody>"

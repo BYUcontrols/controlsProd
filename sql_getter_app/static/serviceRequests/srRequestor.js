@@ -139,6 +139,32 @@ function createNewReqSupport() {
     popCon.classList = 'modal-content';
     popCon.setAttribute('id', 'popup-content')
 
+    // Create the SVG element for the close button
+    let xButton = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    xButton.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+    xButton.setAttribute("viewBox", "0 0 512 512");
+    xButton.classList.add("ionicon"); // Optional, if you want to add styling class
+    // Create the path element inside the SVG
+    let path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    path.setAttribute(
+        "d",
+        "M400 145.49L366.51 112 256 222.51 145.49 112 112 145.49 222.51 256 112 366.51 145.49 400 256 289.49 366.51 400 400 366.51 289.49 256 400 145.49z"
+    );
+    // Append the path to the SVG element
+    xButton.appendChild(path);
+    // Add event listener to close button (SVG)
+    xButton.onclick = function () {
+        cancelCloser(); // Call the function when the close button is clicked
+    };
+    // Add the SVG button to the modal content
+    popCon.appendChild(xButton);
+    
+    // Create the title
+    let title = document.createElement("h2");
+    title.innerHTML = "Add Requestor";
+    popCon.appendChild(title);
+
+
     // create the form
     let popForm = document.createElement('form');
     document.getElementById('popup-content').appendChild(popForm);
@@ -330,7 +356,8 @@ function createNewReqSupport() {
 
     // function that opens the popup
     let openFunction = function() {
-        popup.style.display = "block"
+        popup.style.display = "block";
+        closeModalByClickingOutside();
     }
     popup.open = openFunction;
 }

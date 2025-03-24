@@ -18,7 +18,7 @@ Main Page
 {% import 'menu_options.html' as options %}
 {% block content %}
 <script>
-    testLogin = {{loggedIn|tojson}};
+    let testLogin = "{{loggedIn|tojson}}";
 </script>
 
 {% for menu in menuObject %}

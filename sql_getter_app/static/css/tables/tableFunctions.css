@@ -20,10 +20,15 @@
     border-radius: 4px;
     vertical-align: middle;
     line-height: 30px; /* Set the height to 30px (but like the text size is massive, not setting the height. This makes it expand up and down  */
-    padding-left: 10px;
-    padding-right: 10px;
+    padding-left: 20px;
+    padding-right: 20px;
     display: inline-block; /* To be honest I don't know why we need this here but if we don't have it the 'button' thing is a couple pixels out of line with everything else */
 }
+.tableFunctionContainer:hover {
+    background-color: var(--contrastColor);
+    cursor: pointer;
+}
+
 /* for the little arrow ↧ in Sort By: */
 .accendingButton {
     font-size: 24px;
@@ -100,11 +105,12 @@ We do this in a css hover way because the html <select> elements can't have chec
 /* for the container that holds the sortSelect and accending button */
 .sortSelectOption {
     display: inherit;
+    color: white;
 }
 
 /* for the functionalities on the SR page */
 #srTableFunctions {
-    height: 35px;
+    /* height: 35px; */
     width: 95%;
 }
 
@@ -134,5 +140,12 @@ We do this in a css hover way because the html <select> elements can't have chec
     .tableFunction {
         width: 30%;
         margin-right: 5px;
+    }
+}
+
+@media (max-width: 480px) {
+    .tableFunction {
+        margin-top: 10px;
+        margin-bottom: 10px;
     }
 }

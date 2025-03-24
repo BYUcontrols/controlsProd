@@ -78,6 +78,11 @@ function EditSrInnit() {
 
 // function for creating the form that edits or creates a New Service Request.
 function CreateForm() {
+
+  // resets temporary note and item counter to 1 for new service requests
+  window.newServiceRequestNoteCounter = 1;
+  window.newServiceRequestItemCounter = 1;
+
   // create a form
   let editForm = document.createElement("form");
   editForm.id = "newSrForm";
@@ -208,41 +213,41 @@ function CreateForm() {
   // line break for aesthetics
   editForm.appendChild(document.createElement("br"));
 
-  // create the Location label
-  createLabel("location", "Location", editForm);
+  // create the Service Type label
+  createLabel("serviceType", "Service Type", editForm);
+  
+  // create the Service Type part of the form
+  createDropdownElement("serviceType", "serviceType", editForm);
+  
+  // create the datalist for the Service Type dropdown. 'serviceTypes' is a dict from python with a list of the active service type values.
+  createDatalistElement("serviceType", serviceTypes, editForm);
+  
+  // line break for aesthetics
+  editForm.appendChild(document.createElement("br"));
+  
+  // create the Assigned To label
+  createLabel("assignedTo", "Assigned To", editForm);
+  
+  // create the Assigned To part of the form
+  createDropdownElement("assignedTo", "assignedTo", editForm);
+  
+  // create the datalist for the Assigned To dropdown. 'assignedTo' is a dict from python with a list of the active assigned to values.
+  createDatalistElement("assignedTo", assignedTo, editForm);
+  
+  // create the Building label
+  createLabel("building", "Building", editForm);
+  
+  // create the Building part of the form
+  createDropdownElement("building", "building", editForm);
+  
+  // create the datalist for the Building dropdown. 'building' is a dict from python with a list of the active buildingAbbreviation values.
+  createDatalistElement("building", building, editForm);
+  
+  // create the Room/Location label
+  createLabel("location", "Room/Location", editForm);
 
   // create the Location part of the form
   createInputElement("text", "location", editForm);
-
-  // create the Service Type label
-  createLabel("serviceType", "Service Type", editForm);
-
-  // create the Service Type part of the form
-  createDropdownElement("serviceType", "serviceType", editForm);
-
-  // create the datalist for the Service Type dropdown. 'serviceTypes' is a dict from python with a list of the active service type values.
-  createDatalistElement("serviceType", serviceTypes, editForm);
-
-  // line break for aesthetics
-  editForm.appendChild(document.createElement("br"));
-
-  // create the Assigned To label
-  createLabel("assignedTo", "Assigned To", editForm);
-
-  // create the Assigned To part of the form
-  createDropdownElement("assignedTo", "assignedTo", editForm);
-
-  // create the datalist for the Assigned To dropdown. 'assignedTo' is a dict from python with a list of the active assigned to values.
-  createDatalistElement("assignedTo", assignedTo, editForm);
-
-  // create the Building label
-  createLabel("building", "Building", editForm);
-
-  // create the Building part of the form
-  createDropdownElement("building", "building", editForm);
-
-  // create the datalist for the Building dropdown. 'building' is a dict from python with a list of the active buildingAbbreviation values.
-  createDatalistElement("building", building, editForm);
 
   // line break for aesthetics
   editForm.appendChild(document.createElement("br"));
@@ -320,7 +325,7 @@ function CreateForm() {
 
   // place for the notes list to go
   let tableWrappern = document.createElement("div"); // used for styling (media queries, mobile)
-  tableWrappern.classList = "tableWrapper";
+  tableWrappern.classList = "tableWrapper notesTableWrapper";
   let notestable = document.createElement("table");
   notestable.id = "notesTable";
   notestable.classList = "printThis noBorders";
@@ -340,6 +345,10 @@ function CreateForm() {
     if( Object.keys(servReq.notes).length === 0){
       notestableHead.style.display = "none"
     }
+  } else if (!servReq) {
+    if (newSRNotes.length == 0){
+      notestableHead.style.display = "none"
+    }
   }
 
   let nEdit = createTableHeader("Edit");
@@ -354,7 +363,7 @@ function CreateForm() {
   notestheadrow.appendChild(date);
 
   let notetableBod = document.createElement("tbody");
-  notetableBod.id = "notestableBody";
+  notetableBod.id = "notesTableBody";
   notestable.appendChild(notetableBod);
 
   if (servReq) {
@@ -403,10 +412,11 @@ function CreateForm() {
       notestBodRow.appendChild(noteinputBy);
       let noteDate = createTableCell(notesVec[i]["date"]);
       notestBodRow.appendChild(noteDate);
-    }
-  }else{
+    };
+
+  } else {
     notestableHead.style.display = "none";
-  }
+  };
 
   // Add a Note
   let addnote = document.createElement("input");
@@ -437,7 +447,7 @@ function CreateForm() {
 
   // place for the items list to go
   let tableWrapper = document.createElement("div");
-  tableWrapper.classList = "tableWrapper";
+  tableWrapper.classList = "tableWrapper itemsTableWrapper";
   let table = document.createElement("table");
   table.id = "itemsTable";
   table.classList = "printThis noBorders";
@@ -452,11 +462,12 @@ function CreateForm() {
   let theadrow = document.createElement("tr");
   theadrow.id = "itemsTablehead";
   // hide the table header row if there are no items in the SR
-  if(servReq){
+  if (servReq) {
     if( Object.keys(servReq.items).length === 0){
       theadrow.style.display = "none"
     }
   }
+
   tableHead.appendChild(theadrow);
   let edit = createTableHeader("Edit");
   theadrow.appendChild(edit);
@@ -500,9 +511,9 @@ function CreateForm() {
       let voidstatus = createTableCell(servReq["items"][item]["void"]);
       tBodRow.appendChild(voidstatus);
     }
-  }else{
+  } else {
     tableHead.style.display = "none";
-  }
+  };
 
   // Add an Item
   let additem = document.createElement("input");
@@ -562,6 +573,7 @@ function CreateForm() {
     let deletebtn = document.createElement("input");
     deletebtn.type = "button";
     deletebtn.value = "Delete";
+    deletebtn.id = "deletebutton";
     deletebtn.classList = "BYUbutton";
     deletebtn.tabIndex = 17;
     // creates an invisible form, gives it the servReqId, submits to server via post request

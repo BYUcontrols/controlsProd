@@ -2,12 +2,7 @@
 #   1. Creates an error blueprint
 #   2. Defines places to route errors that the flask app calls
 
-import sys
-# for production
-#sys.path.append('C:\\control-app\\appEnv\\sql_getter_app')
-
 from flask import Blueprint, render_template
-from sqlalchemy import text
 # below are local module imports
 from sql_getter_app.collection import db, flask_login, production
 

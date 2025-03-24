@@ -31,7 +31,7 @@ class paginationEngine {
             // create a new dropdown
         this.displayDrop = new dropdown();
         this.displayDrop.create(this.setPaginateScale.bind(this));
-        divContainer.appendChild(document.createTextNode("Show:"));
+        divContainer.appendChild(document.createTextNode("Show: "));
         divContainer.appendChild(this.displayDrop.select);
             // create options
         this.displayDrop.option('Everything', 'all', (this.currentScale == 'all'));
@@ -46,7 +46,7 @@ class paginationEngine {
             // create page selector dropdown
         this.pageDrop = new dropdown();
         this.pageDrop.create(this.paginate.bind(this));
-        div.appendChild(document.createTextNode('Showing:'));
+        div.appendChild(document.createTextNode('Showing: '));
         div.appendChild(this.pageDrop.select);
             // run the onchange for the displayDrop
         this.setPaginateScale();

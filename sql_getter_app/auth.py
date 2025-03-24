@@ -12,7 +12,6 @@ import sys
 #import functools
 import flask_login
 from flask import (Blueprint, redirect, request, render_template, abort)
-from sqlalchemy.sql.expression import true
 
 # below are imports from local modules
 from sql_getter_app.collection import login_manager, db, production, versionString
@@ -102,7 +101,7 @@ def adminLevelSpoof(newLevel, roleText):
     # this is the page where the user can use the previous function to spoof their user and test
 @bp.route('/userTester')
 def userTester():
-    from menuCreation import getMenuForRole
+    from sql_getter_app.menuCreation import getMenuForRole
 
     User = flask_login.current_user
 
@@ -137,16 +136,16 @@ def userTester():
 ################ if the link somehow gets lost here it is
 @bp.route('/testLogin')
 def testLogin():
+    print('testLogin hit')
     from sql_getter_app.collection import testEnv, adminRoleId
-    ## should be if testEnv['env'] to restrict this login to test environment but cant get that to work rn 
-    # so i bypassed that. remove in production-- Ben
-    if True: # MAKE SURE WE ARE NOT IN A OUTWARD FACING ENVIRONMENT
+    print(testEnv)
+    if testEnv['env']: # MAKE SURE WE ARE NOT IN A OUTWARD FACING ENVIRONMENT
         import json, time
         userCookie = dict()
         userCookie['id'] = 'test'
         userCookie['created'] = time.time_ns()
-        userCookie['roleId'] = adminRoleId
-        userCookie['tableId'] = 2
+        userCookie['roleId'] = 1
+        userCookie['tableId'] = 3
         userCookie['role'] = 'Admin'
         userCookie['name'] = 'test and dev user'
         userCookie['adminImposter'] = True
@@ -155,6 +154,6 @@ def testLogin():
         currentUser = user_session()
         currentUser.setFromString(json.dumps(userCookie), login_manager.userTimeout)
         flask_login.login_user(currentUser)
-        
+        print(userCookie)
         return redirect('/home')
     else: abort(403) # unauthorized

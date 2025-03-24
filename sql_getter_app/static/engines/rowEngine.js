@@ -147,9 +147,8 @@ class rowEngine {
             if (!clone) this.fields[column].restoreCell(this.fields[column].htmlRef.textContent); // restores from text if not a clone
             else this.fields[column].restoreCell(cloneRowEngine.fields[column].getVal()); // restores text from original if clone
         }
-            // fill this.buttonCell with an HTML element for the cell where the buttons go
-        this.buttonCell = cells[this.fields.length];
-        this.buttonCell.innerHTML = '';
+
+        // fill this.buttonCell with an HTML element for the cell where the buttons go
 
         if (dynamic) { // for when we want to do things with the row
             // if we are redirected from another page create a 'Select' button
@@ -160,7 +159,7 @@ class rowEngine {
                 this.selectBtn.classList.add('selectButton');
             }
                 // create the options
-            this.buttonCell.append(this.createOptionsButtons())
+            // this.buttonCell.append(this.createOptionsButtons())
                 // if the row was being edited then start editing it (with the saved values)
             if (editingObject) this.editRow(null, editingObject);
         }

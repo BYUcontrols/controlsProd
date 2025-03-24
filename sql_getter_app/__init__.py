@@ -18,14 +18,17 @@
 # from identifies the module you are pulling from (the source) in python, a module is a file that ends in .py
 # import identifies the function or value you are pulling into your code (the actual thing being implemented)
 # hover over flask or Flask below for more info. Works with other keywords, too.
- 
+
+
 from flask import Flask                 # makes code that builds web apps w/ flask available. flask is framework, Flask is Python class datatype
-from flask_sqlalchemy import SQLAlchemy # makes SQLAlchemy code available. same as above (flask/Flask) but with SQLAlchemy
-from sqlalchemy import create_engine    # gets the create_engine function from sqlalchemy module
+
+
 # local imports
 from sql_getter_app.collection import db as sqlDB      # this pulls from collection.py the db variable which can be referenced in this module as sqlDB
-from sql_getter_app.collection import (login_manager, oauthKey, oauthRedirect, startLogging, production, testEnv)
+from sql_getter_app.collection import (login_manager, production, testEnv)
 from sql_getter_app.menuCreation import createMenus    # final description in case you don't understand: makes the createMenus function from the menuCreation.py module available in this module
+
+# set FLASK_ENV to 'production' in the .flaskenv file before deploying to production. set to development when in dev mode
 
 
 def create_app(test_config = None):     #def keyword defines a function | def name(parameters): | inside function is indented. fun ends with return statement.
@@ -34,7 +37,7 @@ def create_app(test_config = None):     #def keyword defines a function | def na
     # when not running on APACHE (ie vsCode) then this redirects errors and messages from the terminal to a file
     # pass the location for the logging folder as a string, eg '/control-app/logs/'
     # startLogging('/control-app/logs/')
-    
+
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)    # this usually follows the 'from flask import Flask' statement. creates an instance of the Flask class
                                                             # If we set instance_relative_config=True when we create our app with the Flask() call, app.config.from_pyfile() will load the specified file from the instance/ directory.
@@ -64,8 +67,7 @@ def create_app(test_config = None):     #def keyword defines a function | def na
     # this is defined by the visual studio debug config file
     # default is False, so it will be false if run on apache
     # testEnv is from the collection module
-    testEnv['env'] = (app.config.get('ENV') == 'development')
-
+    testEnv['env'] = not production
     # Initialize and configure the login manager    
     login_manager.init_app(app)
     app.login_manager = login_manager
@@ -97,4 +99,4 @@ def create_app(test_config = None):     #def keyword defines a function | def na
 
     return app  # returns the instance of the app that was created
 
-app = create_app()  # I believe this creates a global instance called app
+app = create_app()  # instantiates the flask application

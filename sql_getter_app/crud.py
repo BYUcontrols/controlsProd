@@ -10,22 +10,13 @@
 #   5. Defines functions for verifying tables & returning keys & columns
 #   6. Defines a function that gets the table from the database and returns the html for that table
 #   7. Defines functions for linked tables
-
-import sys
-# for production
-#sys.path.append('C:\\control-app\\appEnv\\sql_getter_app')
-
 import json
 import datetime # Concrete date/time and related types
-from flask.globals import current_app   # access data about the running application
 
 import flask_login
 import logging
 from flask import Blueprint, render_template, request, make_response, abort
-from markupsafe import Markup   # A string that is ready to be safely inserted into an HTML or XML document, either because it was escaped or because it was marked safe
 from sqlalchemy import text
-from sqlalchemy import bindparam    # Represent a "bound expression"
-from sqlalchemy.exc import InvalidRequestError, StatementError
 from urllib import parse # to decode the base 64 encoded filter string on a url
 import pdfkit # this is a wraper for the wkhtmltopdf tool https://wkhtmltopdf.org/downloads.html
 

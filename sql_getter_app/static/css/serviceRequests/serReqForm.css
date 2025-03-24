@@ -53,6 +53,14 @@ input[type="submit"] {
   background-color: lightgray;
 }
 
+input#deletebutton {
+  background-color: #9c2222;
+}
+
+input#deletebutton:hover {
+  background-color: #b52a2a;
+}
+
 /*  NOTES AND ITEMS TABLE STYLING (specific to Service Requests, the rest is in generalTable.css) */
 .tableHeader {
   display: flex;
@@ -201,17 +209,23 @@ select#vendorId {
   vertical-align: middle;
 }
 
-.modal-content input[type="submit"] {
+.modal-content input[type="submit"],
+.modal-content #editItemPopSubmit,
+.modal-content #editnotepopsubmit,
+div#buttonContainer input[type="submit"] {
   background-color: #002e5d;
   color: #fff;
 }
 
 .modal-content input[type="button"] {
-  background-color: #c7c9c7;
+  background-color: #888a8a;
   color: #fff;
 }
 
-.modal-content input[type="submit"]:hover {
+.modal-content input[type="submit"]:hover,
+.modal-content #editItemPopSubmit:hover,
+.modal-content #editnotepopsubmit:hover,
+div#buttonContainer input[type="submit"]:hover {
   background-color: #004080;
 }
 

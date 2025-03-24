@@ -9,7 +9,6 @@
     Property of the BYU A/C Shop
 */
 function init() {
-    console.log('%%%%%%%%%%%%%%%%% STARTING CONTROLS-APP JAVASCRIPT V 0.1.0 %%%%%%%%%%%%%%%%%')
     urlParams = new URLSearchParams(window.location.search);
         // check if this page is a child of another and act accordingly
     checkForParentWindows();
@@ -46,7 +45,7 @@ function init() {
     }
     
         // generate the input new page
-    generateInput();
+    // generateInput();
     
         // define a function to run when the page is closed
     window.addEventListener('unload', updateSaveCookies);
@@ -136,7 +135,6 @@ function generateColumnsObject(headerRef, columnArray=tableColumnArray, columnTy
 function initializeRows(tableBodyRef, columnsInfo) {
     // determine if the showDeleted filter is needed
     let filterArgs = JSON.parse(decodeURIComponent(new URLSearchParams(window.location.search).get('filter')));
-    console.log(filterArgs);
 
 
     let rows = tableBodyRef.rows;

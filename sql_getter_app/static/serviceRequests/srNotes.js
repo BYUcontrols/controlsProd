@@ -134,6 +134,7 @@ function notePopCancel() {
   document.getElementById("modDate").value = "";
 
   document.getElementById("addNotePop").style.display = "none";
+  document.body.style.overflow = "auto"; // Enable scrolling when the modal is closed
 }
 
 // creates and handles the popup and form for adding a new note
@@ -154,6 +155,26 @@ function addNoteModal() {
   title.innerHTML = "Add Note";
   addNotePopCon.appendChild(title);
 
+  // Create the SVG element for the close button
+  let xButton = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  xButton.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+  xButton.setAttribute("viewBox", "0 0 512 512");
+  xButton.classList.add("ionicon"); // Optional, if you want to add styling class
+  // Create the path element inside the SVG
+  let path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  path.setAttribute(
+    "d",
+    "M400 145.49L366.51 112 256 222.51 145.49 112 112 145.49 222.51 256 112 366.51 145.49 400 256 289.49 366.51 400 400 366.51 289.49 256 400 145.49z"
+  );
+  // Append the path to the SVG element
+  xButton.appendChild(path);
+  // Add event listener to close button (SVG)
+  xButton.onclick = function () {
+    notePopCancel();
+  };
+  // Add the SVG button to the modal content
+  addNotePopCon.appendChild(xButton);
+
   // create the form
   let addNotePopForm = document.createElement("form");
   document.getElementById("addNotePop-content").appendChild(addNotePopForm);
@@ -162,6 +183,22 @@ function addNoteModal() {
   addNotePopForm.action = $SCRIPT_ROOT + "/NewServiceRequest";
 
   /////////////////   FORM START  ///////////////////////
+
+  // if it's a new service request form, each note is given a temporary id
+  if (!servReq) {
+    // newNoteTempId
+    const newNoteTempIdDiv = document.createElement("div");
+    newNoteTempIdDiv.id = "newNoteTempIdDiv";
+    newNoteTempIdDiv.style.display = "none"; // makes it so the temporary note id exists but is not shown on screen
+    createLabel("newNoteTempId", "Request Note Temporary ID", newNoteTempIdDiv);
+    let newNoteTemp = createInputElement(
+      "number",
+      "newNoteTempId",
+      newNoteTempIdDiv
+    );
+    addNotePopForm.appendChild(newNoteTempIdDiv);
+    // addNotePopForm.appendChild(document.createElement("br"));
+  }
 
   // Note
   const noteDiv = document.createElement("div");
@@ -205,28 +242,39 @@ function addNoteModal() {
   let addNotePopsubmit = document.createElement("input");
   addNotePopsubmit.type = "submit";
   addNotePopsubmit.value = "Create";
-  addNotePopsubmit.id = 'addNotePopSubmit';
+  addNotePopsubmit.id = "addNotePopSubmit";
   addNotePopForm.appendChild(addNotePopsubmit);
 
   // if new SR then prevent default and add the note to the SR form to be submitted at the same time.
   addNotePopForm.addEventListener("submit", function (event) {
+    // log the form data for debugging
+    // let formData = new FormData(addNotePopForm);
+    // // Iterate over the FormData and log key-value pairs
+    // formData.forEach((value, key) => {
+    //     console.log(`${key}: ${value}`);
+    // });
     if (!servReq) {
       event.preventDefault();
       // display the table header if it is hidden
       document.getElementById("notesTableHeader").style.display = "";
 
+      let newNoteTempId = document.getElementById("newNoteTempId").value;
+      3;
       let note = document.getElementById("note").value;
       let isPublic = document.getElementById("public").checked;
       let inputBy = document.getElementById("noteinputBy").value;
       let modDate = document.getElementById("modDate").value;
 
       let newNote = {
+        newNoteTempId: newNoteTempId,
         note: note,
         public: isPublic,
         inputBy: inputBy,
         modDate: modDate,
       };
       newSRNotes.push(newNote);
+      // Gives newNoteCounter counter for newNoteTempId one more each time a new note is submitted
+      window.newServiceRequestNoteCounter++;
 
       // Assuming there's a global array to hold notes for the new service request
       if (!window.newServiceRequestNotes) {
@@ -239,25 +287,30 @@ function addNoteModal() {
       // enable scrolling
       window.body.style.overflow = "auto";
       // update the UI
-      const noteTable = document.getElementById("notestableBody");
-      const formattedDate = new Date(newNote.modDate).toUTCString();
-      const newRow = `<tr id="notesrow">
-        <td onclick="sendNoteId()" style="cursor: pointer;">
-          <svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512">
-            <path d="M384 224v184a40 40 0 01-40 40H104a40 40 0 01-40-40V168a40 40 0 0140-40h167.48" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/>
-            <path d="M459.94 53.25a16.06 16.06 0 00-23.22-.56L424.35 65a8 8 0 000 11.31l11.34 11.32a8 8 0 0011.34 0l12.06-12c6.1-6.09 6.67-16.01.85-22.38zM399.34 90L218.82 270.2a9 9 0 00-2.31 3.93L208.16 299a3.91 3.91 0 004.86 4.86l24.85-8.35a9 9 0 003.93-2.31L422 112.66a9 9 0 000-12.66l-9.95-10a9 9 0 00-12.71 0z"/>
-          </svg>
-        </td>
-        <td></td>
-        <td>${newNote.note}</td>
-        <td>${newNote.inputBy}</td>
-        <td>${formattedDate}</td>
-      </tr>`;
-      noteTable.innerHTML += newRow;
-
-    }else{
+      if (!servReq) {
+        populateNotesTable(document.getElementById("notesTableBody"));
+      }
+      // const noteTable = document.getElementById("notesTableBody");
+      // const formattedDate = new Date(newNote.modDate).toUTCString();
+      // const newRow = `<tr id="notesrow">
+      //   <td onclick="sendNoteId()" style="cursor: pointer;">
+      //     <svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512">
+      //       <path d="M384 224v184a40 40 0 01-40 40H104a40 40 0 01-40-40V168a40 40 0 0140-40h167.48" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/>
+      //       <path d="M459.94 53.25a16.06 16.06 0 00-23.22-.56L424.35 65a8 8 0 000 11.31l11.34 11.32a8 8 0 0011.34 0l12.06-12c6.1-6.09 6.67-16.01.85-22.38zM399.34 90L218.82 270.2a9 9 0 00-2.31 3.93L208.16 299a3.91 3.91 0 004.86 4.86l24.85-8.35a9 9 0 003.93-2.31L422 112.66a9 9 0 000-12.66l-9.95-10a9 9 0 00-12.71 0z"/>
+      //     </svg>
+      //   </td>
+      //   <td>${newNote.newNoteTempId}</td>
+      //   <td>${newNote.note}</td>
+      //   <td>${newNote.inputBy}</td>
+      //   <td>${formattedDate}</td>
+      // </tr>`;
+      // noteTable.innerHTML += newRow;
+    } else {
       // Store the current scroll position (this will be used to restore position on reload)
-      localStorage.setItem("scrollPosition", window.scrollY || document.documentElement.scrollTop);
+      localStorage.setItem(
+        "scrollPosition",
+        window.scrollY || document.documentElement.scrollTop
+      );
     }
   });
 
@@ -276,22 +329,26 @@ function addNoteModal() {
     addNotePop.style.display = "block";
     document.getElementById("noteinputBy").value = userName;
     document.getElementById("modDate").value = new Date().toDateInputValue();
+    if (!servReq){
+        document.getElementById("newNoteTempId").value =
+        window.newServiceRequestNoteCounter; // Set the counter value
+    };
+    closeModalByClickingOutside();
   };
   addNotePop.open = openFunction;
 }
 
-/* andrewhiggins - I was trying to make the edit note button on the new sr form work by sending it to a different editnotepopform (see below)
-// opens the editor form with a specific note loaded from the notes table in a new service request form
-function sendNoteIdNewSR() {
-  let reqnoteid = parseInt(this.id);
-  editnotepop.open(reqnoteid);
-}
-*/
 
 // opens the editor form with a specific note loaded
 function sendNoteId() {
-  let reqnoteid = parseInt(this.id);
-  editnotepop.open(reqnoteid);
+  document.body.style.overflow = "hidden"; // Prevent scrolling when the modal is open
+  if (servReq) {
+    let reqnoteid = parseInt(this.id);
+    editnotepop.open(reqnoteid);
+  } else {
+    let newSRNote = this;
+    editnotepop.open(newSRNote);
+  }
 }
 
 // creates and handles the popup and form for editing an existing note
@@ -324,6 +381,11 @@ function editNoteModal() {
   };
   // Add the SVG button to the modal content
   editnotepopCon.appendChild(xButton);
+ 
+  // Create the title
+  let title = document.createElement("h2");
+  title.innerHTML = "Edit Note";
+  editnotepopCon.appendChild(title);
 
   editnotepop.appendChild(editnotepopCon);
   editnotepopCon.classList = "modal-content";
@@ -350,7 +412,11 @@ function editNoteModal() {
   // inputDate
   createLabel("noteinputDate", "Input Date", editnotepopForm);
   createInputElement("datetime-local", "noteinputDate", editnotepopForm);
-  editnotepopForm.appendChild(document.createElement("br"));
+  // editnotepopForm.appendChild(document.createElement("br"));
+  // this is for breaks that aren't working
+  let breakReplacement = document.createElement('div');
+  breakReplacement.style.height = '13.5px';
+  editnotepopForm.appendChild(breakReplacement);
 
   // userIdInput/userIdCreator
   createLabel("noteCreator", "Creator", editnotepopForm);
@@ -358,11 +424,13 @@ function editNoteModal() {
   editnotepopForm.appendChild(document.createElement("br"));
 
   // date
-  createLabel("editnotetoday", "Date", editnotepopForm);
+  if (servReq) {
+  createLabel("editnotetoday", "Modified Date", editnotepopForm);
   createInputElement("datetime-local", "editnotetoday", editnotepopForm);
   editnotepopForm.appendChild(document.createElement("br"));
+  };
 
-  editnotepopForm.appendChild(document.createElement("br"));
+  // editnotepopForm.appendChild(document.createElement("br"));
 
   // This is editable by the user
   // Note
@@ -376,11 +444,13 @@ function editNoteModal() {
   editnotepopForm.appendChild(document.createElement("br"));
 
   // Public
-  createLabel("editpublic", "Public", editnotepopForm);
-  createInputElement("checkbox", "editpublic", editnotepopForm);
-  editnotepopForm.appendChild(document.createElement("br"));
+  if (servReq) {
+    createLabel("editpublic", "Public", editnotepopForm);
+    createInputElement("checkbox", "editpublic", editnotepopForm);
+    editnotepopForm.appendChild(document.createElement("br"));
 
-  createInputElement("number", "servReqId", editnotepopForm);
+    createInputElement("number", "servReqId", editnotepopForm);
+  };
 
   // line break for aesthetics
   editnotepopForm.appendChild(document.createElement("br"));
@@ -388,7 +458,28 @@ function editNoteModal() {
   /////////////////   FORM END    ////////////////////////////
   //submit
   let editnotesubmit = document.createElement("input");
-  editnotesubmit.type = "submit";
+  if (servReq) {
+    editnotesubmit.type = "submit";
+  } else if (!servReq) {
+    editnotesubmit.type = "button";
+    editnotesubmit.onclick = function () {
+      // Get the value of the note ID to be edited (newNoteTempId)
+      let noteIdToEdit = document.getElementById("requestNoteId").value;
+
+      // Find the index of the map in the newSRNotes array using the newNoteTempId
+      let noteIndex = newSRNotes.findIndex(note => note.newNoteTempId == noteIdToEdit);
+
+      // If the note with the matching newNoteTempId is found
+      if (noteIndex !== -1) {
+        // Update the note with the new values
+        newSRNotes[noteIndex].note = document.getElementById("editnote").value;
+      };
+      // reload the notes table to reflect the changes
+      populateNotesTable(document.getElementById("notesTableBody"));
+      // close the window
+      editNoteCancel();
+    };
+  };
   editnotesubmit.id = "editnotepopsubmit";
   editnotesubmit.value = "Save";
   editnotepopForm.appendChild(editnotesubmit);
@@ -397,268 +488,132 @@ function editNoteModal() {
     // Store the current scroll position (this will be used to restore position on reload)
     let scrollPosition = window.scrollY || document.documentElement.scrollTop;
     localStorage.setItem("scrollPosition", scrollPosition);
-  })
+  });
 
   // Prevents enter key adding a line (\n) and sumbits edit note pop form instead
-  noteText.addEventListener("keydown", function(enter_key_pressed) {
-    if (enter_key_pressed.key === "Enter" || enter_key_pressed.key === "Return") { // when enter or return is pressed, it will submit the note
+  noteText.addEventListener("keydown", function (enter_key_pressed) {
+    if (
+      enter_key_pressed.key === "Enter" ||
+      enter_key_pressed.key === "Return"
+    ) {
+      // when enter or return is pressed, it will submit the note
       enter_key_pressed.preventDefault();
       document.getElementById("editnotepopsubmit").click();
     }
   });
 
-
   //delete
   let editnotedelete = document.createElement("input");
   editnotedelete.type = "button";
+  editnotedelete.id = "deletebutton";
   editnotedelete.value = "Delete";
   editnotedelete.onclick = function () {
-    // create the form
-    let deletenoteForm = document.createElement("form");
-    body.appendChild(deletenoteForm);
-    deletenoteForm.setAttribute("id", "deletenoteForm");
-    deletenoteForm.method = "post";
-    deletenoteForm.action = $SCRIPT_ROOT + "/NewServiceRequest";
+    if (servReq) {
+      console.log("this should NOT be showing")
+      // create the form
+      let deletenoteForm = document.createElement("form");
+      body.appendChild(deletenoteForm);
+      deletenoteForm.setAttribute("id", "deletenoteForm");
+      deletenoteForm.method = "post";
+      deletenoteForm.action = $SCRIPT_ROOT + "/NewServiceRequest";
 
-    let remove = document.createElement("input");
-    remove.type = "text";
-    remove.name = "deleteNote";
-    remove.value = document.getElementById("requestNoteId").value;
-    deletenoteForm.appendChild(remove);
+      let remove = document.createElement("input");
+      remove.type = "text";
+      remove.name = "deleteNote";
+      remove.value = document.getElementById("requestNoteId").value;
+      deletenoteForm.appendChild(remove);
 
-    let servReqId = document.createElement("input");
-    servReqId.type = "number";
-    servReqId.name = "servReqId";
-    servReqId.value = servReq["servReqId"];
-    deletenoteForm.appendChild(servReqId);
-    // Store the current scroll position
-    let scrollPosition = window.scrollY || document.documentElement.scrollTop;
-    console.log("scrollPosition", scrollPosition);
-    localStorage.setItem("scrollPosition", scrollPosition);
-    deletenoteForm.submit();
+      let servReqId = document.createElement("input");
+      servReqId.type = "number";
+      servReqId.name = "servReqId";
+      servReqId.value = servReq["servReqId"];
+      deletenoteForm.appendChild(servReqId);
+      // Store the current scroll position
+      let scrollPosition = window.scrollY || document.documentElement.scrollTop;
+      console.log("scrollPosition", scrollPosition);
+      localStorage.setItem("scrollPosition", scrollPosition);
+      deletenoteForm.submit();
+    } else if (!servReq) {
+      // Get the value of the note ID to be deleted (newNoteTempId)
+      let noteIdToDelete = document.getElementById("requestNoteId").value;
+
+      // Find the index of the map in the newSRNotes array using the newNoteTempId
+      let noteIndex = newSRNotes.findIndex(note => note.newNoteTempId == noteIdToDelete);
+
+      // If the note with the matching newNoteTempId is found
+      if (noteIndex !== -1) {
+        // Remove the map from the newSRNotes array
+        newSRNotes.splice(noteIndex, 1);
+      };
+
+      // Store the current scroll position
+      let scrollPosition = window.scrollY || document.documentElement.scrollTop;
+      console.log("scrollPosition", scrollPosition);
+      localStorage.setItem("scrollPosition", scrollPosition);
+      // reload the notes table to reflect the changes
+      populateNotesTable(document.getElementById("notesTableBody"));
+      // close the window
+      editNoteCancel();
+    };
   };
   editnotepopForm.appendChild(editnotedelete);
 
   // function that opens the popup
   let openFunction = function (id) {
-    editnotepop.style.display = "block";
-    document.getElementById("requestNoteId").value =
-      servReq["notes"][id]["reqNoteId"];
-    document.getElementById("noteinputDate").value =
-      servReq["notes"][id]["inputDate"];
-    document.getElementById("noteCreator").value =
-      servReq["notes"][id]["userCreator"];
-    document.getElementById("editnotetoday").value =
-      new Date().toDateInputValue();
+    if (servReq) {
+      editnotepop.style.display = "block";
+      document.getElementById("requestNoteId").value =
+        servReq["notes"][id]["reqNoteId"];
+      document.getElementById("noteinputDate").value =
+        servReq["notes"][id]["inputDate"];
+      document.getElementById("noteCreator").value =
+        servReq["notes"][id]["userCreator"];
+      document.getElementById("editnotetoday").value =
+        new Date().toDateInputValue();
 
-    document.getElementById("editnote").value = servReq["notes"][id]["note"];
-    if (servReq["notes"][id]["private"]) {
-      document.getElementById("editpublic").checked = false;
-    } else {
-      document.getElementById("editpublic").checked = true;
-    }
+      document.getElementById("editnote").value = servReq["notes"][id]["note"];
+      if (servReq["notes"][id]["private"]) {
+        document.getElementById("editpublic").checked = false;
+      } else {
+        document.getElementById("editpublic").checked = true;
+      }
 
-    if (userName == servReq["notes"][id]["userCreator"]) {
-      document.getElementById("editnote").readOnly = false;
-    } else {
-      document.getElementById("editnote").readOnly = true;
-    }
+      if (userName == servReq["notes"][id]["userCreator"]) {
+        document.getElementById("editnote").readOnly = false;
+      } else {
+        document.getElementById("editnote").readOnly = true;
+      }
 
-    document.getElementById("noteinputDate").value = sqlDateToUsableDate(
-      servReq["notes"][id]["inputDate"]
-    );
+      document.getElementById("noteinputDate").value = sqlDateToUsableDate(
+        servReq["notes"][id]["inputDate"]
+      );
+    } else if (!servReq) {
+      // id is the newSRNote that is passed from the populateNotesTable function in editSRHelper.js
+      editnotepop.style.display = "block";
+      document.getElementById("requestNoteId").value =
+        id["newNoteTempId"];
+      document.getElementById("noteinputDate").value =
+        id["modDate"];
+      document.getElementById("noteCreator").value =
+        id["inputBy"];
+      document.getElementById("editnote").value = 
+        id["note"];
+    };
+    closeModalByClickingOutside();
   };
   editnotepop.open = openFunction;
-}
-
-
-
-// // creates and handles the popup and form for editing an note in a new service request form andrewhiggins
-// function editNoteModalNewSR() {
-//   // create popup
-//   let editnotepop = document.createElement("div");
-//   document.getElementById("body").appendChild(editnotepop);
-//   editnotepop.classList = "modal";
-//   editnotepop.setAttribute("id", "editnotepop");
-//   editnotepop.style.display = "none";
-
-//   // Create popup content
-//   let editnotepopCon = document.createElement("div");
-//   // Create the SVG element for the close button
-//   let xButton = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-//   xButton.setAttribute("xmlns", "http://www.w3.org/2000/svg");
-//   xButton.setAttribute("viewBox", "0 0 512 512");
-//   xButton.classList.add("ionicon"); // Optional, if you want to add styling class
-//   // Create the path element inside the SVG
-//   let path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-//   path.setAttribute(
-//     "d",
-//     "M400 145.49L366.51 112 256 222.51 145.49 112 112 145.49 222.51 256 112 366.51 145.49 400 256 289.49 366.51 400 400 366.51 289.49 256 400 145.49z"
-//   );
-//   // Append the path to the SVG element
-//   xButton.appendChild(path);
-//   // Add event listener to close button (SVG)
-//   xButton.onclick = function () {
-//     editNoteCancel(); // Call the function when the close button is clicked
-//   };
-//   // Add the SVG button to the modal content
-//   editnotepopCon.appendChild(xButton);
-
-//   editnotepop.appendChild(editnotepopCon);
-//   editnotepopCon.classList = "modal-content";
-//   editnotepopCon.setAttribute("id", "editnotepop-content");
-
-//   // create the form
-//   let editnotepopForm = document.createElement("form");
-//   editnotepopCon.appendChild(editnotepopForm);
-//   editnotepopForm.setAttribute("id", "editnotepopForm");
-//   editnotepopForm.method = "post";
-//   editnotepopForm.action = $SCRIPT_ROOT + "/NewServiceRequest";
-
-//   /////////////////   BUILD THE FORM  ////////////////////////
-//   /*
-//         modifiedDate (server side)
-
-//     */
-//   // Display this information, but it is not editable
-//   // requestNoteId
-//   createLabel("requestNoteId", "Request Note ID", editnotepopForm);
-//   createInputElement("number", "requestNoteId", editnotepopForm);
-//   editnotepopForm.appendChild(document.createElement("br"));
-
-//   // inputDate
-//   createLabel("noteinputDate", "Input Date", editnotepopForm);
-//   createInputElement("datetime-local", "noteinputDate", editnotepopForm);
-//   editnotepopForm.appendChild(document.createElement("br"));
-
-//   // userIdInput/userIdCreator
-//   createLabel("noteCreator", "Creator", editnotepopForm);
-//   createInputElement("text", "noteCreator", editnotepopForm);
-//   editnotepopForm.appendChild(document.createElement("br"));
-
-//   // date
-//   createLabel("editnotetoday", "Date", editnotepopForm);
-//   createInputElement("datetime-local", "editnotetoday", editnotepopForm);
-//   editnotepopForm.appendChild(document.createElement("br"));
-
-//   editnotepopForm.appendChild(document.createElement("br"));
-
-//   // This is editable by the user
-//   // Note
-//   createLabel("editnote", "Note", editnotepopForm);
-//   let noteText = document.createElement("textarea");
-//   noteText.setAttribute("id", "editnote");
-//   noteText.name = "editnote";
-//   noteText.required = true;
-//   noteText.style.width = "100%";
-//   editnotepopForm.appendChild(noteText);
-//   editnotepopForm.appendChild(document.createElement("br"));
-
-//   // Public
-//   createLabel("editpublic", "Public", editnotepopForm);
-//   createInputElement("checkbox", "editpublic", editnotepopForm);
-//   editnotepopForm.appendChild(document.createElement("br"));
-
-//   createInputElement("number", "servReqId", editnotepopForm);
-
-//   // line break for aesthetics
-//   editnotepopForm.appendChild(document.createElement("br"));
-
-//   /////////////////   FORM END    ////////////////////////////
-//   //submit
-//   let editnotesubmit = document.createElement("input");
-//   editnotesubmit.type = "submit";
-//   editnotesubmit.id = "editnotepopsubmit";
-//   editnotesubmit.value = "Save";
-//   editnotepopForm.appendChild(editnotesubmit);
-
-//   editnotepopForm.addEventListener("submit", () => {
-//     // Store the current scroll position (this will be used to restore position on reload)
-//     let scrollPosition = window.scrollY || document.documentElement.scrollTop;
-//     localStorage.setItem("scrollPosition", scrollPosition);
-//   })
-
-//   // Prevents enter key adding a line (\n) and sumbits edit note pop form instead
-//   noteText.addEventListener("keydown", function(enter_key_pressed) {
-//     if (enter_key_pressed.key === "Enter" || enter_key_pressed.key === "Return") { // when enter or return is pressed, it will submit the note
-//       enter_key_pressed.preventDefault();
-//       document.getElementById("editnotepopsubmit").click();
-//     }
-//   });
-
-
-//   //delete
-//   let editnotedelete = document.createElement("input");
-//   editnotedelete.type = "button";
-//   editnotedelete.value = "Delete";
-//   editnotedelete.onclick = function () {
-//     // create the form
-//     let deletenoteForm = document.createElement("form");
-//     body.appendChild(deletenoteForm);
-//     deletenoteForm.setAttribute("id", "deletenoteForm");
-//     deletenoteForm.method = "post";
-//     deletenoteForm.action = $SCRIPT_ROOT + "/NewServiceRequest";
-
-//     let remove = document.createElement("input");
-//     remove.type = "text";
-//     remove.name = "deleteNote";
-//     remove.value = document.getElementById("requestNoteId").value;
-//     deletenoteForm.appendChild(remove);
-
-//     let servReqId = document.createElement("input");
-//     servReqId.type = "number";
-//     servReqId.name = "servReqId";
-//     servReqId.value = servReq["servReqId"];
-//     deletenoteForm.appendChild(servReqId);
-//     // Store the current scroll position
-//     let scrollPosition = window.scrollY || document.documentElement.scrollTop;
-//     console.log("scrollPosition", scrollPosition);
-//     localStorage.setItem("scrollPosition", scrollPosition);
-//     deletenoteForm.submit();
-//   };
-//   editnotepopForm.appendChild(editnotedelete);
-
-//   // function that opens the popup
-//   let openFunction = function (id) {
-//     editnotepop.style.display = "block";
-//     document.getElementById("requestNoteId").value =
-//       servReq["notes"][id]["reqNoteId"];
-//     document.getElementById("noteinputDate").value =
-//       servReq["notes"][id]["inputDate"];
-//     document.getElementById("noteCreator").value =
-//       servReq["notes"][id]["userCreator"];
-//     document.getElementById("editnotetoday").value =
-//       new Date().toDateInputValue();
-
-//     document.getElementById("editnote").value = servReq["notes"][id]["note"];
-//     if (servReq["notes"][id]["private"]) {
-//       document.getElementById("editpublic").checked = false;
-//     } else {
-//       document.getElementById("editpublic").checked = true;
-//     }
-
-//     if (userName == servReq["notes"][id]["userCreator"]) {
-//       document.getElementById("editnote").readOnly = false;
-//     } else {
-//       document.getElementById("editnote").readOnly = true;
-//     }
-
-//     document.getElementById("noteinputDate").value = sqlDateToUsableDate(
-//       servReq["notes"][id]["inputDate"]
-//     );
-//   };
-//   editnotepop.open = openFunction;
-// }
+};
 
 
 // clears the edit form when you click the cancel button
 function editNoteCancel() {
   document.getElementById("editnotepop").style.display = "none";
-
   document.getElementById("requestNoteId").value = "";
   document.getElementById("noteinputDate").value = "";
   document.getElementById("noteCreator").value = "";
-
   document.getElementById("editnote").value = "";
-  document.getElementById("editpublic").checked = true;
+  if (servReq) {
+    document.getElementById("editpublic").checked = true;
+  };
+  document.body.style.overflow = "auto"; // Enable scrolling
 }

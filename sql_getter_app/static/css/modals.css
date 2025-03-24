@@ -1,0 +1,186 @@
+/* Modal Styles */
+/* this styling is attached to each table modal created in tableModals.js */
+/* it is imported into the html in the modal_style block in tables.html */
+/* naming convention for input boxes is {input type}Input */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  
+.modal-content {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  width: 400px;
+  max-width: 90%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  overflow: auto;
+}
+  
+.modal-content h2 {
+  margin: 0;
+  padding: 10px 0;
+  font-size: 1.5rem;
+  text-align: center;
+}
+  
+.modal-content label,
+.textInput,
+.numberInput,
+.emailInput,
+.modal-content select,
+.telInput {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  font-size: 1rem;
+  box-sizing: border-box;
+  border-radius: 4px;
+}
+
+.textInput,
+.numberInput,
+.emailInput,
+.telInput,
+.checkboxInput {
+  border: 1px solid #ccc;
+}
+
+.modal-content select {
+  height: 40px;
+  border: 1px solid #ccc;
+  color: black;
+}
+
+.modal-content button {
+  width: 48%;
+  padding: 10px;
+  margin: 10px 1%;
+  box-sizing: border-box;
+  border: none;
+  vertical-align: middle;
+  color: #fff;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.modal-content button[type="submit"] {
+  background-color: #002e5d;
+}
+
+.modal-content button#edit-del-btn {
+  background-color: #9c2222;
+}
+
+.modal-content button#edit-del-btn:hover {
+  background-color: #b52a2a;
+}
+
+.modal-content button[type="button"] {
+  background-color: #888a8a;
+}
+
+.modal-content button[type="submit"]:hover {
+  background-color: #004080;
+}
+
+.modal-content button[type="button"]:hover {
+  background-color: #a9a9a9;
+}
+
+.numberInput,
+.textInput {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+}
+
+.numberInput {
+  align-items: center;
+  padding: 5px;
+  border-radius: 4px;
+  width: 35% !important /*override width for numeric input*/
+}
+
+.numberInput label,
+.checkboxInput label,
+.textInput label {
+  font-size: 1rem;
+  color: #333;
+}
+
+.numberInput label {
+  margin-right: 10px;
+}
+
+.textInput input[type="text"],
+.textInput input[type="email"] {
+  padding: 8px;
+  border-radius: 4px;
+  width: 100%;
+}
+
+  
+/* FOR THE MODAL CLOSE SVG (X) */
+.modal-content {
+  position: relative; /* Make sure the container is relative for absolute positioning of the close button */
+  padding: 20px;
+  background-color: white;
+  border-radius: 8px;
+}
+
+/* For the close button (SVG) */
+.modal-content svg {
+  position: absolute; /* Position the SVG absolutely within the modal */
+  top: 10px; /* Adjust as needed to move it down from the top */
+  right: 10px; /* Adjust as needed to move it in from the right */
+  width: 30px; /* Set width for the SVG (adjust to desired size) */
+  height: 30px; /* Set height for the SVG (adjust to desired size) */
+  cursor: pointer; /* Change cursor to indicate it's clickable */
+}
+
+/* Optional: Add a hover effect for the close button */
+.modal-content svg:hover {
+  transform : scale(1.1); /* Scale the SVG on hover */
+}
+
+/* Further styling adjustments for smaller screens */
+@media (max-width: 480px) { 
+    .modal-content {
+      width: 70%; /* Make modals full-width on small screens */
+    }
+  }
+  
+@media (max-width: 380px) {
+  .modal-content {
+    padding: 10px; /* Reduce padding for small screens */
+  }
+
+  .modal-content h2 {
+    font-size: 1.2rem; /* Reduce font size for small screens */
+  }
+
+  .modal-content button[type="submit"],
+  .modal-content button[type="button"] {
+    padding: 8px; /* Adjust button padding */
+  }
+
+  .modal-content button[type="submit"]{
+      background-color: #002e5d;
+      color: #fff;
+  }
+
+  .modal-content svg {
+    width: 25px; /* Adjust size of close button */
+    height: 25px; /* Adjust size of close button */
+    top: 5px; /* Adjust position of close button */
+    right: 5px; /* Adjust position of close button */
+  }
+}

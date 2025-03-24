@@ -9,26 +9,19 @@
 #       e. print the SR html
 
 # imports modules we need
-from json.encoder import JSONEncoder
 import json
 from sys import version
 import flask_login
-from flask import (Flask, redirect, render_template, request, session, url_for, Blueprint, abort, make_response)
-from markupsafe import escape
-from sqlalchemy.sql.expression import false, true
-from werkzeug.exceptions import HTTPVersionNotSupported
-from werkzeug.utils import header_property
+from flask import (redirect, render_template, request, Blueprint, abort, make_response)
+from sqlalchemy.sql.expression import true
 from sqlalchemy import text
 # below are local module imports
-from sql_getter_app.crud import getColumnTypes, pull
+from sql_getter_app.crud import getColumnTypes
 from sql_getter_app.auth import login_required
 from sql_getter_app.createTableHtml import tableHtml
 from sql_getter_app.collection import db, production, versionString
 from sql_getter_app.formFuncs import newReqHelper, newSRHelper, getServReqData, submitEdits, submitNewItem, addItem, addNote, saveReqItemEdits, saveReqNoteEdits
 from sql_getter_app.user_class import user_session
-from sql_getter_app.tables import item, tablePermissions
-
-import json
 
 
 primaryKey = 'serviceRequestId'
@@ -155,9 +148,12 @@ def newServiceRequest():
                     deviceType = request.form['newitemdeviceType']
                     deviceSubType = request.form['newitemdeviceSubType']
                     servReqId = request.form['servReqId']
-                    servReq = getServReqData(servReqId)
+                    try: # if created from an existing SR
+                        servReq = getServReqData(servReqId)
+                    except: # if it is created from a new SR
+                        servReq = None
                     submitNewItem(description, modelNum, vendor, minStock, manufacturer, deviceType, deviceSubType)
-                    return newSrRenderTemplate(None, servReq, None, None, description)
+                    return newSrRenderTemplate(None, servReqId, None, None, description)
 
                 # check if they are adding an item
                 elif (str(firstInput) == 'items'):

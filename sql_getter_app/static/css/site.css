@@ -46,7 +46,6 @@ select {
     background-color: white;
     border-color: var(--otherColor);
     height: 20px;
-    max-width: 100px;
 }
 
 

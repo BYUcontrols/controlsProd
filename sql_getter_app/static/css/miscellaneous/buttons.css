@@ -38,7 +38,7 @@ button:disabled {
 .selectButton {
     margin-left: 3px;
     background-color: var(--contrastColor);
-    color: black;
+    color: white;
     width: 60px;
 }
 
@@ -50,7 +50,7 @@ button:disabled {
     font-size: 16px;
     margin: 0px 0;
     height: 30px;
-    width: 100px;
+    min-width: 90px;
     border: none;
     border-radius: 4px;
     text-align: center;
@@ -59,12 +59,17 @@ button:disabled {
     vertical-align: middle;
     line-height: 30px;
     cursor: pointer;
+    padding: 0px 10px;
 }
-/* style for BYUbuttons that have the mouse over them */
-.BYUbutton:hover{
-    background-color:  var(--contrastColor);
-    color: white
+
+
+@media (min-width: 480px) {
+    /* style for BYUbuttons that have the mouse over them */
+    .BYUbutton:hover{
+        background-color:  var(--contrastColor);
+    }
 }
+
 /* a variation of the byu button */
 .BYUbuttonWhite {
     font-family: 'HCo Ringside Narrow SSm', Arial, sans-serif;
@@ -82,4 +87,8 @@ button:disabled {
     vertical-align: middle;
     line-height: 30px;
     cursor: pointer;
+}
+
+#addItemBtn {
+    margin-left: 15px;
 }

@@ -18,9 +18,9 @@ def makeRow(self, row, showDeleted):
         #  or pair[0] != 'serviceTypeId'
         if ((pair[0] != self.PK and pair[0] != 'active')):
             # put the value into the table
-            self.html += f"<td>{str(pair[1])}</td>"
+            self.html += f"<td id='{str(row[self.PK])}-{pair[0]}'>{str(pair[1])}</td>"
     # create a cell where we can put the buttons and close the row
-    self.html += "<td class='noPrint'></td></tr>"
+    self.html += '<td id="editCell"></td></tr>'
     
 # tells us if the row has an open status or not
 def checkIfStatusIsOpen(self, row, PK):

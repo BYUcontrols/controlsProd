@@ -18,6 +18,16 @@ Main Page
 {% block content %}
 <!-- the raw block makes it so that no jinja template code will be executed -->
 {% raw %}
+<style>
+    body {
+            overflow-x: hidden; /* Disable horizontal scrolling */
+            word-wrap: break-word; /* Ensure text wraps within its container */
+    }
+    pre {
+        white-space: pre-wrap; /* Preserve formatting */
+    }
+</style>
+
 <a name="top"></a>
 <pre style='background-color: white; padding: 10px;'>
 

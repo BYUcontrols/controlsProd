@@ -1,8 +1,6 @@
-#
 #   A Module I created for functions that help with getting information from forms
 #   and submitting them to the database because the serviceRequests module was getting
 #   crowded.
-#   FIXME: The requests to the database are very inefficient and need to be optimized
 
 from sqlalchemy.sql import null
 import flask_login
@@ -236,14 +234,23 @@ def getServReqData(servReqId):
         idStr = idStr[1:len(idStr)-2]
         reqItemId = int(idStr)
 
-        itemId = db.engine.execute(f"SELECT [itemId] FROM [RequestItem] WHERE requestItemId='{reqItemId}';").fetchall()[0][0]
-        name = db.engine.execute(f"SELECT [description] FROM [Item] WHERE itemId='{itemId}';").fetchall()[0][0]
-        userId = db.engine.execute(f"SELECT [userIdModified] FROM [RequestItem] WHERE requestItemId='{reqItemId}';").fetchall()[0][0]
-        inputBy = db.engine.execute(f"SELECT [fullName] FROM [User] WHERE userId='{userId}';").fetchall()[0][0]
-        quantity = int(db.engine.execute(f"SELECT [quantity] FROM [RequestItem] WHERE requestItemId='{reqItemId}';").fetchall()[0][0])
-        void = db.engine.execute(f"SELECT [voided] FROM [RequestItem] WHERE requestItemId='{reqItemId}';").fetchall()[0][0]
-        statusId = db.engine.execute(f"SELECT [status] FROM [RequestItem] WHERE requestItemId='{reqItemId}';").fetchall()[0][0]
-        status = db.engine.execute(f"SELECT [status] FROM [Status] WHERE statusId='{statusId}';").fetchall()[0][0]
+        # query the db to get the items on the SR
+        result = db.engine.execute(f"""
+            SELECT ri.itemId, i.description, ri.userIdModified, u.fullName, ri.quantity, ri.voided, s.status
+            FROM [RequestItem] ri
+            JOIN [Item] i ON ri.itemId = i.itemId
+            JOIN [User] u ON ri.userIdModified = u.userId
+            JOIN [Status] s ON ri.status = s.statusId
+            WHERE ri.requestItemId = '{reqItemId}';
+        """).fetchone()
+
+        try:
+            itemId, name, userId, inputBy, quantity, void, status = result
+            quantity = int(quantity)  # Convert quantity to int if necessary
+        except Exception as e:
+            print(e)
+            
+
 
         reqItem = dict()
         reqItem['reqItemId'] = reqItemId
@@ -265,14 +272,17 @@ def getServReqData(servReqId):
         idStr = idStr[1:len(idStr)-2]
         reqNoteId = int(idStr)
 
-        note = db.engine.execute(f"SELECT [note] FROM [RequestNote] WHERE requestNoteId='{reqNoteId}';").fetchall()[0][0]
-        inputById = int(db.engine.execute(f"SELECT [userIdInput] FROM [RequestNote] WHERE requestNoteId='{reqNoteId}';").fetchall()[0][0])
-        inputBy = db.engine.execute(f"SELECT [fullName] FROM [User] WHERE userId='{inputById}';").fetchall()[0][0]
-        date = db.engine.execute(f"SELECT [inputDate] FROM [RequestNote] WHERE requestNoteId='{reqNoteId}';").fetchall()[0][0]
-        private = db.engine.execute(f"SELECT [private] FROM [RequestNote] WHERE requestNoteId='{reqNoteId}';").fetchall()[0][0]
-        inputDate = db.engine.execute(f"SELECT [inputDate] FROM [RequestNote] WHERE requestNoteId='{reqNoteId}';").fetchall()[0][0]
-        userIdCreator = db.engine.execute(f"SELECT [userIdCreator] FROM [RequestNote] WHERE requestNoteId='{reqNoteId}';").fetchall()[0][0]
-        userCreator = db.engine.execute(f"SELECT [userName] FROM [User] WHERE userId='{userIdCreator}';").fetchall()[0][0]
+        # query the db to get the notes on the SR
+        result = db.engine.execute(f"""
+            SELECT rn.note, rn.inputDate, rn.private, rn.userIdInput, u1.fullName, u2.userName 
+            FROM [RequestNote] rn
+            JOIN [User] u1 ON rn.userIdInput = u1.userId
+            JOIN [User] u2 ON rn.userIdCreator = u2.userId
+            WHERE rn.requestNoteId = '{reqNoteId}';
+        """).fetchone()
+
+        note, inputDate, private, inputById, inputBy, userCreator = result
+        inputById = int(inputById)  # Convert userIdInput to int if necessary
     
         reqNote = dict()
         reqNote['reqNoteId'] = reqNoteId

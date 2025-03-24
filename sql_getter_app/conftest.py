@@ -4,15 +4,9 @@
 #   2. creates a function that starts an instance of the user_session class and fake logs it in
 
 import pytest
-import sys
-import os
-# for production
-#sys.path.append('C:\\control-app\\appEnv\\sql_getter_app')
-import sql_getter_app
 from sql_getter_app import app
 from sql_getter_app.collection import db
-from flask import Flask, appcontext_pushed
-from flask_sqlalchemy import SQLAlchemy
+from flask import appcontext_pushed
 
 # here we setup the instance of our app we will use for testing.
 @pytest.fixture
@@ -49,4 +43,5 @@ def testLoginUser():
     testUser.tableId = 1
     testUser.roleText = 'TESTING USER'
     # return the fake user
+    print('testUERS')
     return testUser

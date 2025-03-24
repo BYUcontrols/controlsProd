@@ -2,11 +2,7 @@
 #   1. imports modules we need
 #   2. defines functions for the test environment & login/out situation
 
-import re
-import sqlite3
 import pytest
-import sys
-import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 # for production
