@@ -279,7 +279,7 @@ class cellEngine {
                                             // add the new value to the linked object for the cell
                                             // javascript is nice and editing this will automatically update this object everywhere else
                                             cellContext.linkObject[id] = this.responseText;
-                                            // next we need to reset the new item menu (it's dropdown menus will not contain the new data)
+                                            // next we need to reset the new part menu (it's dropdown menus will not contain the new data)
                                             // by looping through the cells in the row and calling the edit() method on them
                                             for (let cell of window.inputEngine.fields) {
                                                 cell.edit(); // re running the edit function will update the select to reflect the new added linked

@@ -98,25 +98,25 @@ class sqlCommands:
 
                         if (operation == 'containsOr'): # contains x or y or z, for varchars.
                             text += '('
-                            for item in whereDict[column]['list']:
+                            for part in whereDict[column]['list']:
                                 text += column +' LIKE :'+str(counter) + ' OR '
-                                insertDict[str(counter)] = '%'+item+'%'
+                                insertDict[str(counter)] = '%'+part+'%'
                                 counter += 1
                             text = text[:-4] # remove 
                             text += ') AND '
 
                         elif (operation == 'containsAnd'):  # contains x and y and z
-                            for item in whereDict[column]['list']:
+                            for part in whereDict[column]['list']:
                                 text += column +' LIKE :'+str(counter) + ' AND '
-                                insertDict[str(counter)] = '%'+item+'%'
+                                insertDict[str(counter)] = '%'+part+'%'
                                 counter += 1
                             text = text[:-4]
                             text += ' AND '
 
                         elif (operation == 'isNot'): # is not x and is not y and is not z
-                            for item in whereDict[column]['list']:
+                            for part in whereDict[column]['list']:
                                 text += column +' <> :'+str(counter) + ' AND '
-                                insertDict[str(counter)] = item
+                                insertDict[str(counter)] = part
                                 counter += 1
 
                         elif (operation == 'range'): # is between x and y, for varchars and numbers
@@ -127,17 +127,17 @@ class sqlCommands:
 
                         elif (operation == 'is'): # is x or y or z
                             text += column + ' IN ('
-                            for item in whereDict[column]['list']:
+                            for part in whereDict[column]['list']:
                                 text += ':' + str(counter) + ','
-                                insertDict[str(counter)] = item
+                                insertDict[str(counter)] = part
                                 counter += 1
                             text = text[:-1]
                             text += ') AND '
 
                         elif (operation == 'bool'): # is true or false
-                            for item in whereDict[column]['list']:
+                            for part in whereDict[column]['list']:
                                 text += column +' = :'+str(counter) + ' AND '
-                                insertDict[str(counter)] = item
+                                insertDict[str(counter)] = part
                                 counter += 1
 
                         elif (operation == 'noneType'):

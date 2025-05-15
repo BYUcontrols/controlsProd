@@ -13,10 +13,10 @@ function serviceRequestInit() {
     displayTechnicianFunctionalities(userIsTech);
     showOpenButtonTransformation(urlPath);
     showAllButtonTransformation(urlPath);
-    generateFilterButton();
-    generatePrintButton(document.getElementById('srTableFunctions'));
 
     urlParams = new URLSearchParams(window.location.search);
+        // check if this page is a child of another and act accordingly
+    checkForParentWindows();
         // set the page to automatically run data passed to history.pushState as a function when
         // the user hits the back button.
     window.historyStateActionArray = new Array();
@@ -27,31 +27,55 @@ function serviceRequestInit() {
     };
         // create a place to store the containers for the open service request windows
     window.srContainerObject = new Object()
-        // check if this page is a child of another and act accordingly
-    checkForParentWindows();
+    
         // if we were redirected from another page create an alert box that tells the user about it
     if (this.urlParams.has('redirectChain')) {
         let path = JSON.parse(urlParams.get('redirectChain'))
         let fromTable = path[path.length-1]['table'];
         unobtrusiveAlert("Redirected from "+fromTable+". Click a 'Select' button or create new element to return with that element selected");
     }
-
-        // generate the columns object
+    // generate the columns object
     window.columnsInfo = generateColumnsObject(document.getElementById('tableHead'));
+    // console.log(window.columnsInfo);
         // initialize the rows of the table
     window.rowCollection = serviceReqInitializeRows(document.getElementById('tableBody'), window.columnsInfo);
+    // console.log(window.rowCollection);
 
-        // execute various functions
-    // MASON: UNCOMMENT BELOW FOR SORT SELECT    
-    //generateSortSelect();
-        // custom initial displayed columns if you want to easily change this:
-        //  use 'Displayed Columns' and then go to the devConsole for chrome, 
-        //  Application, Local Storage, https://whateverTheServerIs, /serviceRequest, and copy the text for 'display'
-    generateDisplaySelect({"0":true,"1":true,"2":true,"3":true,"4":true,"5":true,"6":true,"7":false,"8":false,"9":false,"10":false,"11":false,"12":true,"13":true});
+    // Create an instance of the sortMenu.
+    let sorter = new sortMenu(window.columnsInfo, document.getElementById('srtable'), window.rowCollection);
+    // console.log("Sorter object:", sorter); // You already have this, good.
+
+    let tableFunctionsContainer = document.getElementById('srTableFunctions');
+    // console.log("Container (srTableFunctions):", tableFunctionsContainer);
+
+    if (tableFunctionsContainer) {
+        let menuElement = sorter.createMenu('Sort SR by: ', 'Options to sort service requests');
+        // console.log("Menu element from createMenu:", menuElement);
+
+        if (menuElement instanceof Node) { // Check if it's a valid DOM node
+            tableFunctionsContainer.appendChild(menuElement);
+            // console.log("innerHTML of srTableFunctions after append:", tableFunctionsContainer.innerHTML);
+            // At this point, if no errors, it should be in the DOM.
+        } else {
+            // console.error("sorter.createMenu() did NOT return a valid DOM element. It returned:", menuElement);
+        }
+    } else {
+        // console.error("Element with ID 'srTableFunctions' NOT FOUND!");
+    }
+    generateDisplaySelect({"0":true,"1":true,"2":true,"3":true,"4":true,"5":true,"6":true,"7":true,"8":true,"9":true,"10":true,"11":true,"12":true,"13":true});
+    generatePrintButton(document.getElementById('srTableFunctions'));
+    generateFilterButton();
     
     
+    //     // execute various functions
+    // // MASON: UNCOMMENT BELOW FOR SORT SELECT    
+    // generateSortSelect();
+    //     // custom initial displayed columns if you want to easily change this:
+    //     //  use 'Displayed Columns' and then go to the devConsole for chrome, 
+    //     //  Application, Local Storage, https://whateverTheServerIs, /serviceRequest, and copy the text for 'display'
+    
 
-        // start the pagination engine
+    // start the pagination engine
     // document.getElementsByClassName('tableFunctions')[0].appendChild(new paginationEngine(rowCollection));
 
         // restore scroll position
@@ -85,8 +109,11 @@ function serviceReqInitializeRows(tableBodyRef, columnsInfo) {
 
     let rows = tableBodyRef.rows;
     let rowsObject = new Object();
+    // Define the SVG for the edit button once
+    const editButtonSVG = '<svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512"><path d="M384 224v184a40 40 0 01-40 40H104a40 40 0 01-40-40V168a40 40 0 0140-40h167.48" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/><path d="M459.94 53.25a16.06 16.06 0 00-23.22-.56L424.35 65a8 8 0 000 11.31l11.34 11.32a8 8 0 0011.34 0l12.06-12c6.1-6.09 6.67-16.01.85-22.38zM399.34 90L218.82 270.2a9 9 0 00-2.31 3.93L208.16 299a3.91 3.91 0 004.86 4.86l24.85-8.35a9 9 0 003.93-2.31L422 112.66a9 9 0 000-12.66l-9.95-10a9 9 0 00-12.71 0z"/></svg>';
+
         // for each row...
-    for (row of rows) {
+    for (const row of rows) { // Changed to const as 'row' is not reassigned in the loop
             // create a row engine and call .loadRow on it
         let placeholder = new rowEngine(columnsInfo, tableName, permissionsObject, linkedChildrenExist, true);
             // load the row up but skip the buttons (the fourth argument)
@@ -99,10 +126,35 @@ function serviceReqInitializeRows(tableBodyRef, columnsInfo) {
         // optionsData.container.append(createButton('Edit', servReqWindow.bind(placeholder), 'Click here to expand and edit this service request'));
         //     // make the audit button if the user has audit permissions
         // if (placeholder.permissions.canAudit) optionsData.container.append(createButton('Audit', auditTable.bind(placeholder), 'View a list of changes made to this row'));
-        //     // make the description field also expand the column
-        placeholder.fields[0].htmlRef.onclick = servReqWindow.bind(placeholder);
-        placeholder.fields[0].htmlRef.style.cursor = 'pointer';
-        placeholder.fields[0].htmlRef.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512"><path d="M384 224v184a40 40 0 01-40 40H104a40 40 0 01-40-40V168a40 40 0 0140-40h167.48" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/><path d="M459.94 53.25a16.06 16.06 0 00-23.22-.56L424.35 65a8 8 0 000 11.31l11.34 11.32a8 8 0 0011.34 0l12.06-12c6.1-6.09 6.67-16.01.85-22.38zM399.34 90L218.82 270.2a9 9 0 00-2.31 3.93L208.16 299a3.91 3.91 0 004.86 4.86l24.85-8.35a9 9 0 003.93-2.31L422 112.66a9 9 0 000-12.66l-9.95-10a9 9 0 00-12.71 0z"/></svg>';
+        
+        // Make the description field (fields[0]) clickable to expand/edit, without the SVG icon.
+        if (placeholder.fields[0] && placeholder.fields[0].htmlRef) {
+            placeholder.fields[0].htmlRef.onclick = servReqWindow.bind(placeholder); //
+            placeholder.fields[0].htmlRef.style.cursor = 'pointer'; //
+            // Ensure the SVG is not placed here if it was there before
+            if (placeholder.fields[0].htmlRef.innerHTML.includes('ionicon')) {
+                 placeholder.fields[0].htmlRef.innerHTML = ''; // Or restore original text if known
+            }
+        }
+
+        // Find the target cell with id 'editCell' within the current row
+        let targetEditCell = null;
+        for (const cell of row.cells) { // 'row.cells' is a collection of TD elements for the current TR
+            if (cell.id === 'editCell') { //
+                targetEditCell = cell;
+                break;
+            }
+        }
+
+        // If the 'editCell' is found, place the SVG icon and its click handler there
+        if (targetEditCell) {
+            targetEditCell.innerHTML = editButtonSVG;
+            targetEditCell.onclick = servReqWindow.bind(placeholder); //
+            targetEditCell.style.cursor = 'pointer';
+        } else {
+            console.warn(`In srMain.js: No cell with id='editCell' found in row with index ${row.rowIndex}. Edit icon (SVG) will not be placed.`);
+        }
+        
             // place that rowEngine in the rowsObject
         rowsObject[placeholder.id] = placeholder;
     }
@@ -134,36 +186,35 @@ function servReqWindow() {
 }
 
 // this one is a bit of a monster, sorry it's probably bad practice to have a 300+ line function (but at least 200 lines of that are comments)
-// Here we create a service request window from the rowEngine for it's counterpart in the table and a boolean to tell us if it a new item or not
+// Here we create a service request window from the rowEngine for it's counterpart in the table and a boolean to tell us if it a new part or not
 
 let modals = [];
 
-function createServReqWindow(originEngine, newItem=false) {
-
+function createServReqWindow(originEngine, newPart=false) {
     // create a rowEngine instance as a clone to represent the row but with new fields
     // we do something similar in audit.js/createCloneOfRow 
     let windowEngine = new rowEngine(originEngine.columnsObject, originEngine.tableName, originEngine.permissions, originEngine.hasLinkedChildren);
     // set the id for the windowEngine
-    if (newItem) windowEngine.id = 'new';
+    if (newPart) windowEngine.id = 'new';
     else windowEngine.id = originEngine.id;
     // store the clone windowEngine in the original engine
     originEngine.servReqClone = windowEngine;   
     // log the windowEngine
 
     // create the display container and save it in the clone
-    // if the window is a new item then the id of the window will be 'newWindow' otherwise '[id]reqWindow'
+    // if the window is a new part then the id of the window will be 'newWindow' otherwise '[id]reqWindow'
     let container = createDisplayContainer(null, false, 'serviceRequestWindow');
     // save the container in it's new home
-    window.srContainerObject[(newItem ? 'new' : originEngine.id)] = container;
+    window.srContainerObject[(newPart ? 'new' : originEngine.id)] = container;
     // reveal the window
-    if (!newItem) container.openModal();
+    if (!newPart) container.openModal();
 
     // **** Title for the table ****
     let title = document.createElement('h1');
     // assign it's  spot
     container.appendChild(title)
     // fill the title
-    title.textContent = newItem ? 'New Service Request' : 'Edit Service Request';
+    title.textContent = newPart ? 'New Service Request' : 'Edit Service Request';
 
     // create 2 columns and rows within the window (using a css grid to keep things tidy)
     let grid = document.createElement('div');
@@ -183,11 +234,11 @@ function createServReqWindow(originEngine, newItem=false) {
      */
     // when I say the grid, it's a css grid (google it). basically we define a grid then place elements within the grid
     // **** id ****
-    if (!newItem) {
+    if (!newPart) {
         grid.append(createServiceRequestWindowText('Id:', 'srN1'));
     }
     // **** id field ****
-    if (!newItem) {
+    if (!newPart) {
         // create element
         let Title = document.createElement('p');
         // set location
@@ -206,7 +257,7 @@ function createServReqWindow(originEngine, newItem=false) {
     // get the column for the date in the windowEngine
     let windowDateCreatedColumn = windowEngine.fields[dateCreatedColumnNum];
     windowDateCreatedColumn.htmlRef = document.createElement('p');
-    if (!newItem) {
+    if (!newPart) {
         let voodoo = new dateTimeVoodoo(originalDateCreatedColumn.getVal());
         createdDate = voodoo.dateOnly();
         // put the date into the windowEngine so that when we press save it will save it
@@ -223,47 +274,48 @@ function createServReqWindow(originEngine, newItem=false) {
         dateCreated.textContent = createdDate;
         grid.append(dateCreated);
     }
+    
     // **** requestor ****
     grid.append(createServiceRequestWindowText('Requestor:', 'srN3'));
     // **** requestor field ****
-    grid.append(createServiceRequestWindowField(originEngine, windowEngine, 1, 'srF3', newItem, (newItem ? '3' : null)));
+    grid.append(createServiceRequestWindowField(originEngine, windowEngine, 1, 'srF3', newPart, (newPart ? '3' : null)));
     // **** priority ****
     grid.append(createServiceRequestWindowText('Priority:', 'srN4'));
     // **** priority field ****
-    grid.append(createServiceRequestWindowField(originEngine, windowEngine, 3, 'srF4', newItem, (newItem ? '3' : null)));
+    grid.append(createServiceRequestWindowField(originEngine, windowEngine, 3, 'srF4', newPart, (newPart ? '3' : null)));
     // **** description ****
     grid.append(createServiceRequestWindowText('Description:', 'srN5'));
     // **** description field ****
-    grid.append(createServiceRequestWindowField(originEngine, windowEngine, 0, 'srF5', newItem, (newItem ? ' ' : null)));
+    grid.append(createServiceRequestWindowField(originEngine, windowEngine, 0, 'srF5', newPart, (newPart ? ' ' : null)));
     // **** location ****
     grid.append(createServiceRequestWindowText('Location:', 'srN6'));
     // **** location field ****
-    grid.append(createServiceRequestWindowField(originEngine, windowEngine, 7, 'srF6', newItem, (newItem ? '3' : null)));
-    // **** service type ****
-    grid.append(createServiceRequestWindowText('Service Type:', 'srN7'));
-    // **** service type field ****
-    grid.append(createServiceRequestWindowField(originEngine, windowEngine, 8, 'srF7', newItem, (newItem ? '3' : null)));
+    grid.append(createServiceRequestWindowField(originEngine, windowEngine, 7, 'srF6', newPart, (newPart ? '3' : null)));
     // **** assigned to ****
     grid.append(createServiceRequestWindowText('Assigned To:', 'srN8'));
     // **** assigned to field ****
-    grid.append(createServiceRequestWindowField(originEngine, windowEngine, 2, 'srF8', newItem, (newItem ? '3' : null)));
+    grid.append(createServiceRequestWindowField(originEngine, windowEngine, 13, 'srF7', newPart, (newPart ? '3' : null)));
+    // **** department ****
+    grid.append(createServiceRequestWindowText('Department:', 'srN9'));
+    // **** department field ****
+    grid.append(createServiceRequestWindowField(originEngine, windowEngine, 16, 'srF8', newPart, (newPart ? '3' : null)));
     // **** building ****
-    grid.append(createServiceRequestWindowText('Building:', 'srN9'));
+    grid.append(createServiceRequestWindowText('Building:', 'srN10'));
     // **** building field ****
-    grid.append(createServiceRequestWindowField(originEngine, windowEngine, 6, 'srF9', newItem, (newItem ? '3' : null)));
+    grid.append(createServiceRequestWindowField(originEngine, windowEngine, 6, 'srF9', newPart, (newPart ? '3' : null)));
     // **** estimate ****
-    grid.append(createServiceRequestWindowText('Estimate:', 'srN10'));
+    grid.append(createServiceRequestWindowText('Estimate:', 'srN11'));
     // **** estimate field ****
-    grid.append(createServiceRequestWindowField(originEngine, windowEngine, 5, 'srF10', newItem, (newItem ? '09/25/2000' : null)));
+    grid.append(createServiceRequestWindowField(originEngine, windowEngine, 5, 'srF10', newPart, (newPart ? '09/25/2000' : null)));
     // **** status ****
-    grid.append(createServiceRequestWindowText('Status:', 'srN11'));
+    grid.append(createServiceRequestWindowText('Status:', 'srN12'));
     // **** status field ****
-    grid.append(createServiceRequestWindowField(originEngine, windowEngine, 4, 'srF11', newItem, (newItem ? '3' : null)));
+    grid.append(createServiceRequestWindowField(originEngine, windowEngine, 4, 'srF11', newPart, (newPart ? '3' : null)));
     // **** completed ****
-    grid.append(createServiceRequestWindowText('Completed:', 'srN12'));
+    grid.append(createServiceRequestWindowText('Completed:', 'srN13'));
     // **** completed field ****
     // save the div created for the 'Created Date' field so that we can append a 'Today' button
-    let completedDateField = createServiceRequestWindowField(originEngine, windowEngine, 12, 'srF12', newItem, (newItem ? ' ' : null), 'srCompletedDateField');
+    let completedDateField = createServiceRequestWindowField(originEngine, windowEngine, 12, 'srF12', newPart, (newPart ? ' ' : null), 'srCompletedDateField');
     grid.append(completedDateField);
     // 'Today' button: create a button that sets the value of the input to today
     let todayButton = createButton('Today', function() {
@@ -271,13 +323,12 @@ function createServReqWindow(originEngine, newItem=false) {
         windowEngine.fields[12].inputRef.value = voodoo.forComputers();
     }, 'Set the date to today\'s date')
     todayButton.classList.add('srTodayButton')
-
     completedDateField.appendChild(todayButton);
     // **** CC ****
     grid.append(createServiceRequestWindowText('CC:', 'srN13'));
     // **** CC field ****
-    // **** add item ****
-    // **** item fields ****
+    // **** add part ****
+    // **** part fields ****
     // **** add note ****
     // **** note fields ****
     // **** functions ****
@@ -311,8 +362,8 @@ function createServReqWindow(originEngine, newItem=false) {
             originEngine.saveRow.bind(originEngine)('nada', windowEngine.getValues(), 
                 function() {
                         // this function is run on successful return of the saveRow request to the server
-                        // now we need to save all the items/notes/people attached to the request
-                        // To start off we need to loop through all the items in the windowEngine.enginesToSave array
+                        // now we need to save all the parts/notes/people attached to the request
+                        // To start off we need to loop through all the parts in the windowEngine.enginesToSave array
                     for (let engineToSave of windowEngine.enginesToSave) {
                             // take the engineToSave off airplane mode so it will send requests to the server
                         engineToSave.airplaneMode = false;
@@ -343,13 +394,13 @@ function createServReqWindow(originEngine, newItem=false) {
     saveBtn.classList.add('srBtn');
 
 
-    /************ now we create the items and notes fields **********************/
-    // create a table to store the items in
-    let itemsTable = document.createElement('table')
-    itemsTable.classList.add('srItemsTable');
-    grid.append(itemsTable);
-    // load the items table
-    loadItems(itemsTable, originEngine.id, windowEngine)
+    /************ now we create the parts and notes fields **********************/
+    // create a table to store the parts in
+    let partsTable = document.createElement('table')
+    partsTable.classList.add('srPartsTable');
+    grid.append(partsTable);
+    // load the parts table
+    loadItems(partsTable, originEngine.id, windowEngine)
     console.log(windowEngine);
 
     // create a table to store the Notes in in
@@ -395,7 +446,7 @@ function createServiceRequestWindowText(text, locClass, tooltip=null) {
 }
 
 // A function that creates a service request window field
-function createServiceRequestWindowField(originObj, windowObj, colNum, className, newItemBool, defaultValue=null, styleClass='srDataField') {
+function createServiceRequestWindowField(originObj, windowObj, colNum, className, newPartBool, defaultValue=null, styleClass='srDataField') {
     // get the field objects for the origin and window
     originFieldObj = originObj.fields[colNum];
     windowFieldObj = windowObj.fields[colNum];
@@ -403,8 +454,8 @@ function createServiceRequestWindowField(originObj, windowObj, colNum, className
     windowFieldObj.htmlRef = document.createElement('div');
     // create the input field using the .edit member of the rowEngine
     // if a default value is provided put that value in the input, else get the value from the originEngine
-    if (!newItemBool) console.log(originFieldObj)
-    windowFieldObj.edit((newItemBool ? defaultValue : originFieldObj.getVal()), false);
+    if (!newPartBool) console.log(originFieldObj)
+    windowFieldObj.edit((newPartBool ? defaultValue : originFieldObj.getVal()), false);
     // style fields
     windowFieldObj.inputRef.classList.add(styleClass);
 	windowFieldObj.htmlRef.classList.add(className);
@@ -427,19 +478,35 @@ function generateNewServiceRequest() {
     document.getElementById("title").appendChild(button);
 }
 
-// add an event listener so if the user clicks outside any modal it will close
+// add an event listener so if the user clicks outside any modal it will close (only when outside is both clicked and released)
+
 function closeModalByClickingOutside() {
-    modals = document.getElementsByClassName('modal');
+    const modals = document.getElementsByClassName('modal');
+
     for (let modal of modals) {
-        modal.onclick = function(event) {
-            if (event.target === modal) {
-                editItemCancel();
+        let mouseDownInsideModal = false;
+
+        modal.addEventListener('mousedown', function(event) {
+            // If the user pressed directly on the modal background (not the content), don't mark as inside
+            mouseDownInsideModal = event.target !== modal;
+        });
+
+        // Check where the mouse is released
+        modal.addEventListener('mouseup', function(event) {
+            const mouseUpInsideModal = event.target !== modal;
+
+            // Only close if both mousedown and mouseup were outside the modal content
+            if (!mouseDownInsideModal && !mouseUpInsideModal) {
+                editPartCancel();
                 editNoteCancel();
                 notePopCancel();
-                newitemCancel(); 
-                itemCancel();
-                cancelCloser();
+                newPartCancel(); 
+                partCancel();
+                // cancelCloser();
             }
-        };
+
+            // Reset for next interaction
+            mouseDownInsideModal = false;
+        });
     }
 }

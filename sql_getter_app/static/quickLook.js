@@ -13,7 +13,7 @@ function createInspectIcon(id, table) {
     icon.onclick = function() { showLink(id, table); };
     icon.classList = 'icon';
 
-    setTooltip(icon, 'Get more information about the item in this cell');
+    setTooltip(icon, 'Get more information about the part in this cell');
 
     return icon;
 }

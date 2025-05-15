@@ -43,10 +43,6 @@ function printFunc(servReq) {
     if (servReq['location']){srLoc.appendChild(createNestedTable("Location", servReq['location']))}
     else {srLoc.appendChild(createNestedTable("Location", "None"))}
     tBodRow3.appendChild(srLoc);
-    let srType = createTableCell();
-    if (servReq['serviceType']){srType.appendChild(createNestedTable("Service Type", servReq['serviceType']))}
-    else {srType.appendChild(createNestedTable("Service Type", "None"))}
-    tBodRow3.appendChild(srType);
 
     let tBodRow4 = document.createElement('tr');
     tableBod.appendChild(tBodRow4);
@@ -121,18 +117,57 @@ function printFunc(servReq) {
     descsr.classList = "noBorders";
     desctBodRow.appendChild(descsr);
 
-    // create an object where we can store data to send to the server neatly  
+    // create an object where we can store data to send to the server neatly  
     let data = new Object;
     let srcont = putInContainer(table, 'div');
-    let itemcont = putInContainer(document.getElementById('itemsTable').cloneNode(true), 'div');
-    let notecont = putInContainer(document.getElementById('notesTable').cloneNode(true), 'div');
-    let desccont = putInContainer(document.getElementById('descTable').cloneNode(true), 'div');
-    data['html'] = "<h1>Service Request Form</h1> <div class=\"logo\"><img src=\"C:\\Apache24\\icons\\BYU.png\"><h2 class=\"title\">AC Shop</h2></div>" + srcont.innerHTML + "<br>" + desccont.innerHTML + "<br>" + notecont.innerHTML + "<br>" + itemcont.innerHTML;
+
+    // --- MODIFICATION FOR partsTable ---
+    let clonedPartsTable = null;
+    const originalPartsTable = document.getElementById('partsTable');
+    if (originalPartsTable) {
+        clonedPartsTable = originalPartsTable.cloneNode(true);
+        // Remove "edit" column header if it exists
+        const partsHeaderToRemove = clonedPartsTable.querySelector('th.editTableColumn');
+        if (partsHeaderToRemove) {
+            partsHeaderToRemove.remove();
+        }
+        // Remove "edit" column data cells if they exist
+        const partsCellsToRemove = clonedPartsTable.querySelectorAll('td#editCell');
+        partsCellsToRemove.forEach(cell => cell.remove());
+    }
+    let partcont = putInContainer(clonedPartsTable || document.createElement('div'), 'div'); // Use cloned or an empty div
+
+    // --- MODIFICATION FOR notesTable ---
+    let clonedNotesTable = null;
+    const originalNotesTable = document.getElementById('notesTable');
+    if (originalNotesTable) {
+        clonedNotesTable = originalNotesTable.cloneNode(true);
+        // Remove "edit" column header if it exists
+        const notesHeaderToRemove = clonedNotesTable.querySelector('th.editTableColumn');
+        if (notesHeaderToRemove) {
+            notesHeaderToRemove.remove();
+        }
+        // Remove "edit" column data cells if they exist
+        const notesCellsToRemove = clonedNotesTable.querySelectorAll('td#editCell');
+        notesCellsToRemove.forEach(cell => cell.remove());
+    }
+    let notecont = putInContainer(clonedNotesTable || document.createElement('div'), 'div'); // Use cloned or an empty div
+
+    // --- descTable handling ---
+    // If descTable was set to "display: none" and you need its content for printing,
+    // you might need to make it visible before cloning or ensure its content is built correctly regardless of display style.
+    // The original code clones it as is.
+    const originalDescTable = document.getElementById('descTable');
+    let desccont = putInContainer(originalDescTable ? originalDescTable.cloneNode(true) : document.createElement('div'), 'div');
+
+    data['html'] = "<h1>Service Request Form</h1> <div class=\"logo\"><img src=\"/path/to/your/BYU.png\"><h2 class=\"title\">AC Shop</h2></div>" + srcont.innerHTML + "<br>" + desccont.innerHTML + "<br>" + notecont.innerHTML + "<br>" + partcont.innerHTML;
     data['params'] = "";
     data['sort'] = "ID";
     data['tableName'] = "Service_Request";
-    
-    // redirectPost should be able to work with our data if we format it correctly
-    // sending it to a special url that formats everything just as we want it
+
     redirectPost(data,'/printSingleServiceRequest');
+
+    // Clean up tables appended to body if they are temporary
+    if (table.parentNode === document.body) document.body.removeChild(table);
+    if (descTable.parentNode === document.body) document.body.removeChild(descTable);
 }

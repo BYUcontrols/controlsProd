@@ -13,7 +13,7 @@
 .serviceRequestGrid {
     display: grid;
     grid-template-columns: [name1] 115px 3px [val1] minmax(50px, 200px) [name2] 115px 3px [val2] minmax(50px, 200px);
-    grid-template-rows: [line1] 20px 10px [line2] 40px 10px [line3] minmax(70px, min-content) 10px [line4] 40px 10px [line5] 40px 10px [line6] 40px 10px [line7] 40px 10px [items] min-content 10px [notes] min-content 10px [requestors] min-content [functions] 50px;
+    grid-template-rows: [line1] 20px 10px [line2] 40px 10px [line3] minmax(70px, min-content) 10px [line4] 40px 10px [line5] 40px 10px [line6] 40px 10px [line7] 40px 10px [parts] min-content 10px [notes] min-content 10px [requestors] min-content [functions] 50px;
 }
 
 /* style for the generic name fields */
@@ -184,19 +184,19 @@
     margin-left: 20px;
 }
 
-.srItemsTable {
+.srPartsTable {
     grid-column: 1/-1;
-    grid-row: items;
+    grid-row: parts;
     border-color: black;
     border-width: 2px;
     border-style: solid;
 }
 
-.srItemsTable th, .srNotesTable th, .srRequestorsTable th {
+.srPartsTable th, .srNotesTable th, .srRequestorsTable th {
     background-color: var(--backgroundColor);
 }
 
-.srItemsTable td, .srNotesTable td, .srRequestorsTable td {
+.srPartsTable td, .srNotesTable td, .srRequestorsTable td {
     max-width: 250px;
     overflow: hidden;
     margin-left: 3px;
@@ -205,30 +205,30 @@
     width: max-content;
 }
 
-.srItemsTable td > * , .srNotesTable td > * , .srRequestorsTable > * {
+.srPartsTable td > * , .srNotesTable td > * , .srRequestorsTable > * {
     margin-left: 0px;
     margin-right: 3px;
 }
 
-.srItemsTable .optionsBtn, .srNotesTable .optionsBtn, .srRequestorsTable .optionsBtn {
+.srPartsTable .optionsBtn, .srNotesTable .optionsBtn, .srRequestorsTable .optionsBtn {
     margin-right: 3px;
 }
 
-.srItemsNewRow {
+.srPartsNewRow {
     background-color: var(--backgroundColor) !important;
     padding-bottom: 3px;
 }
 
-.srItemsNewSaveBtnCell > * {
+.srPartsNewSaveBtnCell > * {
     width: 70px !important;
     margin: 5px !important
 }
 
-.srItemsNewSaveBtnCell {
+.srPartsNewSaveBtnCell {
     background-color: var(--backgroundColor) !important;
 }
 
-.srItemsNewRow * {
+.srPartsNewRow * {
     margin-right: auto;
     margin-top: 3px;
     width: 100px;

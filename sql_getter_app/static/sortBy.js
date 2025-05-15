@@ -43,13 +43,15 @@ class sortSelect {
         }
             // Create backward/reverse button cookie retrieval
         let sortUp;
-        if (isStorageItem(`sortUp${this.id}`)) {sortUp = getStorageItem(`sortUp${this.id}`); console.log(sortUp)}
+        if (isStorageItem(`sortUp${this.id}`)) {sortUp = getStorageItem(`sortUp${this.id}`); 
+        // console.log(sortUp)
+        }
         else sortUp = 'false';
             // Create a button to change if we sort accending or descending
-        this.accendingButton = document.createElement('button');
-        div.appendChild(this.accendingButton);
-        this.accendingButton.classList = 'accendingButton';
-        this.accendingButton.onclick = this.accendingButtonChange.bind(this)
+        this.ascendingButton = document.createElement('button');
+        div.appendChild(this.ascendingButton);
+        this.ascendingButton.classList = 'ascendingButton';
+        this.ascendingButton.onclick = this.accendingButtonChange.bind(this)
             // defines a global variable to store the state of the button
         window.reverse = false
             // set that state based on the cookie
@@ -70,20 +72,20 @@ class sortSelect {
         if (!execute) {
             if (this.reverse) {
                     // change symbol, state variable, and cookie for the button
-                this.accendingButton.innerHTML = '&UpTeeArrow;';
+                this.ascendingButton.innerHTML = '&UpTeeArrow;';
             } else {
                     // change symbol, state variable, and cookie for the button
-                this.accendingButton.innerHTML = '&DownTeeArrow;';
+                this.ascendingButton.innerHTML = '&DownTeeArrow;';
             }
         } else {
             if (!this.reverse) {
                     // change symbol, state variable, and cookie for the button
-                this.accendingButton.innerHTML = '&UpTeeArrow;';
+                this.ascendingButton.innerHTML = '&UpTeeArrow;';
                 this.reverse = true;
                 if (execute){ setStorageItem(`sortUp${this.id}`, 'true'); console.log(46)}
             } else {
                     // change symbol, state variable, and cookie for the button
-                this.accendingButton.innerHTML = '&DownTeeArrow;';
+                this.ascendingButton.innerHTML = '&DownTeeArrow;';
                 this.reverse = false;
                 if (execute) setStorageItem(`sortUp${this.id}`, 'false');
             }
@@ -233,7 +235,7 @@ class sortMenu {
 
             // append each row in order
         tb.innerHTML = '';
-        for (row of tr) tb.appendChild(row.rowRef);
+        for (let row of tr) tb.appendChild(row.rowRef);
         // run the paginate command when the row updates if the paginate select has been created
         if (window.updatePagination) window.updatePagination();
 

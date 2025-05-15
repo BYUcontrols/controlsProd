@@ -15,23 +15,25 @@ function makeDocument(element = document.getElementById('table'), requests=null)
     let tableRaw = element.cloneNode(true);
     // if we are printing the SR list page then we need to add some data
     if(document.getElementById('srtable')){
-        // new headers
-        let header = tableRaw.querySelector('#tableHead');
-        let reqPhoneHead = document.createElement('th')
-        reqPhoneHead.innerText = 'Requestor\'s Phone';
-        header.appendChild(reqPhoneHead);
-        let locHead = document.createElement('th')
-        locHead.innerText = 'Location';
-        header.appendChild(locHead);
-        let noteHead = document.createElement('th')
-        noteHead.innerText = 'Note';
-        header.appendChild(noteHead);
+        // // new headers
+        // let header = tableRaw.querySelector('#tableHead');
+        // let reqPhoneHead = document.createElement('th')
+        // reqPhoneHead.innerText = 'Requestor\'s Phone';
+        // header.appendChild(reqPhoneHead);
+        // // let locHead = document.createElement('th')
+        // // locHead.innerText = 'Location';
+        // // header.appendChild(locHead);
+        // let noteHead = document.createElement('th')
+        // noteHead.innerText = 'Note';
+        // header.appendChild(noteHead);
 
         for (id in requests){
+            
             let tBodRow = tableRaw.querySelector('[data-id=\''+requests[id]['servReqId']+'\']');
             let reqPhone = "";
             if (requests[id]['requestorPhone']){
-                reqPhone = createTableCell(requests[id]['requestorPhone']);
+                let phoneNumber = getPhoneNumber(requests[id]['requestorPhone']);
+                reqPhone = createTableCell(phoneNumber);
             }
             else {
                 reqPhone = createTableCell("None");
@@ -61,7 +63,33 @@ function makeDocument(element = document.getElementById('table'), requests=null)
                 tBodRow.appendChild(currnote);
             }
         }
+        
+        // Remove the header cell for the priority column
+        const priorityHeaderToRemove = tableRaw.querySelector('th.priorityId');
+        if (priorityHeaderToRemove) {
+            priorityHeaderToRemove.remove();
+        }
+    
+        // Remove all data cells for the priority column
+        const priorityCellsToRemove = tableRaw.querySelectorAll('td');
+        for (let i = 0; i < priorityCellsToRemove.length; i++) {
+            if (priorityCellsToRemove[i].id.includes('priorityId')) {
+                priorityCellsToRemove[i].remove();
+            }
+        }
     }
+
+    // Remove the header cell for the edit column
+    const editHeaderToRemove = tableRaw.querySelector('th.editTableColumn');
+    if (editHeaderToRemove) {
+        editHeaderToRemove.remove();
+    }
+
+    // Remove all data cells for the edit column
+    const editCellsToRemove = tableRaw.querySelectorAll('td#editCell');
+    editCellsToRemove.forEach(cell => cell.remove());
+
+
     // get the tbody (where all the rows are)
     let tableBody = tableRaw.querySelector('#tableBody');
     // un-hide all the rows

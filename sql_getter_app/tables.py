@@ -23,7 +23,7 @@ from sql_getter_app.auth import login_required
 from sql_getter_app.createTableHtml import tableHtml
 from sql_getter_app.collection import versionString, production, db
 from sql_getter_app.menuCreation import getMenuForRole
-# from sql_getter_app.static import historyTable
+from sql_getter_app.user_class import user_session
 
 
 bp = Blueprint("tables", __name__)  # sets up the blueprint with name tables defined at __name__
@@ -40,7 +40,6 @@ def siteTest():
 
     # create a fake user (not saved to any cookies or valid at all beyond the test) 
 
-    from sql_getter_app.user_class import user_session
     import json
 
     userCookie = dict()
@@ -114,7 +113,7 @@ def tabOrder():
 @bp.route('/BBMD')                      # @bp.route from flask associates the URL /BBMD with the BBMD view function. This is why the url ends in /BBMD even though there is no BBMD.html file. When Flask receives a request to /auth/BBMD, it will call the BBMD view and use the return value as the response.
 @login_required                         # @login_required from django a shortcut: If the user isn’t logged in, redirect to settings.LOGIN_URL, passing the current absolute path in the query string. Example: /accounts/login/?next=/polls/3/. If the user is logged in, execute the view normally. The view code is free to assume the user is logged in.
 def bbmd():                             # define the bbmd function
-    return pull("table.html","BBMD")    # this function returns the pull() function from crud.py with the parameter BBMD
+    return pull("table.html", "BBMD")   # this function returns the pull() function from crud.py with the parameter BBMD
 
 """
 This is just to show how to create a duplicate page.
@@ -176,10 +175,10 @@ def inventory():
 def ip():
     return pull("table.html","IP")
 
-@bp.route('/Item')
+@bp.route('/Part')
 @login_required
-def item():
-    return pull("table.html","Item")
+def part():
+    return pull("table.html","Part")
 
 @bp.route('/Manufacturer')
 @login_required
@@ -226,11 +225,6 @@ def priority():
 def role():
     return pull("table.html","Role")
 
-@bp.route('/ServiceType')
-@login_required
-def serviceType():
-    return pull("table.html","ServiceType", "Service Type")
-
 @bp.route('/State')
 @login_required
 def state():
@@ -267,8 +261,173 @@ def VersionControl():
     text = "Add a row here for every new Build of the application or every time you change the production site"
     return pull("table.html","VersionControl", "Version Control", message=text)
 
+@bp.route('/Department')
+@login_required
+def department():
+    return pull("table.html","Department")
+
+@bp.route('/BuildingHistory')
+@login_required
+def buildingHistory():
+    return pull("table.html","BuildingAudit", "Building History", isHistoryTable=True)
+
+@bp.route('/TabOrderHistory')
+@login_required
+def tabOrderHistory():
+    return pull("table.html","TabOrderAudit", "Tab Order History", isHistoryTable=True)
+
+@bp.route('/BBMDHistory')
+@login_required
+def bbmdHistory():
+    return pull("table.html","BBMDAudit", "BBMD History", isHistoryTable=True)
+
+@bp.route('/CountryHistory')
+@login_required
+def countryHistory():
+    return pull("table.html","CountryAudit", "Country History", isHistoryTable=True)
+
+@bp.route('/DeviceHistory')
+@login_required
+def deviceHistory():
+    return pull("table.html","DeviceAudit", "Device History", isHistoryTable=True)
+
+@bp.route('/DeviceLicenseHistory')
+@login_required
+def deviceLicenseHistory():
+    return pull("table.html","DeviceLicenseAudit", "Device License History", isHistoryTable=True)
+
+@bp.route('/DeviceSubTypeHistory')
+@login_required
+def deviceSubTypeHistory():
+    return pull("table.html","DeviceSubTypeAudit", "Device SubType History", isHistoryTable=True)
+
+@bp.route('/DeviceTypeHistory')
+@login_required
+def deviceTypeHistory():
+    return pull("table.html","DeviceTypeAudit", "Device Type History", isHistoryTable=True)
+
+@bp.route('/DNSHistory')
+@login_required
+def dnsHistory():
+    return pull("table.html","DNSAudit", "DNS History", isHistoryTable=True)
+
+@bp.route('/FailureHistory')
+@login_required
+def failureHistory():
+    return pull("table.html","FailureAudit", "Failure History", isHistoryTable=True)
+
+@bp.route('/FailureTypeHistory')
+@login_required
+def failureTypeHistory():
+    return pull("table.html","FailureTypeAudit", "Failure Type History", isHistoryTable=True)
+
+@bp.route('/InventoryHistory')
+@login_required
+def inventoryHistory():
+    return pull("table.html","InventoryAudit", "Inventory History", isHistoryTable=True)
+
+@bp.route('/IPHistory')
+@login_required
+def ipHistory():
+    return pull("table.html","IPAudit", "IP History", isHistoryTable=True)
+
+@bp.route('/PartHistory')
+@login_required
+def partHistory():
+    return pull("table.html","PartAudit", "Part History", isHistoryTable=True)
+
+@bp.route('/ManufacturerHistory')
+@login_required
+def manufacturerHistory():
+    return pull("table.html","ManufacturerAudit", "Manufacturer History", isHistoryTable=True)
+
+@bp.route('/NCRSNodeHistory')
+@login_required
+def ncrsNodeHistory():
+    return pull("table.html","NCRSNodeAudit", "NCRS Node History", isHistoryTable=True)
+
+@bp.route('/OITJackHistory')
+@login_required
+def oitJackHistory():
+    return pull("table.html","OITJackAudit", "OIT Jack History", isHistoryTable=True)
+
+@bp.route('/PatchPanelHistory')
+@login_required
+def patchPanelHistory():
+    return pull("table.html","PatchPanelAudit", "Patch Panel History", isHistoryTable=True)
+
+@bp.route('/PatchPanelTypeHistory')
+@login_required
+def patchPanelTypeHistory():
+    return pull("table.html","PatchPanelTypeAudit", "Patch Panel Type History", isHistoryTable=True)
+
+@bp.route('/PhoneNumberHistory')
+@login_required
+def phoneNumberHistory():
+    return pull("table.html","PhoneNumberAudit", "Phone Number History", isHistoryTable=True)
+
+@bp.route('/PhoneNumberTypeHistory')
+@login_required
+def phoneNumberTypeHistory():
+    return pull("table.html","PhoneNumberTypeAudit", "Phone Number Type History", isHistoryTable=True)
+
+@bp.route('/PriorityHistory')
+@login_required
+def priorityHistory():
+    return pull("table.html","PriorityAudit", "Priority History", isHistoryTable=True)
+
+@bp.route('/RoleHistory')
+@login_required
+def roleHistory():
+    return pull("table.html","RoleAudit", "Role History", isHistoryTable=True)
+
+@bp.route('/StateHistory')
+@login_required
+def stateHistory():
+    return pull("table.html","StateAudit", "State History", isHistoryTable=True)
+
+@bp.route('/StatusHistory')
+@login_required
+def statusHistory():
+    return pull("table.html","StatusAudit", "Status History", isHistoryTable=True)
+
+@bp.route('/UserHistory')
+@login_required
+def userHistory():
+    return pull("table.html","UserAudit", "User History", isHistoryTable=True)
+
+@bp.route('/UserRoleHistory')
+@login_required
+def userRoleHistory():
+    return pull("table.html","UserRoleAudit", "User Role History", isHistoryTable=True)
+
+@bp.route('/VMCloudDirectorHistory')
+@login_required
+def vmCloudDirectorHistory():
+    return pull("table.html","VMCloudDirectorAudit", "VM Cloud Director History", isHistoryTable=True)
+
+@bp.route('/VersionControlHistory')
+@login_required
+def versionControlHistory():
+    return pull("table.html","VersionControlAudit", "Version Control History", isHistoryTable=True)
+
+@bp.route('/DepartmentHistory')
+@login_required
+def departmentHistory():
+    return pull("table.html","DepartmentAudit", "Department History", isHistoryTable=True)
+
+@bp.route('/TablePermissionsHistory')
+@login_required
+def tablePermissionsHistory():
+    return pull("table.html","TablePermissionsAudit", "Table Permissions History", isHistoryTable=True)
+
+@bp.route('/VendorHistory')
+@login_required
+def vendorHistory():
+    return pull("table.html","VendorAudit", "Vendor History", isHistoryTable=True)
+
 # this route queries the db to get all the values (display name and id) that will go into the dropdowns for the modals to CRUD 
-# the items in the tables
+# the parts in the tables
 @bp.route('/GetModalDropdownData', methods=['POST'])
 @login_required
 def GetModalDropdownData():
@@ -281,20 +440,84 @@ def GetModalDropdownData():
         foreignKeys = {}
 
         # Query all foreign keys
-        for item in tableInfo:
-            table_name = item.get("table")
-            fk_column = item.get("fk")
-            display_column = item.get("display")
+        for part in tableInfo:
+            table_name = part.get("table")
+            fk_column = part.get("fk")
+            display_column = part.get("display")
 
             if not all([table_name, fk_column, display_column]):
                 return jsonify({"error": "Missing table, fk, or display field in the modalConfig object "}), 400
 
-            query = text(f"SELECT {fk_column}, {display_column} FROM {table_name} ORDER BY {display_column}")
+            query = text(f"SELECT {fk_column}, {display_column} FROM {table_name} WHERE active = 1 ORDER BY {display_column}")
 
             result = db.engine.execute(query)
             foreignKeys[table_name] = [dict(row) for row in result.fetchall()]
-
         return jsonify(foreignKeys)
+
+    except Exception as e:
+        print("Error:", str(e), flush=True)
+        return jsonify({"error": str(e)}), 500
+    
+@bp.route('/GetRowData', methods=['POST'])
+@login_required
+def GetRowData():
+
+    try:
+        # Get JSON payload
+        data = request.get_json()
+        rowId = data.get("rowId")
+        table_name = data.get("tableName")
+
+        foreignKeys = {}
+
+        query1 = text(f'''
+        SELECT [bbmdId],
+        [deviceId],
+        [ipId],
+        [buildingId],
+        [active],
+        [userIdModified],
+        [oldSiteName],
+        [deviceNumber],
+        [siteName],
+        [siteNumber],
+        [bbmdUdpPort]
+        FROM [BBMD]
+        WHERE [bbmdId] = {rowId}
+        ''')
+
+        result1 = db.engine.execute(query1)
+        foreignKeys[table_name] = [dict(row) for row in result1.fetchall()]
+
+
+        rowData = {}
+
+        query2 = text(f'''
+        SELECT 
+        BBMD.[bbmdId],
+        Device.deviceName AS deviceName,
+        IP.ipAddress AS ipAddress,
+        Building.buildingName AS buildingName,
+        BBMD.[active],
+        BBMD.[userIdModified],
+        BBMD.[oldSiteName],
+        BBMD.[deviceNumber],
+        BBMD.[siteName],
+        BBMD.[siteNumber],
+        BBMD.[bbmdUdpPort]
+        FROM BBMD
+        LEFT JOIN Device ON BBMD.deviceId = Device.deviceId
+        LEFT JOIN IP ON BBMD.ipId = IP.ipId
+        LEFT JOIN Building ON BBMD.buildingId = Building.buildingId
+        WHERE BBMD.bbmdId = {rowId}
+        ''')
+
+        result2 = db.engine.execute(query2)
+        rowData[table_name] = [dict(row) for row in result2.fetchall()]
+
+        # print("\n\n\n\n", foreignKeys)
+
+        return jsonify({"foreignKeys": foreignKeys, "rowData": rowData})
 
     except Exception as e:
         print("Error:", str(e), flush=True)
@@ -314,12 +537,13 @@ def GetPhoneNumberTypeData():
 
 # this dictionary of sets is for the security of the dynamic routes below. It defines what tables and columns can be passed into the routes
 allowed_tables = {
-    "Item": {"itemId", "description", "modelNumber", "vendorId", "minimumToStock", "active", "manufacturerId", "deviceTypeId", "deviceSubTypeId", "userIdModified"},
-    "Inventory": {"inventoryId", "itemId", "inStock", "location", "userIdModified", "active"},
-    "User": {"userId", "userName", "firstName", "lastName", "technician", "phone", "eMail", "vendorId", "userIdModified", "fullName", "userRoleId", "active"},
+    "Part": {"partId", "description", "modelNumber", "vendorId", "minimumToStock", "active", "manufacturerId", "deviceTypeId", "deviceSubTypeId", "userIdModified"},
+    "Inventory": {"inventoryId", "partId", "inStock", "location", "userIdModified", "active"},
+    "User": {"userId", "userName", "firstName", "lastName", "technician", "departmentId", "phone", "eMail", "vendorId", "userIdModified", "fullName", "userRoleId", "active"},
     "TabOrder": {"tabOrderId", "tableName", "columnName", "tabOrder", "userIdModified", "active"},
     "Role": {"roleId", "role", "userIdModified", "active"},
     "Building": {"buildingId", "buildingName", "buildingAbbreviation", "tornDown", "userIdModified", "bacnetNetworkNumber", "notes", "active"},
+    "Department": {"departmentId", "departmentName", "buildingId", "userIdDepartmentHead", "userIdModified", "active"},
     "Device": {"deviceId", "deviceName", "deviceTypeId", "deviceSubTypeId", "modelNumber", "serialNumber", "cnaId", "byuId", "statusId", "buildingId", "location", "devicesManaged", "oldJaceName", "oldAlias", "notes", "manufacturerId", "macAddress", "userIdModified", "active"},
     "DNS": {"dnsId", "dns1", "dns2", "domain", "userIdModified", "active"},
     "Failure": {"failureId", "failureTypeId", "failureDate", "deviceId", "notes", "userIdModified", "active"},
@@ -341,9 +565,10 @@ allowed_tables = {
     "Priority": {"priorityId", "priority", "userIdModified", "sla", "slaHours", "active"},
     "State": {"stateId", "state", "code", "countryId", "userIdModified", "active"},
     "Status": {"statusId", "status", "userIdModified", "forServiceRequest", "active", "forDevices", "forItems"},
-    "VersionControl": {"versionId", "versionControl", "userIdModified", "active"},
+    "VersionControl": {"versionId", "versionNumber", "liveDate", "changeLog", "notes", "userIdModified", "active"},
     "TablePermissions": {"tablePermissionsId", "tableName", "viewingLevel", "editingLevel", "addingLevel", "deletingLevel", "userIdModified", "undeletingLevel", "auditingLevel", "active"},
-    "BBMD": {"bbmdId", "deviceId", "ipId", "buildingId", "oldSiteName", "deviceNumber", "siteName", "siteDeviceNumber", "bbmdUdpPort", "active"}
+    "BBMD": {"bbmdId", "deviceId", "ipId", "buildingId", "oldSiteName", "deviceNumber", "siteName", "siteNumber", "bbmdUdpPort", "userIdModified", "active"},
+    "UserRole": {"userRoleId", "userId", "roleId", "userIdModified", "active"}
 }
 
 @bp.route('/AddTableRow', methods=['POST'])    
@@ -368,6 +593,11 @@ def AddTableRow():
         if 'active' in valid_columns and 'active' not in data:
             data['active'] = 1
 
+        # make sure nothing is undefined in the data
+        for key in data.keys():
+            if data[key] == '' or data[key] == 'None' or data[key] == 'undefined':
+                data[key] = None
+
         # Build dynamic INSERT query
         columns = ', '.join(data.keys())
         values_placeholders = ', '.join(f":{col}" for col in data.keys())
@@ -377,17 +607,22 @@ def AddTableRow():
         with db.engine.begin() as conn:
             conn.execute(query, data)
 
+        if table == "User":
+            fullName = data.pop("firstName") + " " + data.pop("lastName")
+    
+            return jsonify({"message": "Item added successfully", "name": fullName}), 201
+        elif table == "Part":
+            description = data.pop("description")
+            return jsonify({"message": "Item added successfully", "name": description}), 201
         return jsonify({"message": "Item added successfully"}), 201
 
     except Exception as e:
+        print(e)
         return jsonify({"error": str(e)}), 500
 
-
-@bp.route('/EditTableRow', methods=['PUT'])    
+@bp.route('/EditTableRow', methods=['PUT'])
 @login_required
 def EditTableRow():
-    print("EditTableRow route hit")
-    
     try:
         # Get JSON data from request
         data = request.get_json()
@@ -413,13 +648,17 @@ def EditTableRow():
         if table not in allowed_tables:
             return jsonify({"error": f"Invalid table name: {table}"}), 400
         valid_columns = allowed_tables[table]
-        invalid_columns = [col for col in data.keys() if col not in valid_columns]
-        if invalid_columns:
-            return jsonify({"error": f"Invalid columns for this table: {', '.join(invalid_columns)}"}), 400
-
+        if not all(col in valid_columns for col in data.keys()):
+            return jsonify({"error": "Invalid columns for this table"}), 400
+        
+        # make sure nothing is undefined in the data
+        for key in data.keys():
+            if data[key] == '' or data[key] == 'None' or data[key] == 'undefined':
+                data[key] = None
+        
         # Build dynamic UPDATE query binding params to values (submit a dictionary to conn.execute)
         update_values = ", ".join(f"{col} = :{col}" for col in data.keys())  # Using bindparams with column names
-        query = text(f"UPDATE {table} SET {update_values} WHERE {pk} = :pk")  # Use named :pk for the primary key
+        query = text(f"UPDATE [{table}] SET {update_values} WHERE {pk} = :pk")  # Use named :pk for the primary key
         print('Generated query:', query)
 
         # Prepare data for query execution (mapping column names to values, adding pk_value)
@@ -466,7 +705,7 @@ def DeleteTableRow():
         # The DELETE query doesn't need to validate column names, only table and pk.
         
         # Build dynamic DELETE query
-        query = text(f"UPDATE {table} SET active = 0 WHERE {pk} = :pk")
+        query = text(f"UPDATE [{table}] SET active = 0 WHERE {pk} = :pk")
         print('Generated query:', query)
 
         # Prepare data for query execution
@@ -483,23 +722,6 @@ def DeleteTableRow():
         print(e)
         return jsonify({"error": str(e)}), 500
 
-
-@bp.route('/history')
-@login_required
-def history():
-    print("history route hit")
-    audit_table_name = request.args.get('audit_table_name')
-    pk_column = request.args.get('pk_column')
-    item_id = request.args.get('item_id')
-
-    if not audit_table_name or not pk_column or not item_id:
-        print("Missing required parameters")
-    
-    query = text(f"SELECT * FROM {audit_table_name} WHERE {pk_column} = {item_id}")
-    result = db.engine.execute(query)
-    data = [dict(row) for row in result.fetchall()]
-    # historyTable(data)
-    return jsonify(data)
 
 
 @bp.route('/TablePermissions')
@@ -558,7 +780,10 @@ def tablePermissions():
             'IS_NULLABLE': 'NO'}
     }
 
-    instructions = "Control who gets access to what tables by adding a row here for each table and checking which roles get which permissions. The 'Table Name' row must be the exact sql name for the table (you can find it by hovering over a table in the dropdown menu). Tables with no row here will have the DEFAULT permissions. There MUST be a row in this table with the table name 'DEFAULT'."
+    instructions = "Control who gets access to what tables by adding a row here for each table and checking which roles get which permissions. The 'Table Name' row must be the exact sql name " \
+    "for the table (you can find it by hovering over a table in the dropdown menu). Tables with no row here will have the DEFAULT permissions. There MUST be a row in this table with the " \
+    "table name 'DEFAULT'.-------------------------------------IMPORTANT: When adding and editing rows, in the \"____ Level\" fields, you must use this format: [\"\",\"\",\"\"]. Example: [\"1\",\"2\",\"3\"] " \
+    "allows admins, mechanics, and secretaries to access that table" \
 
     return pull("table.html","TablePermissions", "Table Permissions", columnTypes=customTypes, message=instructions)
 

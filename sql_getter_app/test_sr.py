@@ -12,14 +12,13 @@ BASE_URL = "http://127.0.0.1:5000"  # Update this if necessary
 
 # DATA --------------------------------------------------------------------------------
 # this data is sent to the /NewServiceRequest route to create a new request
-# this also tests adding a notes and items to a new service request
+# this also tests adding a notes and parts to a new service request
 good_new_sr_form_data = {
     'date': '2024-11-21T09:23:07',
     'requestor': 'Ben Haggard',
     'priority': 'Low',
     'description': 'test_new_service_request',
     'location': 'BRWB',
-    'serviceType': 'Project',
     'assignedTo': 'Ben Haggard',
     'building': 'CB',
     'estimate': datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3], # timestamp formatting
@@ -30,7 +29,7 @@ good_new_sr_form_data = {
     'externalId': '',
     'newSRNotes': [{'note': 'good_new_sr_form_data note', 'public': 0, 'modDate': '2024-11-21T09:23:50', 'noteinputBy': 'Ben Haggard'},
               {'note': 'good_new_sr_form_data note2', 'public': 0, 'modDate': '2024-11-21T09:23:50', 'noteinputBy': 'Ben Haggard'}],
-    'newSRItems': [{'items': 'ACT 2301', 'itemquantity': '1', 'inputBy': 'Ben Haggard'}, {'items': 'ACT 2301', 'itemquantity': '2', 'inputBy': 'Ben Haggard'}]
+    'newSRParts': [{'parts': 'ACT 2301', 'partquantity': '1', 'inputBy': 'Ben Haggard'}, {'parts': 'ACT 2301', 'partquantity': '2', 'inputBy': 'Ben Haggard'}]
 }
 
 # this data is sent to the /NewServiceRequest route and should fail because it leaves out required fields (status)
@@ -40,7 +39,6 @@ bad_new_sr_form_data1 = {
     'priority': 'Low',
     'description': 'test_new_service_request',
     'location': 'BRWB',
-    'serviceType': 'Project',
     'assignedTo': 'Ben Haggard',
     'building': 'CB',
     'estimate': datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3], # timestamp formatting
@@ -50,7 +48,7 @@ bad_new_sr_form_data1 = {
     'contactedDate': '',
     'externalId': '',
     'newSRNotes': [],
-    'newSRItems': []
+    'newSRParts': []
 }
 
 # HELPER FUNCTIONS --------------------------------------------------------------------------------
@@ -81,7 +79,7 @@ def get_last_service_request_id():
 # CREATE: each argument in the list will be passed into the function as form_data
 @pytest.mark.parametrize("form_data", [good_new_sr_form_data])
 def test_new_service_request_valid(logged_in_session, form_data):
-    # use json.dumps to allow nested data (notes and items)
+    # use json.dumps to allow nested data (notes and parts)
     response = logged_in_session.post(f"{BASE_URL}/NewServiceRequest",
         data=json.dumps(form_data), headers={"Content-Type": "application/json"})
     assert response.status_code == 200, "New Service Request failed"
@@ -144,17 +142,17 @@ def test_add_note_existing_service_reqeust(logged_in_session):
     assert response.status_code == 200, "Failed to add note to service request"
 
 
-    # ADD ITEM
-def test_add_item_existing_service_request(logged_in_session):
+    # ADD Part
+def test_add_part_existing_service_request(logged_in_session):
     service_request_id = get_last_service_request_id()
-    item_data = {
-        'items': 'ACT 2301',
-        'itemquantity': '1',
+    part_data = {
+        'parts': 'ACT 2301',
+        'partquantity': '1',
         'inputBy': 'test',
         'servReqId': service_request_id
     }
-    response = logged_in_session.post(f"{BASE_URL}/NewServiceRequest", data=item_data)
-    assert response.status_code == 200, "Failed to add item to service request"
+    response = logged_in_session.post(f"{BASE_URL}/NewServiceRequest", data=part_data)
+    assert response.status_code == 200, "Failed to add part to service request"
 
 
 

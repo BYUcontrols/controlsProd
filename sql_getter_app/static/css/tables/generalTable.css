@@ -132,7 +132,7 @@ tr.deletedRow:nth-child(odd) {
 }
 
 .notesTableWrapper,
-.itemsTableWrapper {
+.partsTableWrapper {
   width: 100%;
 }
 

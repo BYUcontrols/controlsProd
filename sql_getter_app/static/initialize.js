@@ -30,6 +30,7 @@ function init() {
         
         // generate the sort Menu
     let sorter = new sortMenu(window.columnsInfo, document.getElementById("table"), window.rowCollection);
+    // console.log(sorter);
     document.getElementById('tableFunctions').appendChild(sorter.createMenu('Sort by: ', 'STUFF TO SORT'));
 
     generateDisplaySelect();
@@ -202,7 +203,7 @@ function placeInBeautifulRows(collection, container) {
     let grid = document.createElement('div');
     container.appendChild(grid);
     grid.classList.add('inputDaddyDiv');
-        // go over each item in the collection array
+        // go over each part in the collection array
     for (let inputNum in collection) {
         // format the things
         let daddyDiv = document.createElement('div');

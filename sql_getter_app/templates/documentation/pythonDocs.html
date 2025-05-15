@@ -19,36 +19,48 @@ Main Page
 <!-- the raw block makes it so that no jinja template code will be executed -->
 {% raw %}
 <style>
+    a:hover {
+        opacity: 0.6;
+    }
     body {
-            overflow-x: hidden; /* Disable horizontal scrolling */
-            word-wrap: break-word; /* Ensure text wraps within its container */
+        overflow-x: hidden; /* Disable horizontal scrolling */
+        word-wrap: break-word; /* Ensure text wraps within its container */
     }
     pre {
         white-space: pre-wrap; /* Preserve formatting */
     }
-</style>
+    .page-content .doc-container * {
+        font-family: "HCo Ringside Narrow SSm", "Noto Sans", "Open Sans", Helvetica, Arial, sans-serif !important;
+    }
 
+    li {
+        display: inline;
+    }
+    ul {
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+</style>
+<div class="doc-container">
 <a name="top"></a>
 <pre style='background-color: white; padding: 10px;'>
+<h1>AC Controls Application Documentation</h1>
 
 Written by Joe Housley
 Updated by Mason Hunter 4/18/2022
 
-Here we will talk about how the server side elements of our application work. 
-If you have questions about the client side stuff look at the JavaScript Manual.
+Here we will talk about how the server side elements of our application work. If you have questions about the client side stuff look at the JavaScript Manual.
 
 To create the requirements document use the command: pip freeze > requirements.txt
 
 The server is written in Python and functions using the following modules:
-    Flask - http request handling - https://flask.palletsprojects.com/en/1.1.x/
-    modWSGI - For interface between the Flask application and the Apache server - https://modwsgi.readthedocs.io/en/master/ and https://flask.palletsprojects.com/en/1.1.x/deploying/mod_wsgi/
-    sqlAlchemy - To access the database - https://www.sqlalchemy.org/
+    <strong>Flask</strong> - http request handling - https://flask.palletsprojects.com/en/1.1.x/
+    <strong>modWSGI</strong> - For interface between the Flask application and the Apache server - https://modwsgi.readthedocs.io/en/master/ and https://flask.palletsprojects.com/en/1.1.x/deploying/mod_wsgi/
+    <strong>sqlAlchemy</strong> - To access the database - https://www.sqlalchemy.org/
 
-Our code is (should be at least) very well commented and will be easy to follow, but to get you started
-here are some basic overviews for the processes of our app. If you want any details go read the comments 
-next to the actual code!
+Our code is (should be at least) very well commented and will be easy to follow, but to get you started here are some basic overviews for the processes of our app. If you want any details go read the comments next to the actual code!
 
-Table of Contents:
+<h3>Table of Contents:</h3>
 <a href='#http'>Handling an http Request</a>
 <a href='#serv'>Serving HTML</a>
 <a href='#data'>Talking to the Database</a>
@@ -60,11 +72,9 @@ Table of Contents:
 <a href='#cth'>Create Table HTML</a>
 <a href='#edi'>Editing, Creating New Rows, Auditing, and Printing</a>
 <a href='#'></a>
-
-Python is Unique to Service Request Functionality
-<a href='#servReq'>Service Request</a>
+<a href='#servReq'>Python is Unique to Service Request Functionality</a>
 <a href='#col'>Collection</a>
-<a href='#tabhtml'>createTableHtml</a>
+<a href='#tabhtml'>createTableHtml</a>x
 <a href='#tabhtml2'>createTableHtml Support</a>
 <a href='#ff'>formFuncs</a>
 <a href='#sr'>Service Requests</a>
@@ -73,14 +83,14 @@ Python is Unique to Service Request Functionality
 
 
 <a name='http'></a><a href='#top'>Top of Page</a>
-Handling an http Request:
+<h3>Handling an http Request:</h3>
     1. A user sends a request for the home page '/home',
     2. Flask looks for a function with the wrapper (the thing with the @ before functions) @bp.route('/home') before it,
     3. Flask finds that function in tables.py and then runs it home().
 
 
 <a name='serv'></a><a href='#top'>Top of Page</a>
-Serving HTML
+<h3>Serving HTML</h3>
     1. Functions with the @bp.route() wrapper should return strings,
     2. Full page requests (browser requests) use render_template() to generate the HTML,
     3. Render_template()'s first argument is a string that points to a file,
@@ -91,8 +101,7 @@ Serving HTML
 
 
 <a name='data'></a><a href='#top'>Top of Page</a>
-Talking to the Database:
-
+<h3>Talking to the Database:</h3>
     1. In __init__.py when the server starts it starts a connection with the database using
         the sqlAlchemy's .init_app(app),
     2. Connection configuration is located in collection.py,
@@ -109,7 +118,7 @@ Talking to the Database:
 
 
 <a name='apa'></a><a href='#top'>Top of Page</a>        
-Flask Talking to Apache
+<h3>Flask Talking to Apache</h3>
     See the controls-app/docs/APACHE_CONFIG.txt for information on how to set up an apache server.
 
     Apache talks to Flask through a module (Python and Apache) called mod-wsgi. We import it through Python's pip tool
@@ -123,7 +132,7 @@ Flask Talking to Apache
 
 
 <a name='usr'></a><a href='#top'>Top of Page</a>
-User Authentication:
+<h3>User Authentication:</h3>
     1. A function has the @login_required wrapper (defined in auth.py),
     2. @login_required asks the login_manager object (defined in collection.py) if the user is logged in,
     3. If the user is not logged in we send them a page that redirects them to the BYU CAS login API 
@@ -149,7 +158,7 @@ User Authentication:
 
 
 <a name='cas'></a><a href='#top'>Top of Page</a>
-BYU CAS (Central Authentication System):
+<h3>BYU CAS (Central Authentication System):</h3>
     We use the BYU login API to authenticate our users (using their BYU account)
 
     First we will go over how to set up the site with the API:
@@ -184,7 +193,7 @@ BYU CAS (Central Authentication System):
 
 
 <a name='men'></a><a href='#top'>Top of Page</a>
-Loading Menus:
+<h3>Loading Menus:</h3>
     Menus displayed to the user cannot be just plain typed out HTML because different users will not have access
     to all the menus, so:
 
@@ -198,8 +207,7 @@ Loading Menus:
 
 
 <a name='tbl'></a><a href='#top'>Top of Page</a>
-Displaying Tables:
-
+<h3>Displaying Tables:</h3>
     1. The urls for the tables are their SQL tableName (e.g. '/Building' for the buildings table),
     2. All the @bp.route()'s for the tables are in tables.py,
     3. Those table functions call the function pull() from crud.py,
@@ -207,8 +215,8 @@ Displaying Tables:
         and generates HTML for the table using the tableHtml class (createTableHtml.py).
 
 <a name='cth'></a><a href='#top'>Top of Page</a>
-Creating Table HTML (also see createTableHtml.py for the specific code):
-        Any time the user requests a table (audits, linked tables, just plain tables, etc.),
+<h3>Creating Table HTML (also see createTableHtml.py for the specific code):</h3>
+    Any time the user requests a table (audits, linked tables, just plain tables, etc.),
     we execute a SQL query to retrieve the data and then feed that data into the createTableHtml class
     to turn the resultProxy objects returned from the server into HTML tables that work with
     the client side javascript. Here are the members of that class (located in createTableHtml.py):
@@ -253,25 +261,23 @@ Creating Table HTML (also see createTableHtml.py for the specific code):
 
 
 <a name='edi'></a><a href='#top'>Top of Page</a>
-Editing, Creating New Rows, Auditing, and Printing:
+<h3>Editing, Creating New Rows, Auditing, and Printing:</h3>
     1. The user performs an action that causes the JavaScript (the code that runs on the user's browser)
         to send a http request to the server (for instance to the '/print' url in crud.py),
     2. The functions associated with those urls do something then return a string to the JavaScript.
 
 <div id="servReq"></div><a href='#top'>Top of Page</a>
-Python Unique to Service Request Functionality:
+<strong>Python Unique to Service Request Functionality:</strong>
 by Mason Hunter 4/20/2022
 
 <div id="col"></div><a href='#top'>Top of Page</a>
-Collection Variables I added:
-
+<h3>Collection Variables I added:</h3>
  - userTechId = '(True,)' - The value for in the technician column of the User table that means a user IS a technician. 
                                 If that value changes, you need to change it here, too.
  - devUserName = 'test' - the dev site auto logs in with this user name.
 
 <div id="tabhtml"></div><a href='#top'>Top of Page</a>
-createTableHtml:
-
+<h3>createTableHtml:</h3>
 This was originally written by Joe.
 I modified this a bit to:
     - Change the name of some columns in the SR list page,
@@ -281,16 +287,14 @@ For more info go into the specific file and read my comments!
 
 
 <div id="tabhtml2"></div><a href='#top'>Top of Page</a>
-createTableHtml Support:
-
+<h3>createTableHtml Support:</h3>
 I added this file because my edits to the original were taking up a lot of room:
 
     makeRow() - Function used in the createTableHtml module, tableHtml class in order to make a row in the table.
     checkIfStatusIsOpen() - Tells us if the row has an open status or not.
 
 <div id="ff"></div><a href='#top'>Top of Page</a>
-formFuncs:
-
+<h3>formFuncs:</h3>
     A Module(found in formFuncs.py) I created for functions that help with getting information from forms 
     and submitting them to the database because the serviceRequests module was getting crowded:
 
@@ -299,15 +303,15 @@ formFuncs:
         convertStringToDatetime() - Takes a string that is a data and converts it to the datetime data type.
         getServReqData() - Gets all the data of a given service request from the database.
         submitEdits() - Takes the info submitted by the user to edit a service request and submits it to the database to save it.
-        submitNewItem() - Takes the info submitted by the user to create a new item and submits it to the database to save it.
-        addItem() - Adds an item to a service request in the database.
+        submitNewPart() - Takes the info submitted by the user to create a new part and submits it to the database to save it.
+        addPart() - Adds an part to a service request in the database.
         addNote() - Adds a note to a service request in the database.
-        saveReqItemEdits() - Saves the edits to a specific item connected to a sepcific service request to the database.
+        saveReqPartEdits() - Saves the edits to a specific part connected to a sepcific service request to the database.
         saveReqNoteEdits() - Saves the edits to a specific note connected to a sepcific service request to the database.
 
 
 <div id="sr"></div><a href='#top'>Top of Page</a>
-Service Requests
+<h3>Service Requests</h3>
 The serviceRequests.py file was created by Joe initially, and I added some changes as needed.
 Changes I made:
     - Added some pages for the filtering functionality of the SR list page.
@@ -320,12 +324,12 @@ Changes I made:
     Look at my comments for more info
 
 <div id="tab"></div><a href='#top'>Top of Page</a>
-Tables
+<h3>Tables</h3>
 All I added here was the code to generate the new pages,
 Check out tables.py for more info.
 
 <div id="uc"></div><a href='#top'>Top of Page</a>
-userClass
+<h3>userClass</h3>
 user_class.py was written by Joe and I modified it as needed.
 I added 3 functions:
 
@@ -335,5 +339,6 @@ checkIfUserIsAssignedTo() - Tells us if the user is the Assigned to technician f
 
 
 </pre>
+</div>
 {% endraw %}
 {% endblock %}

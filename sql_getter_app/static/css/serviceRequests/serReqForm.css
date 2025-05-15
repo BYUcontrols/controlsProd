@@ -36,7 +36,9 @@ textarea {
 }
 
 input[type="button"],
-input[type="submit"] {
+input[type="submit"],:xr-overlay
+button[type="button"],
+button[type="submit"] {
   padding: 8px 18px; /* Adjusted padding for a smaller button */
   font-size: 14px; /* Reduced font size */
   line-height: 1.2; /* Line height to ensure vertical alignment */
@@ -61,7 +63,7 @@ input#deletebutton:hover {
   background-color: #b52a2a;
 }
 
-/*  NOTES AND ITEMS TABLE STYLING (specific to Service Requests, the rest is in generalTable.css) */
+/*  NOTES AND PARTS TABLE STYLING (specific to Service Requests, the rest is in generalTable.css) */
 .tableHeader {
   display: flex;
   justify-content: space-between; /* Space between button and title */
@@ -74,7 +76,7 @@ input#deletebutton:hover {
 }
 
 
-#add-item-btn #add-note-btn {
+#add-part-btn #add-note-btn {
   padding: 10px 15px;            /* Adds padding to make the button a reasonable size */
   font-size: 16px;               /* Adjust the font size */
 }
@@ -124,7 +126,7 @@ input[type="datetime-local"] {
   max-width: 250px;
 }
 input[type="number"] {
-  max-width: 100px;
+  max-width: 100%; /* Adjusted to account for padding */
 }
 
 #completedDiv {
@@ -198,9 +200,10 @@ input[type="number"] {
 select#vendorId {
   max-width: 60%;
 }
-
 .modal-content input[type="submit"],
-.modal-content input[type="button"] {
+.modal-content input[type="button"],
+.modal-content button[type="submit"],
+.modal-content button[type="button"] {
   width: 48%;
   padding: 10px;
   margin: 10px 1%;
@@ -210,11 +213,15 @@ select#vendorId {
 }
 
 .modal-content input[type="submit"],
-.modal-content #editItemPopSubmit,
+.modal-content #editPartPopSubmit,
 .modal-content #editnotepopsubmit,
 div#buttonContainer input[type="submit"] {
   background-color: #002e5d;
   color: #fff;
+}
+
+.modal-content button[type="submit"] {
+  background-color: #002e5d;;
 }
 
 .modal-content input[type="button"] {
@@ -223,13 +230,21 @@ div#buttonContainer input[type="submit"] {
 }
 
 .modal-content input[type="submit"]:hover,
-.modal-content #editItemPopSubmit:hover,
+.modal-content #editPartPopSubmit:hover,
 .modal-content #editnotepopsubmit:hover,
-div#buttonContainer input[type="submit"]:hover {
+div#buttonContainer input[type="submit"]:hover{
+  background-color: #004080;
+}
+
+.modal-content button[type="submit"]:hover {
   background-color: #004080;
 }
 
 .modal-content input[type="button"]:hover {
+  background-color: #a9a9a9;
+}
+
+.modal-content button[type="button"]:hover {
   background-color: #a9a9a9;
 }
 
@@ -268,6 +283,20 @@ div#buttonContainer input[type="submit"]:hover {
   margin-bottom: 10px;
 }
 
+
+.modal-content input[type="text"],
+.modal-content input[list],
+.modal-content input[type="email"],
+.modal-content input[type="tel"],
+.modal-content select {
+  height: 40px;
+  font-size: 1rem;
+  line-height: 1.5;
+  padding: 8px 10px;
+  box-sizing: border-box;
+}
+
+
 .textInput label {
   margin-bottom: 5px;
   font-size: 1rem;
@@ -304,8 +333,43 @@ div#buttonContainer input[type="submit"]:hover {
 }
 
 #inputByDiv,
-#itemQuant {
+#partQuant {
   margin-top: 10px;
+}
+
+.numberInput{
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+}
+
+.numberInput {
+  align-items: center;
+  padding: 5px;
+  border-radius: 4px;
+  width: 35% !important /*override width for numeric input*/
+}
+
+.numberInput label{
+  font-size: 1rem;
+  color: #333;
+}
+
+.numberInput label {
+  margin-right: 10px;
+}
+
+.numberInput{
+  border: 1px solid #ccc;
+}
+
+.numberInput{
+  display: block;
+  width: 100%;
+  padding: 10px;
+  font-size: 1rem;
+  box-sizing: border-box;
+  border-radius: 4px;
 }
 
 /* FOR THE MODAL CLOSE SVG (X) */
@@ -370,7 +434,9 @@ div#buttonContainer input[type="submit"]:hover {
 /* Further styling adjustments for smaller screens */
 @media (max-width: 480px) {
   input[type="submit"],
-  input[type="button"] {
+  input[type="button"],
+  button[type="submit"],
+  button[type="button"] {
     font-size: 12px; /* Further reduce font size for mobile */
     padding: 6px 12px; /* Adjust button padding */
     height: 30px; /* Reduce button height */
@@ -403,7 +469,9 @@ div#buttonContainer input[type="submit"]:hover {
   }
 
   .modal-content input[type="submit"],
-  .modal-content input[type="button"] {
+  .modal-content input[type="button"],
+  .modal-content button[type="submit"],
+  .modal-content button[type="button"] {
     padding: 8px; /* Adjust button padding */
   }
 

@@ -1,4 +1,4 @@
-//  written Feb 2025 to build modals for each table to add items
+//  written Feb 2025 to build modals for each table to add parts
 // this function is called from the table.html file to dynamically add a modal to each table
 
 // Define modal configurations for each table
@@ -14,9 +14,9 @@ const modalConfig = {
         // display: the column name within the related table that will be displayed in the dropdown and correspond with the fk
         // fk: the value in each select that is submitted in the form submission (so we dont have to submit to multiple tables on the backend)
         // the backend takes this info and return all the data display names and their associated id (fk)
-    "Item": { // table name
+    "Part": { // table name
         "fields": [
-         // each field required to submit a new item
+         // each field required to submit a new part
             {"name": "Description", "type": "text", "columnName": "description", "maxchar": "255", "required": true},
             {"name": "Model Number", "type": "text", "columnName": "modelNumber", "maxchar": "100"},
             {"name": "Vendor", "type": "text", "dropdown": {"table":"Vendor", "display":"name", "fk":"vendorId"}, "columnName": "vendorId"},
@@ -26,11 +26,11 @@ const modalConfig = {
             {"name": "Device Type", "type": "text", "dropdown": {"table": "DeviceType", "display":"deviceType", "fk":"deviceTypeId"}, "columnName": "deviceTypeId"},
             {"name": "Device Sub Type", "type": "text", "dropdown": {"table": "DeviceSubType", "display":"deviceSubType", "fk":"deviceSubTypeId"}, "columnName": "deviceSubTypeId"},
         ],
-        "pk" : "itemId"
+        "pk" : "partId"
     },
     "Inventory": {
         "fields": [
-            { "name": "Item", "type": "text", "dropdown": {"table": "Item", "display": "description", "fk": "itemId"}, "columnName": "itemId", "required": true},
+            { "name": "Part", "type": "text", "dropdown": {"table": "Part", "display": "description", "fk": "partId"}, "columnName": "partId", "required": true},
             { "name": "In Stock", "type": "number", "columnName": "inStock", "required": true},
             { "name": "Location", "type": "text", "columnName": "location", "maxchar": "100"},
             // could add an active column here but it defaults to 1 in the db
@@ -43,11 +43,12 @@ const modalConfig = {
             {"name": "User Name", "type": "text", "columnName": "userName", "maxchar": "100", "required": true},
             {"name": "First Name", "type": "text", "columnName": "firstName", "maxchar": "100", "required": true},
             {"name": "Last Name", "type": "text", "columnName": "lastName", "maxchar": "100", "required": true},
-            {"name": "Technician", "type": "checkbox", "columnName": "technician", "required": true},
-            {"name": "Phone", "type": "tel", "columnName": "phone", "maxchar": "25", "format": `pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"`},
+            {"name": "Technician", "type": "checkbox", "columnName": "technician"},
+            {"name": "Department", "type": "text", "dropdown": {"table": "Department", "display":"departmentName", "fk":"departmentId"}, "columnName": "departmentId", "required": true},
+            {"name": "Phone", "type": "tel", "columnName": "phone", "maxchar": "25"},
             {"name": "E Mail", "type": "email", "columnName": "eMail", "maxchar": "100"},
             {"name": "Vendor", "type": "text", "dropdown": {"table":"Vendor", "display":"name", "fk":"vendorId"}, "columnName": "vendorId"},
-            // {"name": "Full Name", "type": "text", "columnName": "fullName"},
+            // {"name": "User Id Modified", "type": "number", "columnName": "userIdModified"},
             {"name": "Role", "type": "text", "dropdown": {"table": "Role", "display":"role", "fk":"roleId"}, "columnName": "userRoleId"},
         ],
         "pk" : "userId"
@@ -71,14 +72,23 @@ const modalConfig = {
     },
     "TablePermissions": {
         "fields": [
-            {"name": "Table Permissions", "type": "text", "columnName": "tablePermissionsId", "required": true},
+            {"name": "Table Name", "type": "text", "columnName": "tableName", "maxchar": "50", "required": true},
+            {"name": "Viewing Level", "type": "text", "columnName": "viewingLevel", "maxchar": "255", "required": true},
+            {"name": "Editing Level", "type": "text", "columnName": "editingLevel", "maxchar": "255"},
+            {"name": "Adding Level", "type": "text", "columnName": "addingLevel", "maxchar": "255"},
+            {"name": "Deleting Level", "type": "text", "columnName": "deletingLevel", "maxchar": "255"},
+            {"name": "Undeleting Level", "type": "text", "columnName": "undeletingLevel", "maxchar": "255"},
+            {"name": "Auditing Level", "type": "text", "columnName": "auditingLevel", "maxchar": "255"},
             // could add an active column here but it defaults to 1 in the db
         ],
         "pk" : "tablePermissionsId"
     },
     "VersionControl": {
         "fields": [
-            {"name": "Version Control", "type": "text", "columnName": "versionControl", "required": true},
+            {"name": "Version Number", "type": "text", "columnName": "versionNumber", "required": true},
+            {"name": "Live Date", "type": "date", "columnName": "liveDate", "required": true},
+            {"name": "Change Log", "type": "text", "columnName": "changeLog", "maxchar": "2000", "required": true},
+            {"name": "Notes", "type": "text", "columnName": "notes", "maxchar": "1000"},
             // could add an active column here but it defaults to 1 in the db
         ],
         "pk" : "versionId"
@@ -87,7 +97,7 @@ const modalConfig = {
         "fields": [
             { "name": "Building Name", "type": "text", "columnName": "buildingName", "maxchar": "255", "required": true},
             { "name": "Building Abbreviation", "type": "text", "columnName": "buildingAbbreviation", "maxchar": "20", "required": true},
-            { "name": "Torn Down", "type": "checkbox", "columnName": "tornDown", "required": true},
+            { "name": "Torn Down", "type": "checkbox", "columnName": "tornDown"},
             { "name": "Bacnet Network Number", "type":"number", "columnName": "bacnetNetworkNumber"},
             { "name": "Notes", "type":"text", "columnName": "notes", "maxchar": "255"},
         ],
@@ -97,14 +107,22 @@ const modalConfig = {
         "fields": [
             {"name": "Device", "type": "text", "dropdown": {"table": "Device", "display":"deviceName", "fk":"deviceId"}, "columnName": "deviceId"},
             {"name": "IP", "type": "text", "dropdown": {"table": "IP", "display":"ipAddress", "fk":"ipId"}, "columnName": "ipId"},
-            {"name": "Building", "type": "text", "dropdown": {"table": "Building", "display":"buildingName", "fk":"buildingId"}, "columnName": "buildingId"},   
+            {"name": "Building", "type": "text", "dropdown": {"table": "Building", "display": "buildingName", "fk":"buildingId"}, "columnName": "buildingId"},   
             {"name": "Old Site Name", "type": "text", "required": false, "columnName": "oldSiteName", "maxchar": "50"},
             {"name": "Device Number", "type": "number", "required": false, "columnName": "deviceNumber"},
             {"name": "Site Name", "type": "text", "columnName": "siteName", "maxchar": "50"},
-            {"name": "Site Device Number", "type": "number", "columnName": "siteDeviceNumber"},
+            {"name": "Site Number", "type": "number", "columnName": "siteNumber"},
             {"name": "Bbmd Udp Port", "type": "number", "columnName": "bbmdUdpPort"}  // Assuming this is a numeric port number
         ],
         "pk" : "bbmdId"
+    },
+    "Department": {
+        "fields": [
+            {"name": "Department Name", "type": "text", "columnName": "departmentName", "maxchar": "100"},   
+            {"name": "Building", "type": "text", "dropdown": {"table": "Building", "display": "buildingName", "fk":"buildingId"}, "columnName": "buildingId"},
+            {"name": "User Id Department Head", "type": "int", "columnName": "userIdDepartmentHead", "dropdown": {"table": "[User]", "display": "fullName", "fk":"userId"}},
+        ],
+        "pk" : "departmentId"
     },
     "Device": {
         "fields": [
@@ -194,7 +212,7 @@ const modalConfig = {
             {"name": "City", "type": "text", "required": false, "columnName": "city", "maxchar": "100"},
             {"name": "State", "type": "text", "required": false, "dropdown": {"table": "State", "display":"state", "fk":"stateId"}, "columnName": "stateId"},
             {"name": "Zip", "type": "number", "required": false, "columnName": "zip", "maxchar": "25"},
-            {"name": "Phone", "type": "text", "required": false, "columnName": "phone", "maxchar": "25", "format": `pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"`},
+            {"name": "Phone", "type": "text", "required": false, "columnName": "phone", "maxchar": "25"},
             {"name": "Contact", "type": "text", "required": false, "columnName": "contact", "maxchar": "25"},
         ],
         "pk" : "vendorId"
@@ -298,15 +316,27 @@ const modalConfig = {
             {"name": "Status", "type": "text", "columnName": "status", "maxchar": "255"},
             {"name": "For Service Request", "type": "checkbox", "columnName": "forServiceRequest"},
             {"name": "For Devices", "type": "checkbox", "columnName": "forDevices"},
-            {"name": "For Items", "type": "checkbox", "columnName": "forItems"}
+            {"name": "For Parts", "type": "checkbox", "columnName": "forItems"}
         ],
         "pk" : "statusId"
+    },
+    "UserRole": {
+        "fields": [
+            {"name": "User", "type": "int", "columnName": "userId", "dropdown": {"table": "[User]", "display": "fullName", "fk":"userId"}},
+            {"name": "Role", "type": "int", "columnName": "roleId", "dropdown": {"table": "[Role]", "display": "role", "fk":"roleId"}}
+        ],
+        "pk" : "userRoleId"
     }
 };
 
 let cachedDropdownData = {}
 
 let phoneNumberTypeData = null
+
+// Ensure userRole is always safely set
+if (typeof window.userRole === "undefined" || !window.userRole) {
+    window.userRole = "Guest"; // fallback role
+  }
 
 async function getDropdownValues(dropdowns) {
     try {
@@ -330,10 +360,39 @@ async function getDropdownValues(dropdowns) {
     }
 }
 
+function collectFormValues(modal, tableName) {
+    const inputs = modal.querySelectorAll("input, select, textarea");
+    const values = {
+      Table: tableName
+    };
+  
+    inputs.forEach(input => {
+      let fieldName = input.id.replace(`${tableName}-`, "").replace(/\s/g, '');
+  
+      if (input.type === "checkbox") {
+        values[fieldName] = input.checked ? 1 : 0;
+      } else {
+        values[fieldName] = input.value;
+      }
+    });
+  
+    return values;
+  }
+
+function getVendorRoleId() {
+    const roleDropdown = document.querySelector(`[id$="-Role"]`);
+    for (let option of roleDropdown.options) {
+      if (option.textContent.trim().toLowerCase() === "vendor") {
+        return option.value;
+      }
+    }
+    return ""; // fallback
+}
+
 // get the history of a row in a table
-function openHistoryTabForRow(itemId, tableName, pk_column) {
-    let historyTableName = tableName + "Audit"
-    window.open(`/history?audit_table_name=${historyTableName}&pk_column=${pk_column}&item_id=${itemId}`, "_blank");
+function openHistoryTabForRow(partId, tableName, pk_column) {
+
+    window.open(`/${tableName}History?filter=%7B"${pk_column}"%3A%7B"op"%3A"is"%2C"list"%3A%5B"${partId}"%5D%7D%2C"showDeleted"%3A%7B"op"%3A"showDeleted"%2C"list"%3A"true"%7D%7D`, "_blank");
 }
 
 // gets the phone number type data from the database so the dropdown can be populated with the correct values
@@ -364,8 +423,31 @@ function getDropdownOptionId(cachedDataForTable, dropdownTable, dropdownName, dr
     }
 }
 
+async function getRowData(rowId, tableName) {
+    try {
+        const response = await fetch('/GetRowData', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ "rowId": rowId, "tableName": tableName })  // Send as JSON
+        });
+        
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const data = await response.json();
+        return data;  // Return the data after the function resolves
+    } catch (error) {
+        console.error('Error:', error);
+        return null;
+    }
+}
+
     
-export async function createTableModal(tableName, userID, rowId = null, edit=false) {
+export async function createTableModal(tableName, userID, config = {}, rowId = null, edit = false) {
+
     // Check if the table has a defined modal structure
     if (!(tableName in modalConfig)) {
         console.error(`No modal configuration found for table: ${tableName}`);
@@ -374,18 +456,32 @@ export async function createTableModal(tableName, userID, rowId = null, edit=fal
 
     // Get configuration for the selected table
     const { fields } = modalConfig[tableName];
+    let workingFields = [...fields]; // clone fields so we don't mutate the original config
+
+    // SECURITY: Remove Technician field if user isn't Admin or Secretary
+    if (!["Admin", "Secretary"].includes(window.userRole)) {
+        workingFields = workingFields.filter(f => f.columnName?.toLowerCase() !== "technician");
+    }
 
     // Create modal container
     const modal = document.createElement("div");
     modal.id = `modal-${tableName}`;
     modal.classList.add("modal");
     modal.style = "display:none;"
-    modal.onclick = function(event) {
-        if (event.target === modal) {
+
+    // func to close the modal when the user clicks outside of it
+    let mouseDownInsideModal = false;
+    modal.addEventListener('mousedown', function(event) {
+        mouseDownInsideModal = event.target !== modal;
+    });
+    modal.addEventListener('mouseup', function(event) {
+        const mouseUpInsideModal = event.target !== modal;
+        if (!mouseDownInsideModal && !mouseUpInsideModal) {
             closeTableModal();
         }
-    };
-
+        mouseDownInsideModal = false; // reset for next click
+    });
+    
     // for each field in the table (defined in modalConfig object). if the field has a dropdown key then add 
     // it to an object to be sent to the backend via the getDropdownValues funtion which calls the (/GetModalDropdownData) route
     //  which will query the db and return dropdown values
@@ -412,47 +508,144 @@ export async function createTableModal(tableName, userID, rowId = null, edit=fal
             }
         }
     }
+    
+    let data = null
+    let ids = null
+    let values = null
+    if (edit) {
+        
+        if (tableName === "BBMD") {
+            data = await getRowData(rowId, tableName);
+            ids = data["foreignKeys"]
+            values = data["rowData"]
+        }
+    }
 
     // Generate input fields dynamically
     // example field {"name": "Vendor", "type": "text", "dropdown": {"table":"Vendor", "display":"name", "fk":"vendorId"}},
-    let formFields = fields.map(field => {
+    let formFields = workingFields.map(field => {
         // If the field has a dropdown, generate a dropdown select element
         let editValue = '';
         let dropdownOptionId = '';
         if (edit) {
-            // edit value = existing value in the row (get row id then column value. You might have to change the table creation to include a class name with the column title)
-            if (field.dropdown) {
-                editValue = document.getElementById(`${rowId}-${field.columnName}`).innerText
-                // gives building abbreviation a dropdown value of its associated building id
-                if (field.dropdown.table === "Building" || field.dropdown.table === "Country") {
-                    let buildingTitle = document.getElementById(`${rowId}-${field.columnName}`).getAttribute('title');
-                    let buildingId = buildingTitle.match(/ID Number:\s*(\d+)/);
-                    dropdownOptionId = buildingId[1];
-                } else if (field.dropdown.table === "PhoneNumberType") {
-                    dropdownOptionId = editValue
-                    editValue = phoneNumberTypeData[editValue]
+            if (tableName !== "BBMD") {
+                // edit value = existing value in the row (get row id then column value. You might have to change the table creation to include a class name with the column title)
+                if (field.dropdown) {
+                    editValue = document.getElementById(`${rowId}-${field.columnName}`).innerText
+                    // gives building abbreviation a dropdown value of its associated building id
+                    if (field.dropdown.table === "Building" || field.dropdown.table === "Country") {
+                        let buildingTitle = document.getElementById(`${rowId}-${field.columnName}`).getAttribute('title');
+                        let buildingId = buildingTitle.match(/ID Number:\s*(\d+)/);
+                        dropdownOptionId = buildingId[1];
+                    } else if (field.dropdown.table === "Vendor") {
+                        let buildingTitle = document.getElementById(`${rowId}-${field.columnName}`).getAttribute('title');
+                        if (buildingTitle) {
+                            let buildingId = buildingTitle.match(/ID Number:\s*(\d+)/);
+                            dropdownOptionId = buildingId[1];
+                        }
+
+
+                        const vendorDropdownId = `${tableName}-${field.name.replace(/\s/g, '')}`; // Construct the ID for this specific vendor dropdown
+
+                        // Defer the option cleanup until after the modal is rendered
+                        setTimeout(() => {
+                            const vendorDropdownElements = document.querySelectorAll(`#${vendorDropdownId}`);
+                            const vendorDropdownElement = vendorDropdownElements[vendorDropdownElements.length - 1]; // Get the last one to ensure it's the correct one
+                            if (vendorDropdownElement) {
+                                const options = vendorDropdownElement.options;
+                                for (let i = 0; i < options.length; i++) {
+                                    if (options[i].value === "" && !buildingTitle) {
+                                        options[i].remove(); // Remove the "None" option if it exists
+                                        break
+                                    }
+                                }
+                            }
+                        }, 0);
+                    } else if (field.dropdown.table === "PhoneNumberType") {
+                        dropdownOptionId = editValue
+                        editValue = phoneNumberTypeData[editValue]
+                    } else {
+                        // (cached data for the table, dropdown table, column name, fk column, option name)
+                        dropdownOptionId = getDropdownOptionId(cachedDropdownData[tableName], field.dropdown.table, field.dropdown.display, field.dropdown.fk, editValue)
+                    }            
+                } else if (field.type === 'date') {
+                    editValue = document.getElementById(`${rowId}-${field.columnName}`).innerText;
+                    editValue = new Date(editValue).toISOString().split('T')[0];
+                    editValue = `value="${editValue}"`;
+                } else if (field.type === 'checkbox') {
+                    editValue = document.getElementById(`${rowId}-${field.columnName}`).innerText;
+                    if (editValue === 'True') {
+                        editValue = 'checked';
+                    } else if (editValue === 'False') {
+                        editValue = '';
+                    }
                 } else {
-                    // (cached data for the table, dropdown table, column name, fk column, option name)
-                    dropdownOptionId = getDropdownOptionId(cachedDropdownData[tableName], field.dropdown.table, field.dropdown.display, field.dropdown.fk, editValue)
-                }            
-            } else if (field.type === 'date') {
-                editValue = document.getElementById(`${rowId}-${field.columnName}`).innerText;
-                editValue = new Date(editValue).toISOString().split('T')[0];
-                editValue = `value="${editValue}"`;
-            } else if (field.type === 'checkbox') {
-                editValue = document.getElementById(`${rowId}-${field.columnName}`).innerText;
-                if (editValue === 'True') {
-                    editValue = 'checked';
-                } else if (editValue === 'False') {
-                    editValue = '';
-                }
+                    editValue = `value="${document.getElementById(`${rowId}-${field.columnName}`).innerText}"`
+                };
             } else {
-                editValue = `value="${document.getElementById(`${rowId}-${field.columnName}`).innerText}"`
-            };
+                let columnKey = ''
+                if (field.columnName === "deviceId") {
+                    columnKey = "deviceName"
+                } else if (field.columnName === "buildingId") {
+                    columnKey = "buildingName"
+                } else if (field.columnName === "ipId") {
+                    columnKey = "ipAddress"
+                } else {
+                    columnKey = field.columnName
+                }
+                if (field.dropdown) {
+                        
+                    console.log(values[tableName][0][columnKey])
+                    // console.log(rowData[field.columnName])
+                    dropdownOptionId = ids[tableName][0][field.columnName];
+                    editValue = values[tableName][0][columnKey];
+                } else {
+                    editValue = `value="${values[tableName][0][columnKey]}"`
+                };
+            }
 
         }
         if (field.dropdown) {
-            const dropdownOptions = dropdownValues[field.dropdown.table] || []; // Fetch dropdown data dynamically
+            let dropdownOptions = dropdownValues[field.dropdown.table] || [];
+          
+            // Filter role options if not Admin/Secretary
+            if (
+              field.dropdown.table === "Role" &&
+              !["Admin", "Secretary"].includes(window.userRole) &&
+              Array.isArray(dropdownOptions)
+            ) {
+              dropdownOptions = dropdownOptions.filter(option => {
+                const raw = option[field.dropdown.display] || "";
+                return !["admin", "secretary", "mechanic"].includes(raw.toLowerCase());
+              });
+            }
+            
+            // Add "New Vendor" and "None" option manually
+            if (field.dropdown.table === "Vendor") {
+                const newVendorOptionExists = dropdownOptions.some(opt => opt[field.dropdown.fk] === "New Vendor");
+                if (!newVendorOptionExists) {
+                    dropdownOptions.unshift({
+                        [field.dropdown.fk]: "New Vendor",
+                        [field.dropdown.display]: "New Vendor"
+    
+                    });
+                }
+                const noneOptionExists = dropdownOptions.some(opt => opt[field.dropdown.fk] === "");
+                if (!noneOptionExists && edit) {
+                    dropdownOptions.unshift({
+                        [field.dropdown.fk]: "",
+                        [field.dropdown.display]: "None"
+                    });
+                }
+            } else if (field.dropdown.table === "Department") {
+                console.log("Dropdown Options!!!", dropdownOptions);
+                dropdownOptions.sort((a, b) => {
+                    if (a[field.dropdown.display] === "Unassigned") return -1; // Move "Unassigned" to the top
+                    if (b[field.dropdown.display] === "Unassigned") return 1;
+                    return 0; // Keep other options in their original order
+                });
+            }
+            
             const options = dropdownOptions.map(option => `
                 <option value="${option[field.dropdown.fk]}">${option[field.dropdown.display]}</option>
             `).join('');
@@ -462,19 +655,26 @@ export async function createTableModal(tableName, userID, rowId = null, edit=fal
             <select id="${tableName}-${field.name.replace(/\s/g, '')}" 
                     class="${field.type}Input" 
                     ${field.required ? "required" : ""}>
-                <option value=${edit ? dropdownOptionId : ""}>${edit ? editValue : `Select ${field.name}`}</option>
+                    <option value=${edit ? dropdownOptionId : ""}>${edit ? editValue : `Select ${field.name}`}</option>
                 ${options}
             </select>
         `;
         }
     
         // If the field does not have a dropdown, create a regular input field
-        return `
+        const inputField = `
             <label style="font-size: 1rem;">${field.name}:</label>
             <input type="${field.type}" id="${tableName}-${field.name.replace(/\s/g, '')}" 
-                placeholder="Enter ${field.name}${field.format ? " as 123-456-7890" : ""}" class="${field.type}Input" ${field.required ? "required" : ""} ${edit ? `${editValue}`: ""} 
-                ${field.format ? field.format : ""} ${field.maxchar ? `maxlength="${field.maxchar}"` : ""}>
+                placeholder="Enter ${field.name}" class="${field.type}Input" ${field.required ? "required" : ""} ${edit ? `${editValue}`: ""} 
+                 ${field.maxchar ? `maxlength="${field.maxchar}"` : ""}>
         `;
+
+        // Add a break after checkboxes
+        if (field.type === 'checkbox') {
+            return `${inputField}<br>`;
+        }
+
+        return inputField;
     }).join("<br>");
 
 
@@ -504,6 +704,70 @@ export async function createTableModal(tableName, userID, rowId = null, edit=fal
 
     // Append modal to body (but keep hidden initially)
     document.body.appendChild(modal);
+    modal.style.display = "block";
+    document.body.style.overflow = "hidden"; // Optional: prevents background scroll
+
+    setTimeout(() => {
+        const vendorDropdown = modal.querySelector(`#${tableName}-Vendor`);
+        if (vendorDropdown) {
+            vendorDropdown.addEventListener("change", () => {
+                if (vendorDropdown.value === "New Vendor") {
+                    createTableModal("Vendor", userID);
+                }
+            });
+        }
+    }, 0);
+
+    setTimeout(() => {
+        const vendorDropdown = modal.querySelector(`#${tableName}-Part`);
+        if (vendorDropdown) {
+            vendorDropdown.addEventListener("change", () => {
+                if (vendorDropdown.value === "New Vendor") {
+                    createTableModal("Parts", userID);
+                }
+            });
+        }
+    }, 0);
+
+      
+    setTimeout(() => {
+        const phoneInput = modal.querySelector(`#${tableName}-Phone`);
+        if (phoneInput) {
+            phoneInput.addEventListener("input", (e) => {
+            const cleaned = e.target.value.replace(/\D/g, "").slice(0, 10); // only digits, max 10
+            let formatted = cleaned;
+        
+            if (cleaned.length >= 7) {
+                formatted = `${cleaned.slice(0,3)}-${cleaned.slice(3,6)}-${cleaned.slice(6)}`;
+            } else if (cleaned.length >= 4) {
+                formatted = `${cleaned.slice(0,3)}-${cleaned.slice(3)}`;
+            } else if (cleaned.length >= 1) {
+                formatted = `${cleaned}`;
+            }
+        
+            e.target.value = formatted;
+            });
+        }
+    }, 0);
+
+    setTimeout(() => {
+        const vendorDropdown = modal.querySelector(`#${tableName}-Vendor`);
+        const roleDropdown = modal.querySelector(`#${tableName}-Role`);
+        
+        if (vendorDropdown && roleDropdown) {
+            vendorDropdown.addEventListener("change", () => {
+            if (vendorDropdown.value && vendorDropdown.value !== "New Vendor") {
+                // Auto-set role to Vendor and disable
+                roleDropdown.value = getVendorRoleId(); // you will define this below
+                roleDropdown.disabled = true;
+            } else {
+                // Re-enable role dropdown
+                roleDropdown.disabled = false;
+                roleDropdown.value = ""; // optional: reset
+            }
+            });
+        }
+    }, 0);
     
     // Close modal event
     const closeTableModal = () => {
@@ -511,13 +775,13 @@ export async function createTableModal(tableName, userID, rowId = null, edit=fal
         document.body.style.overflow = "auto";  // Re-enable body scrolling
     }
 
-    const deleteItem = (itemId, pk_column) => {
+    const deletePart = (partId, pk_column) => {
         fetch("/DeleteTableRow", {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({"table": tableName, "pk": pk_column, "pk_value": itemId})
+            body: JSON.stringify({"table": tableName, "pk": pk_column, "pk_value": partId})
         })  
         .then(response => response.json())
         .then(data => {
@@ -526,7 +790,7 @@ export async function createTableModal(tableName, userID, rowId = null, edit=fal
         .catch(error => console.error("Error:", error));
         form.reset()
         closeTableModal()
-        // window.location.reload(); // reload the page to show the changes.
+        window.location.href = `/${tableName}`; // reload the page to show the changes.
     }
 
     // Add event listener to close modal when x button is clicked
@@ -536,8 +800,8 @@ export async function createTableModal(tableName, userID, rowId = null, edit=fal
     //  if edit mode change the cancel to a delete button and add history button
     if(edit){
         const pk_column = modalConfig[tableName]["pk"]
-        modal.querySelector(".closeTableModal").addEventListener("click", () => {deleteItem(rowId, pk_column)})
-        const historyButton = document.getElementById("historyButton")
+        modal.querySelector(".closeTableModal").addEventListener("click", () => {deletePart(rowId, pk_column)})
+        const historyButton = modal.querySelector("#historyButton")
         historyButton.addEventListener("click", () => {
             openHistoryTabForRow(rowId, tableName, pk_column)
         })
@@ -558,7 +822,7 @@ export async function createTableModal(tableName, userID, rowId = null, edit=fal
             if (field.dropdown) {
                 formData[field.columnName] = inputElement.value;
             } else if (field.type === 'checkbox') {
-                if (inputElement.checked) {
+                if (inputElement && inputElement.checked) {
                     formData[field.columnName] = 1;
                 } else {
                     formData[field.columnName] = 0;
@@ -571,9 +835,17 @@ export async function createTableModal(tableName, userID, rowId = null, edit=fal
             const pk = modalConfig[tableName]["pk"]
             formData["pk"] = pk
             formData[pk] = rowId
-        }   
+        }
+        const modal = document.querySelector(".modal"); // or whatever your modal class is
+        const values = collectFormValues(modal, tableName);
+        // Fix empty string problem
+        for (const key in values) {
+            if (values[key] === "") {
+            values[key] = null;
+            }
+        }
 
-        console.log(`Submitting data for ${tableName}:`, JSON.stringify(formData));
+        // console.log(`Submitting data for ${tableName}:`, JSON.stringify(formData));
 
         // Send data via Fetch API
         fetch(`${edit ? "/EditTableRow" : "/AddTableRow"}`, {
@@ -582,15 +854,27 @@ export async function createTableModal(tableName, userID, rowId = null, edit=fal
                 "Content-Type": "application/json"
             },
             body: JSON.stringify(formData)
-        })  
+        }) 
         .then(response => response.json())
         .then(data => {
             console.log("Success:", data);
+            if (typeof userFullName === 'undefined') {
+                window.location.href = `/${tableName}`; // reload the page to show the changes.
+            } else if (userFullName && tableName !== "User" && tableName !== "Part") {
+                window.location.reload(); 
+            } else {
+                closeTableModal()
+                if (tableName === "User") {
+                    document.getElementById("requestor").value = data.name;
+                } else if (tableName === "Part") {
+                    document.getElementById("parts").value = data.name;
+                }
+            }
         })
-        .catch(error => console.error("Error:", error));
-        form.reset()
-        closeTableModal()
-        // window.location.reload(); // reload the page to show the changes.
+        .catch(error => {
+            console.error("Error:", error);
+            alert("Error: Could not add part. Make sure required fields are filled out correctly, and try again.");
+        });
     });
         // Function to show the modal
     const showModal = () => {
@@ -599,3 +883,4 @@ export async function createTableModal(tableName, userID, rowId = null, edit=fal
     }
     return showModal
 }
+window.createTableModal = createTableModal; // Expose the function globally for use in other scripts

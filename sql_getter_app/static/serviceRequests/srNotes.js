@@ -16,12 +16,12 @@ function loadNotes(notesTable, requestId, serviceRequestWindowEngine) {
   console.log(serviceRequestWindowEngine);
 }
 
-// Called on return of the request form loadItems()
+// Called on return of the request form loadParts()
 function finishLoadNotes() {
   // place the return table where it goes
   this.table.innerHTML = this.response;
   // load the rows and save the list of rowEngines returned in the rowEngine for the service request window
-  // we do this so that when the service request window is closed we have a list of items and notes and people
+  // we do this so that when the service request window is closed we have a list of parts and notes and people
   // to save. As a note the type of foreign row loaded is AIRPLANE_MODE which means that the Notes will not
   // actually send any requests to the server when saved or edited
   let listOfEngines = loadForeignRow(
@@ -54,12 +54,12 @@ function createInputNewNoteRow(requestContext) {
   // create the input new row
   inputEngine.rowRef = document.createElement("tr");
   requestContext.table.childNodes[1].append(inputEngine.rowRef);
-  inputEngine.rowRef.classList.add("srItemsNewRow");
+  inputEngine.rowRef.classList.add("srPartsNewRow");
   // set edit to to true for the inputEngine
   inputEngine.editing = true;
   // set the 'new' id for the input engine
   inputEngine.id = "new";
-  // load columns for the input new item
+  // load columns for the input new part
   let startColumn = function (index, defaultVal = undefined) {
     let cell = inputEngine.fields[index];
     // create the cell for the input field
@@ -85,11 +85,11 @@ function createInputNewNoteRow(requestContext) {
 
   let customSaveFunction = function () {
     // remove the css class of the row so that makes it look different from the other rows
-    inputEngine.rowRef.classList.remove("srItemsNewRow");
-    // remove the + item button
+    inputEngine.rowRef.classList.remove("srPartsNewRow");
+    // remove the + part button
     inputButtons.innerHTML = "";
     inputButtons.append(inputEngineOptions);
-    inputButtons.classList.remove("srItemsNewSaveBtnCell");
+    inputButtons.classList.remove("srPartsNewSaveBtnCell");
     inputButtons.classList.add("noPrint");
     // disable the undo button (can't undo a creation)
     inputEngine.undoBtn.disabled = true;
@@ -109,11 +109,11 @@ function createInputNewNoteRow(requestContext) {
       cell.restoreCell();
     }
     // call this whole function again to create another input new row
-    createInputNewItemRow(requestContext);
+    createInputNewPartRow(requestContext);
     // It's not an infinite loop I swear. This part of the code is run when the user clicks a button
   };
 
-  // create an add button for the new item
+  // create an add button for the new part
   let button = generateByuButton("+Note", function () {
     // call the saveRow() method
     inputEngine.saveRow(null, null, customSaveFunction);
@@ -121,7 +121,7 @@ function createInputNewNoteRow(requestContext) {
 
   // place that button in its place
   inputButtons.append(button);
-  inputButtons.classList.add("srItemsNewSaveBtnCell");
+  inputButtons.classList.add("srPartsNewSaveBtnCell");
 }
 
 // START MASON
@@ -409,26 +409,26 @@ function editNoteModal() {
   createInputElement("number", "requestNoteId", editnotepopForm);
   editnotepopForm.appendChild(document.createElement("br"));
 
-  // inputDate
-  createLabel("noteinputDate", "Input Date", editnotepopForm);
-  createInputElement("datetime-local", "noteinputDate", editnotepopForm);
-  // editnotepopForm.appendChild(document.createElement("br"));
-  // this is for breaks that aren't working
-  let breakReplacement = document.createElement('div');
-  breakReplacement.style.height = '13.5px';
-  editnotepopForm.appendChild(breakReplacement);
+  // // inputDate
+  // createLabel("noteinputDate", "Input Date", editnotepopForm);
+  // createInputElement("datetime-local", "noteinputDate", editnotepopForm);
+  // // editnotepopForm.appendChild(document.createElement("br"));
+  // // this is for breaks that aren't working
+  // let breakReplacement = document.createElement('div');
+  // breakReplacement.style.height = '13.5px';
+  // editnotepopForm.appendChild(breakReplacement);
 
   // userIdInput/userIdCreator
   createLabel("noteCreator", "Creator", editnotepopForm);
   createInputElement("text", "noteCreator", editnotepopForm);
   editnotepopForm.appendChild(document.createElement("br"));
 
-  // date
-  if (servReq) {
-  createLabel("editnotetoday", "Modified Date", editnotepopForm);
-  createInputElement("datetime-local", "editnotetoday", editnotepopForm);
-  editnotepopForm.appendChild(document.createElement("br"));
-  };
+  // // date
+  // if (servReq) {
+  // createLabel("editnotetoday", "Modified Date", editnotepopForm);
+  // createInputElement("datetime-local", "editnotetoday", editnotepopForm);
+  // editnotepopForm.appendChild(document.createElement("br"));
+  // };
 
   // editnotepopForm.appendChild(document.createElement("br"));
 
@@ -564,12 +564,12 @@ function editNoteModal() {
       editnotepop.style.display = "block";
       document.getElementById("requestNoteId").value =
         servReq["notes"][id]["reqNoteId"];
-      document.getElementById("noteinputDate").value =
-        servReq["notes"][id]["inputDate"];
+      // document.getElementById("noteinputDate").value =
+      //   servReq["notes"][id]["inputDate"];
       document.getElementById("noteCreator").value =
         servReq["notes"][id]["userCreator"];
-      document.getElementById("editnotetoday").value =
-        new Date().toDateInputValue();
+      // document.getElementById("editnotetoday").value =
+      //   new Date().toDateInputValue();
 
       document.getElementById("editnote").value = servReq["notes"][id]["note"];
       if (servReq["notes"][id]["private"]) {
@@ -584,16 +584,16 @@ function editNoteModal() {
         document.getElementById("editnote").readOnly = true;
       }
 
-      document.getElementById("noteinputDate").value = sqlDateToUsableDate(
-        servReq["notes"][id]["inputDate"]
-      );
+      // document.getElementById("noteinputDate").value = sqlDateToUsableDate(
+      //   servReq["notes"][id]["inputDate"]
+      // );
     } else if (!servReq) {
       // id is the newSRNote that is passed from the populateNotesTable function in editSRHelper.js
       editnotepop.style.display = "block";
       document.getElementById("requestNoteId").value =
         id["newNoteTempId"];
-      document.getElementById("noteinputDate").value =
-        id["modDate"];
+      // document.getElementById("noteinputDate").value =
+      //   id["modDate"];
       document.getElementById("noteCreator").value =
         id["inputBy"];
       document.getElementById("editnote").value = 
@@ -609,7 +609,7 @@ function editNoteModal() {
 function editNoteCancel() {
   document.getElementById("editnotepop").style.display = "none";
   document.getElementById("requestNoteId").value = "";
-  document.getElementById("noteinputDate").value = "";
+  // document.getElementById("noteinputDate").value = "";
   document.getElementById("noteCreator").value = "";
   document.getElementById("editnote").value = "";
   if (servReq) {

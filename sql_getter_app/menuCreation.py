@@ -36,17 +36,18 @@ rawMenu = [
             { 'displayName':'Buildings', 'func': 'tables.building', 'sqlName': 'Building' },# there are 3 key:value pairs here. They're outlined above, around lines 7-9
             { 'displayName':'BBMD', 'func': 'tables.bbmd', 'sqlName': 'BBMD' },
             # { 'displayName':'BBMDDUPLICATE', 'func': 'tables.bbmdduplicate', 'sqlName': 'BBMDDUPLICATE' }, This adds the page to the menu table
+            { 'displayName':'Department', 'func': 'tables.department', 'sqlName': 'Department' },
+            { 'displayName':'Device Licenses', 'func': 'tables.deviceLicense', 'sqlName': 'DeviceLicense' },
             { 'displayName':'Devices', 'func': 'tables.device', 'sqlName': 'Device' },
             { 'displayName':'DNS', 'func': 'tables.dns', 'sqlName': 'DNS' },
             { 'displayName':'Failure', 'func': 'tables.failure', 'sqlName': 'Failure' },
+            { 'displayName':'IP', 'func': 'tables.ip', 'sqlName': 'IP' },
             { 'displayName':'NCRS Node', 'func': 'tables.ncrsNode', 'sqlName': 'NCRSNode' },
             { 'displayName':'OIT Jack', 'func': 'tables.oitJack', 'sqlName': 'OITJack' },
             { 'displayName':'Patch Panel', 'func': 'tables.patchPanel', 'sqlName': 'PatchPanel' },
             { 'displayName':'Phone Number', 'func': 'tables.phoneNumber', 'sqlName': 'PhoneNumber' },
             { 'displayName':'Vendor', 'func': 'tables.vendor', 'sqlName': 'Vendor' },
-            { 'displayName':'VM Cloud Director', 'func': 'tables.vmCloudDirector', 'sqlName': 'VmCloudDirector' },
-            { 'displayName':'IP', 'func': 'tables.ip', 'sqlName': 'IP' },
-            { 'displayName':'Device Licenses', 'func': 'tables.deviceLicense', 'sqlName': 'DeviceLicense' }
+            { 'displayName':'VM Cloud Director', 'func': 'tables.vmCloudDirector', 'sqlName': 'VmCloudDirector' }
         ]
     },
     {##### LOOK AT THE TABLES DICTIONARY FOR A BREAKDOWN OF WHAT IS HAPPENING HERE ########
@@ -67,7 +68,7 @@ rawMenu = [
     {
         'name':'Inventory',
         'options':[
-            { 'displayName':'Items', 'func': 'tables.item', 'sqlName': 'Item' },
+            { 'displayName':'Parts', 'func': 'tables.part', 'sqlName': 'Part' },
             { 'displayName':'Inventory', 'func': 'tables.inventory', 'sqlName': 'Inventory' }
         ]
     },
@@ -77,6 +78,7 @@ rawMenu = [
             { 'displayName':'Users', 'func': 'tables.user', 'sqlName': 'User' },
             { 'displayName':'Tab Order', 'func': 'tables.tabOrder', 'sqlName': 'TabOrder' },
             { 'displayName':'Roles', 'func': 'tables.role', 'sqlName': 'Role' },
+            { 'displayName':'User Role', 'func': 'tables.userRole', 'sqlName': 'UserRole' },
             { 'displayName':'Table Permissions', 'func': 'tables.tablePermissions', 'sqlName': 'TablePermissions' },
             { 'displayName':'Role test tool', 'func': 'auth.userTester', 'sqlName': None },
             { 'displayName':'Version Control', 'func': 'tables.VersionControl', 'sqlName': 'VersionControl' }
@@ -158,7 +160,7 @@ def getMenuForRole(user):
                     # put the option in the new menu
                     newMenuOptions.append(option)
             # else if there isn't a viewingLevel we only want admins to access it
-            elif user.isAdmin:
+            elif user.isAdmin or user.roleText == "Secretary":
                 # put the option in the new menu
                 newMenuOptions.append(option)
 

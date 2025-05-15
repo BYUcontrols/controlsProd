@@ -3,7 +3,7 @@
 #   2. sets up the serviceRequests blueprint
 #   3. defines functions for the service request feature:
 #       a. pulling service request table
-#       b. service request (SR) items
+#       b. service request (SR) parts
 #       c. SR notes
 #       d. SR requestors
 #       e. print the SR html
@@ -12,7 +12,7 @@
 import json
 from sys import version
 import flask_login
-from flask import (redirect, render_template, request, Blueprint, abort, make_response)
+from flask import (redirect, render_template, request, Blueprint, abort, make_response, current_app)
 from sqlalchemy.sql.expression import true
 from sqlalchemy import text
 # below are local module imports
@@ -20,7 +20,7 @@ from sql_getter_app.crud import getColumnTypes
 from sql_getter_app.auth import login_required
 from sql_getter_app.createTableHtml import tableHtml
 from sql_getter_app.collection import db, production, versionString
-from sql_getter_app.formFuncs import newReqHelper, newSRHelper, getServReqData, submitEdits, submitNewItem, addItem, addNote, saveReqItemEdits, saveReqNoteEdits
+from sql_getter_app.formFuncs import newSRHelper, getServReqData, submitEdits, submitNewPart, addPart, addNote, saveReqPartEdits, saveReqNoteEdits
 from sql_getter_app.user_class import user_session
 
 
@@ -55,7 +55,7 @@ def newServiceRequest():
                     priority = data.get('priority')
                     description = data.get('description')
                     location = data.get('location')
-                    serviceType = data.get('serviceType')
+                    department = data.get('department')
                     assignedTo = data.get('assignedTo')
                     building = data.get('building')
                     estimate = data.get('estimate')
@@ -65,10 +65,9 @@ def newServiceRequest():
                     contactedDate = data.get('contactedDate')
                     externalId = data.get('externalId')
                     notes = data.get('newSRNotes', [])  # Default to an empty list if notes is not provided
-                    items = data.get('newSRItems', [])  # Default to an empty list if items is not provided
-                    #  print(f"date: {date} \nrequestor: {requestor} \npriority: {priority} \ndescription: {description} \nlocation: {location} \nserviceType: {serviceType} \nassignedTo: {assignedTo} \nbuilding: {building} \nestimate: {estimate} \nstatus: {status} \ncompleted: {completed} \ncc: {cc} \ncontactedDate: {contactedDate} \nexternalId: {externalId} \nnotes: {notes} \nitems: {items}")
+                    parts = data.get('newSRParts', [])  # Default to an empty list if parts is not provided
                     # submit the new service request!
-                    newSRHelper(date, requestor, priority, description, location, serviceType, assignedTo, building, estimate, status, completed, contactedDate, externalId, cc, notes, items)
+                    newSRHelper(date, requestor, priority, description, location, department, assignedTo, building, estimate, status, completed, contactedDate, externalId, cc, notes, parts)
                     message = "Service Request has been saved."
                     return newSrRenderTemplate(None, None, message)
                 except Exception as e:
@@ -82,25 +81,9 @@ def newServiceRequest():
                 keysList = list(formDict)
                 firstInput = keysList[0]
 
-                # the first input of the newRequestor form
-                if (str(firstInput) == 'userName'):
-                    # collect the information from the form
-                    userName = request.form['userName']
-                    firstName = request.form['firstName']
-                    lastName = request.form['lastName']
-                    technician = request.form['technician']
-                    phone = request.form['phone']
-                    email = request.form['email']
-                    vendorId = request.form['vendorId']
-                    userIdModified = request.form['userIdModified']
-                    fullName = request.form['fullName']
-                    userRoleId = request.form['userRoleId']
-                    # create the new requestor!
-                    newReqHelper(userName, firstName, lastName, technician, phone, email, vendorId, userIdModified, fullName, userRoleId)
-                    return newSrRenderTemplate(fullName, None)
 
                 # if the user clicked the link from the id of a SR row    
-                elif(str(firstInput) == 'servReqId'):
+                if(str(firstInput) == 'servReqId'):
                     servReqId = int(request.form['servReqId'])
                     servReq = getServReqData(servReqId)
                     userIsTech = user_session.checkIfUserIsTechnician(flask_login.current_user)
@@ -114,8 +97,8 @@ def newServiceRequest():
                     requestor = request.form['requestor']
                     priority = request.form['priority']
                     description = request.form['description']
+                    department = request.form['department']
                     location = request.form['location']
-                    serviceType = request.form['serviceType']
                     assignedTo = request.form['assignedTo']
                     building = request.form['building']
                     estimate = request.form['estimate']
@@ -125,9 +108,9 @@ def newServiceRequest():
                     contactedDate = request.form['contactedDate']
                     externalId = request.form['externalId']
                     # submit the edits
-                    submitEdits(currId, date, requestor, priority, description, location, serviceType, assignedTo, building, estimate, status, completed, contactedDate, externalId, cc)
+                    submitEdits(currId, date, requestor, priority, description, department, location, assignedTo, building, estimate, status, completed, contactedDate, externalId, cc)
                     servReq = getServReqData(currId)
-                    message = "Changes have been saved."
+                    message = "Changes have been saved. Redirecting to Service Request."
                     return newSrRenderTemplate(None, servReq, message)
 
                 # when a user clicks the Delete button
@@ -137,31 +120,31 @@ def newServiceRequest():
                         db.engine.execute(f"""UPDATE [ServiceRequest]\nSET [active] = '{False}'\nWHERE serviceRequestId='{idinput}';""")
                     return redirect('/ServiceRequest')
                 
-                # check if the user is creating a new item
-                elif (str(firstInput) == 'newitemdescription'):
-                    print("new item", request.form)
-                    description = request.form['newitemdescription']
-                    modelNum = request.form['newitemmodelNumber']
-                    vendor = request.form['newitemVendor']
-                    minStock = request.form['newitemMinStock']
-                    manufacturer = request.form['newitemManu']
-                    deviceType = request.form['newitemdeviceType']
-                    deviceSubType = request.form['newitemdeviceSubType']
+                # check if the user is creating a new part
+                elif (str(firstInput) == 'newpartdescription'):
+                    print("new part", request.form)
+                    description = request.form['newpartdescription']
+                    modelNum = request.form['newpartmodelNumber']
+                    vendor = request.form['newpartVendor']
+                    minStock = request.form['newpartMinStock']
+                    manufacturer = request.form['newpartManu']
+                    deviceType = request.form['newpartdeviceType']
+                    deviceSubType = request.form['newpartdeviceSubType']
                     servReqId = request.form['servReqId']
                     try: # if created from an existing SR
                         servReq = getServReqData(servReqId)
                     except: # if it is created from a new SR
                         servReq = None
-                    submitNewItem(description, modelNum, vendor, minStock, manufacturer, deviceType, deviceSubType)
+                    submitNewPart(description, modelNum, vendor, minStock, manufacturer, deviceType, deviceSubType)
                     return newSrRenderTemplate(None, servReqId, None, None, description)
 
-                # check if they are adding an item
-                elif (str(firstInput) == 'items'):
-                    items = request.form['items']
-                    itemquantity = request.form['itemquantity']
-                    itemvoid = request.form.getlist('itemvoid')
+                # check if they are adding an part
+                elif (str(firstInput) == 'parts'):
+                    parts = request.form['parts']
+                    partquantity = request.form['partquantity']
+                    partvoid = request.form.getlist('partvoid')
                     servReqId = request.form['servReqId']
-                    addItem(items, itemquantity, itemvoid, servReqId)
+                    addPart(parts, partquantity, partvoid, servReqId)
                     servReq = getServReqData(servReqId)
                     userIsTech = user_session.checkIfUserIsTechnician(flask_login.current_user)
                     return newSrRenderTemplate(None, servReq, None, userIsTech)
@@ -179,23 +162,23 @@ def newServiceRequest():
                     userIsTech = user_session.checkIfUserIsTechnician(flask_login.current_user)
                     return newSrRenderTemplate(None, servReq, None, userIsTech)
 
-                # delete the item
-                elif (str(firstInput) == 'deleteItem'):
-                    deleteItem = request.form['deleteItem']
+                # delete the part
+                elif (str(firstInput) == 'deletePart'):
+                    deletePart = request.form['deletePart']
                     servReqId = request.form['servReqId']
-                    db.engine.execute(f"""UPDATE [RequestItem]\nSET [active] = '{False}'\nWHERE requestItemId='{deleteItem}';""")
+                    db.engine.execute(f"""UPDATE [RequestPart]\nSET [active] = '{False}'\nWHERE requestPartId='{deletePart}';""")
                     servReq = getServReqData(servReqId)
                     userIsTech = user_session.checkIfUserIsTechnician(flask_login.current_user)
                     return newSrRenderTemplate(None, servReq, None, userIsTech)
 
-                # edit the item
-                elif (str(firstInput) == 'requestItemId'):
-                    requestItemId = request.form['requestItemId']
+                # edit the part
+                elif (str(firstInput) == 'requestPartId'):
+                    requestPartId = request.form['requestPartId']
                     # getlist used to get multiple values (checkboxes)
-                    edititemvoid = request.form.getlist('edititemvoid')
-                    itemStat = request.form['itemStat']
-                    itemQuan = request.form['itemQuan']
-                    saveReqItemEdits(requestItemId, edititemvoid, itemStat, itemQuan)
+                    editpartvoid = request.form.getlist('editpartvoid')
+                    partStat = request.form['partStat']
+                    partQuan = request.form['partQuan']
+                    saveReqPartEdits(requestPartId, editpartvoid, partStat, partQuan)
                     servReqId = request.form['servReqId']
                     servReq = getServReqData(servReqId)
                     userIsTech = user_session.checkIfUserIsTechnician(flask_login.current_user)
@@ -215,9 +198,9 @@ def newServiceRequest():
                     requestNoteId = request.form['requestNoteId']
                     servReqId = request.form['servReqId']
                     note = request.form['editnote']
-                    editnotetoday = request.form['editnotetoday']
+                    # editnotetoday = request.form['editnotetoday']
                     public = request.form.getlist('editpublic')
-                    saveReqNoteEdits(requestNoteId, note, public, editnotetoday)               
+                    saveReqNoteEdits(requestNoteId, note, public)               
                     servReq = getServReqData(servReqId)
                     userIsTech = user_session.checkIfUserIsTechnician(flask_login.current_user)
                     return newSrRenderTemplate(None, servReq, None, userIsTech)
@@ -227,16 +210,31 @@ def newServiceRequest():
             return newSrRenderTemplate()
 
 # returns the correct NewServiceRequest page
-def newSrRenderTemplate(newRequestor=None, servReq=None, message=None, userIsTech=None, itemDesc=None):
+def newSrRenderTemplate(newRequestor=None, servReq=None, message=None, userIsTech=None, partDesc=None):
     from sql_getter_app.menuCreation import getMenuForRole
+
+    departmentIdsAndNames = db.engine.execute("SELECT [departmentId], [departmentName] FROM [Department] WHERE active = 1").fetchall()
+    userIdsAndNames = db.engine.execute("SELECT [departmentId], [fullName] FROM [User] WHERE active = 1").fetchall()
+
+    departmentDict = {}
+    userDict = {}
+
+    for row in departmentIdsAndNames:
+        departmentDict[str(row[1])] = row[0]
+    for row in userIdsAndNames:
+        if row[0] in userDict:
+            userDict[row[0]].append(row[1])
+        else:
+            userDict[row[0]] = [row[1]]
+
     return render_template('newServiceRequest.html',
                             menuObject=getMenuForRole(flask_login.current_user),
                             requestors=ListOfNames(None, None, 'New Requestor'),
                             pageOnLoadFunction='EditSrInnit()',
                             priorities=ListOfValues('priorityId', 'priority', 'Priority'),
-                            serviceTypes=ListOfValues('serviceTypeId', 'serviceType', 'ServiceType'),
                             assignedTo=ListOfNames('technician', 1),
                             building=ListOfValues('buildingId', 'buildingAbbreviation', 'Building'),
+                            departments=ListOfValues('departmentId', 'departmentName', 'Department'),
                             status=ListOfValues('statusId', 'status', 'Status', None, "forServiceRequest = 1"),
                             nextId=nextIdNumber(),
                             userNextId=nextIdNumber('userId', 'userId', 'User'),
@@ -244,9 +242,9 @@ def newSrRenderTemplate(newRequestor=None, servReq=None, message=None, userIsTec
                             userFullName=user_session.returnFullName(flask_login.current_user),
                             vendors=ListOfValues('vendorId', 'name', 'Vendor', 'None'),
                             roles=ListOfValues('roleId', 'role', 'Role'),
-                            items=ListOfValues('itemId','description','Item','New Item'),
-                            itemStatus=ListOfValues('statusId', 'status', 'Status', None, "forItems = 1"),
-                            itemvendors=ListOfValues('vendorId', 'name', 'Vendor'),
+                            parts=ListOfValues('partId','description','Part','New Part'),
+                            partStatus=ListOfValues('statusId', 'status', 'Status', None, "forItems = 1"),
+                            partvendors=ListOfValues('vendorId', 'name', 'Vendor'),
                             manufacturers=ListOfValues('manufacturerId', 'name', 'Manufacturer'),
                             deviceTypes=ListOfValues('deviceTypeId', 'deviceType', 'DeviceType'),
                             deviceSubTypes=ListOfValues('deviceSubTypeId', 'deviceSubType', 'DeviceSubType'),
@@ -254,7 +252,12 @@ def newSrRenderTemplate(newRequestor=None, servReq=None, message=None, userIsTec
                             servReq=servReq,
                             message=message,
                             userIsTech=userIsTech,
-                            itemDesc=itemDesc
+                            partDesc=partDesc,
+                            userN=True,
+                            role=flask_login.current_user.roleText,
+                            production=production,
+                            departmentDict=departmentDict,
+                            userDict=userDict
                             )
 
 @bp.route('/ServiceRequest')
@@ -285,17 +288,19 @@ def serviceRequestPull(mask, html):
         # This is where to edit visible service request table columns
         # these have to be column names in the database (they are being queried)
         keys = [
-            ('serviceRequestId',), # This is the primary key.
-            ('description',),
-            ('userIdRequestor',),
             ('userIdTechnician',),
-            ('priorityId',), 
-            ('statusId',),
-            ('estimatedDueDate',),
+            ('serviceRequestId',), # This is the primary key.
+            ('requestDate',),
             ('buildingId',), 
-            #('location',),         MASON: commented out so that the table in the SR home page has the right columns
-            ('serviceTypeId',),
-            #('requestDate',),
+            ('location',),        # MASON: commented out so that the table in the SR home page has the right columns
+            ('description',),
+            # ('departmentId',),
+            ('userIdRequestor',),
+            # Phone number from User table
+            ('statusId',),
+            # notes from RequestNote table
+            ('priorityId',), 
+            # ('estimatedDueDate',),
             #('contactedDate',),
             #('externalId',),
             #('completedDate',),
@@ -373,19 +378,19 @@ def serviceRequestPull(mask, html):
         # if the user can't view the table return the unauthorized error page
         abort(403)
 
-# link called when a service request is opened and the items are loaded
-@bp.route('/serviceRequestItems/<requestId>')
+# link called when a service request is opened and the parts are loaded
+@bp.route('/serviceRequestParts/<requestId>')
 @login_required
-def serviceRequestItems(requestId):
+def serviceRequestParts(requestId):
     # put the showDeleted in a state we can use (not a string)
     User = flask_login.current_user
     # catch a user who is not logged in
     if (not User.is_authenticated):
         return 'unauthorized, ', 403
 
-    dName = 'RequestItem'
-    itemkeys = (('itemId',),('quantity',),('statusId',)) # changes here should also be made to the sql command about 20 lines down
-    primaryKey = 'requestItemId'
+    dName = 'RequestPart'
+    partkeys = (('partId',),('quantity',),('statusId',)) # changes here should also be made to the sql command about 20 lines down
+    primaryKey = 'requestPartId'
 
     #check to see if the user can view the contents of this table
     if User.canView(dName):
@@ -393,20 +398,20 @@ def serviceRequestItems(requestId):
         # start an instance of our tablehtml class
         code = tableHtml(User, dName, primaryKey)
         # create the header for the table and include the linked data in the header
-        code.newHeader(itemkeys, linkedDataTag=True, columnTypes=getColumnTypes(dName))
+        code.newHeader(partkeys, linkedDataTag=True, columnTypes=getColumnTypes(dName))
         # check to see if we have a valid requestId (if not this is probably blank)
         if requestId.isdigit():
             # sql command
-            command = text(f'SELECT {primaryKey}, {itemkeys[0][0]}, {itemkeys[1][0]}, {itemkeys[2][0]}, active FROM [{dName}] WHERE serviceRequestId=:srId;')
+            command = text(f'SELECT {primaryKey}, {partkeys[0][0]}, {partkeys[1][0]}, {partkeys[2][0]}, active FROM [{dName}] WHERE serviceRequestId=:srId;')
             result = db.engine.execute(command, {'srId':str(requestId)}).fetchall()
             # if the result has any rows fill in the table
             if (len(result)>0): code.content(result, true)
             # else display the no rows message
-            else: code.noRows('No Items yet')
+            else: code.noRows('No Parts yet')
         
         else:
-            # add a no items text
-            code.noRows('No Items yet')
+            # add a no parts text
+            code.noRows('No Parts yet')
         return code.html
     else:
         return 'unauthorized', 403
@@ -422,7 +427,7 @@ def serviceRequestNotes(requestId):
 
     dName = 'RequestNote'
     # CHANGING THE ORDER OF THESE COLUMNS REQUIRES CHANGES TO THE JAVASCRIPT static/serviceRequest/srNotes.js/createInputNewNoteRow()
-    sqlKeys = (('note',),('userIdCreator',),('private',)) # changes here should also be made to the sql command about 20 lines down
+    sqlKeys = (('note',),('private',)) # changes here should also be made to the sql command about 20 lines down
     primaryKey = 'requestNoteId'
 
     #check to see if the user can view the contents of this table
@@ -431,7 +436,7 @@ def serviceRequestNotes(requestId):
         # start an instance of our tablehtml class
         code = tableHtml(User, dName, primaryKey)
         # create the header for the table and include the linked data in the header
-        code.newHeader(sqlKeys, linkedDataTag=True, columnTypes=getColumnTypes(dName), uneditableList=['userIdCreator'])
+        code.newHeader(sqlKeys, linkedDataTag=True, columnTypes=getColumnTypes(dName), uneditableList=['userIdModified'])
         # check to see if we have a valid requestId (if not this is probably blank)
         if requestId.isdigit():
             # sql command
@@ -443,13 +448,13 @@ def serviceRequestNotes(requestId):
             else: code.noRows('No Notes yet')
         
         else:
-            # add a no items text
+            # add a no parts text
             code.noRows('No Notes yet')
         return code.html
     else:
         return 'unauthorized', 403
 
-# link called when a service request is opened and the items are loaded
+# link called when a service request is opened and the parts are loaded
 @bp.route('/serviceRequestRequestor/<requestId>')
 @login_required
 def serviceRequestRequestors(requestId):
@@ -460,7 +465,7 @@ def serviceRequestRequestors(requestId):
         return 'unauthorized, ', 403
 
     dName = 'Requestor'
-    itemkeys = (('firstName',),('lastName',),('email',),('phoneNumber',),('netId',)) # changes here should also be made to the sql command about 20 lines down
+    partkeys = (('firstName',),('lastName',),('email',),('phoneNumber',),('netId',)) # changes here should also be made to the sql command about 20 lines down
     primaryKey = 'requestorId'
 
     #check to see if the user can view the contents of this table
@@ -469,16 +474,16 @@ def serviceRequestRequestors(requestId):
         # start an instance of our tablehtml class
         code = tableHtml(User, dName, primaryKey)
         # create the header for the table and include the linked data in the header
-        code.newHeader(itemkeys, linkedDataTag=True, columnTypes=getColumnTypes(dName))
+        code.newHeader(partkeys, linkedDataTag=True, columnTypes=getColumnTypes(dName))
         # check to see if we have a valid requestId (if not this is probably blank)
         if requestId.isdigit():
             # sql command
             command = text(f'''SELECT {primaryKey}, 
-                {itemkeys[0][0]}, 
-                {itemkeys[1][0]}, 
-                {itemkeys[2][0]}, 
-                {itemkeys[3][0]}, 
-                {itemkeys[4][0]}, 
+                {partkeys[0][0]}, 
+                {partkeys[1][0]}, 
+                {partkeys[2][0]}, 
+                {partkeys[3][0]}, 
+                {partkeys[4][0]}, 
                 active 
                 FROM [{dName}] WHERE serviceRequestId=:srId;
             ''')
@@ -489,8 +494,8 @@ def serviceRequestRequestors(requestId):
             else: code.noRows('No Requestors yet')
         
         else:
-            # add a no items text
-            code.noRows('No Items yet')
+            # add a no parts text
+            code.noRows('No Parts yet')
         return code.html
     else:
         return 'unauthorized', 403
@@ -571,7 +576,7 @@ def printFromHtml():
     .noPrint {
         display: none;
     }
-    #itemsTable,#descTable,#notesTable{
+    #partsTable,#descTable,#notesTable{
         width: 100%;
     }
     #table{
@@ -705,4 +710,3 @@ def nextIdNumber(idCol = 'serviceRequestId', valCol = 'serviceRequestId', table 
             highest = num
 
     return highest + 1
-        

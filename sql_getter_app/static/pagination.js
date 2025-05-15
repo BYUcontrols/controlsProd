@@ -23,10 +23,10 @@ class paginationEngine {
             // create container and place container in page
         let functionDiv = document.createElement("DIV");    // creates a div element for the js functions
         functionDiv.classList = 'tableFunction';            // assigns the div with a class called tableFunction for all the mini tools above the table
-        let divContainer = document.createElement('div');   // create a div element to the number-of-items-to-display tool
-        divContainer.classList = 'tableFunctionContainer';  // creates the class specifically for the engine that lets you select how many items you want to display at once
+        let divContainer = document.createElement('div');   // create a div element to the number-of-parts-to-display tool
+        divContainer.classList = 'tableFunctionContainer';  // creates the class specifically for the engine that lets you select how many parts you want to display at once
         divContainer.style.display = 'inline-block';
-        setTooltip(divContainer, 'Choose how many items to display at a time and choose which group of items is displayed based on their \'Sort by:\' column values');
+        setTooltip(divContainer, 'Choose how many parts to display at a time and choose which group of parts is displayed based on their \'Sort by:\' column values');
         functionDiv.appendChild(divContainer);
             // create a new dropdown
         this.displayDrop = new dropdown();
@@ -35,10 +35,10 @@ class paginationEngine {
         divContainer.appendChild(this.displayDrop.select);
             // create options
         this.displayDrop.option('Everything', 'all', (this.currentScale == 'all'));
-        this.displayDrop.option('50 items', '50', (this.currentScale == '50'));
-        this.displayDrop.option('20 items', '20', (this.currentScale == '20'));
-        this.displayDrop.option('10 items', '10', (this.currentScale == '10'));
-        this.displayDrop.option('2 items', '2', (this.currentScale == '2'));
+        this.displayDrop.option('50 parts', '50', (this.currentScale == '50'));
+        this.displayDrop.option('20 parts', '20', (this.currentScale == '20'));
+        this.displayDrop.option('10 parts', '10', (this.currentScale == '10'));
+        this.displayDrop.option('2 parts', '2', (this.currentScale == '2'));
             // create container for selector
         let div = document.createElement('div');
         div.style.marginLeft = '10px'

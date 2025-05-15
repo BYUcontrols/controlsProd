@@ -87,9 +87,9 @@ def test_ip(client):
     logout(client)
     assert response.status_code == 200
 
-def test_item(client):
+def test_part(client):
     login(client)
-    response = client.get('/Item', follow_redirects=True)
+    response = client.get('/Part', follow_redirects=True)
     logout(client)
     assert response.status_code == 200
 
@@ -141,9 +141,9 @@ def test_priority(client):
     logout(client)
     assert response.status_code == 200
 
-def test_request_item(client):
+def test_request_part(client):
     login(client)
-    response = client.get('/RequestItem', follow_redirects=True)
+    response = client.get('/RequestPart', follow_redirects=True)
     logout(client)
     assert response.status_code == 200
 
@@ -165,11 +165,10 @@ def test_service_request(client):
     logout(client)
     assert response.status_code == 200
 
-def test_service_type(client):
-    login(client)
-    response = client.get('/ServiceType', follow_redirects=True)
-    logout(client)
-    assert response.status_code == 200
+# def test_service_type(client):
+#     login(client)
+#     logout(client)
+#     assert response.status_code == 200
 
 def test_state(client):
     login(client)

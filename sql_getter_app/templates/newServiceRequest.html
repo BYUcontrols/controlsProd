@@ -1,40 +1,90 @@
 {% extends "layout.html" %}
 
+{% block extra_styles %}
+    <!-- for modal styling -->
+    <!-- <link rel="stylesheet" media="screen" type="text/css" href="{{ url_for('static', filename='css/modals.css') }}"> -->
+{% endblock %}
+
+{% block name %}
+    {{userFullName}}
+{% endblock %}
+
+{% block role %}
+    {{userRole}}
+{% endblock %}
+
+
 {% block content %}
 
 
 <!-- Here we pass data to the javascript about the table by attaching them to the window object
 the curly brackets are places that the template will fill with the arguments of render_template() -->
 <script>
-    // we sanitize the data by passing it through JSON (a standard for converting objects to strings and vice versa)
-    $SCRIPT_ROOT = JSON.parse('{{request.script_root|tojson}}');
-    let requestors = JSON.parse('{{requestors|tojson}}');
-    let priorities = JSON.parse('{{priorities|tojson}}');
-    let serviceTypes = JSON.parse('{{serviceTypes|tojson}}');
-    let assignedTo = JSON.parse('{{assignedTo|tojson}}');
-    let building = JSON.parse('{{building|tojson}}');
-    let status = JSON.parse('{{status|tojson}}');
-    let nextId = JSON.parse('{{nextId|tojson}}');
-    let userNextId = JSON.parse('{{userNextId|tojson}}');
-    let userName = JSON.parse('{{userName|tojson}}');
-    let vendors = JSON.parse('{{vendors|tojson}}');
-    let roles = JSON.parse('{{roles|tojson}}');
-    let newRequestor = JSON.parse('{{newRequestor|tojson}}');
-    let servReq = JSON.parse('{{servReq|tojson}}');
-    let message = JSON.parse('{{message|tojson}}');
-    let userIsTech = JSON.parse('{{userIsTech|tojson}}');
-    let items = JSON.parse('{{items|tojson}}');
-    let itemStatus = JSON.parse('{{itemStatus|tojson}}');
-    let itemvendors = JSON.parse('{{itemvendors|tojson}}');
-    let manufacturers = JSON.parse('{{manufacturers|tojson}}');
-    let deviceTypes = JSON.parse('{{deviceTypes|tojson}}');
-    let deviceSubTypes = JSON.parse('{{deviceSubTypes|tojson}}');
-    let itemDesc = JSON.parse('{{itemDesc|tojson}}');
-    let userFullName = JSON.parse('{{userFullName|tojson}}');
+    // Corrected version WITH |safe filter
+    $SCRIPT_ROOT = JSON.parse('{{ request.script_root | tojson }}');
+    let requestors = JSON.parse('{{ requestors | tojson }}');
+    let priorities = JSON.parse('{{ priorities | tojson }}');
+    let assignedTo = JSON.parse('{{ assignedTo | tojson }}');
+    let building = JSON.parse('{{ building | tojson }}');
+    let departments = JSON.parse('{{ departments | tojson }}');
+    let status = JSON.parse('{{ status | tojson }}');
+    let nextId = JSON.parse('{{ nextId | tojson }}');
+    let userNextId = JSON.parse('{{ userNextId | tojson }}');
+    let userName = JSON.parse('{{ userName | tojson }}');
+    let vendors = JSON.parse('{{ vendors | tojson }}');
+    let roles = JSON.parse('{{ roles | tojson }}');
+    let newRequestor = JSON.parse('{{ newRequestor | tojson }}');
+    let servReq = JSON.parse('{{ servReq | tojson }}');
+    let message = JSON.parse('{{ message | tojson }}');
+    let userIsTech = JSON.parse('{{ userIsTech | tojson }}');
+    let parts = JSON.parse('{{ parts | tojson }}');
+    let partStatus = JSON.parse('{{ partStatus | tojson }}');
+    let partvendors = JSON.parse('{{ partvendors | tojson }}');
+    let manufacturers = JSON.parse('{{ manufacturers | tojson }}');
+    let deviceTypes = JSON.parse('{{ deviceTypes | tojson }}');
+    let deviceSubTypes = JSON.parse('{{ deviceSubTypes | tojson }}');
+    let partDesc = JSON.parse('{{ partDesc | tojson }}');
+    let userFullName = JSON.parse('{{ userFullName | tojson }}');
+    let userRole = JSON.parse('{{ role | tojson }}');
+    let departmentDict = JSON.parse('{{ departmentDict | tojson }}');
+    let userDict = JSON.parse('{{ userDict | tojson }}');
+
+    // $SCRIPT_ROOT = {{ request.script_root | tojson | safe }};
+    // let requestors = {{ requestors | tojson | safe }};
+    // let priorities = {{ priorities | tojson | safe }};
+    // let assignedTo = {{ assignedTo | tojson | safe }};
+    // let building = {{ building | tojson | safe }};
+    // let departments = {{ departments | tojson | safe }};
+    // let status = {{ status | tojson | safe }};
+    // let nextId = {{ nextId | tojson | safe }};
+    // let userNextId = {{ userNextId | tojson | safe }};
+    // let userName = {{ userName | tojson | safe }};
+    // let vendors = {{ vendors | tojson | safe }};
+    // let roles = {{ roles | tojson | safe }};
+    // let newRequestor = {{ newRequestor | tojson | safe }};
+    // let servReq = {{ servReq | tojson | safe }};
+    // let message = {{ message | tojson | safe }};
+    // let userIsTech = {{ userIsTech | tojson | safe }};
+    // let parts = {{ parts | tojson | safe }};
+    // let partStatus = {{ partStatus | tojson | safe }};
+    // let partvendors = {{ partvendors | tojson | safe }};
+    // let manufacturers = {{ manufacturers | tojson | safe }};
+    // let deviceTypes = {{ deviceTypes | tojson | safe }};
+    // let deviceSubTypes = {{ deviceSubTypes | tojson | safe }};
+    // let partDesc = {{ partDesc | tojson | safe }};
+    // let userFullName = {{ userFullName | tojson | safe }};
+    // let userRole = {{ role | tojson | safe }};
+    // let departmentDict = {{ departmentDict | tojson | safe }};
+    // let userDict = {{ userDict | tojson | safe }}; 
 </script>
+
+<script type="module" src="{{ url_for('static', filename='tableModals.js') }}"></script>
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/serviceRequests/serReqForm.css') }}">
 
-
+<script>
+    window.userRole = "{{ role }}";
+</script>
+  
 <br>
 <h1 class="title" id="title">
     {% if servReq %}

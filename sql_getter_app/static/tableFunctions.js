@@ -38,11 +38,11 @@ function generateSortSelect() {
     if (isStorageItem('sortUp')) sortUp = getStorageItem('sortUp'); 
     else sortUp = 'true';
         // Create a button to change if we sort accending or descending
-    let accendingButton = document.createElement('button');
-    divContainer.appendChild(accendingButton);
-    accendingButton.classList = 'accendingButton';
+    let ascendingButton = document.createElement('button');
+    divContainer.appendChild(ascendingButton);
+    ascendingButton.classList = 'ascendingButton';
         // defines a function that runs on click
-    accendingButton.onclick = sortCall.bind(accendingButton);
+    ascendingButton.onclick = sortCall.bind(ascendingButton);
         // defines a global variable to store the state of the button
     window.reverse = false
         // set that state based on the cookie
@@ -53,7 +53,7 @@ function generateSortSelect() {
     }
     
         // run the onclick function associated with the button to initialize everything 
-    sortCall.bind(accendingButton)();
+    sortCall.bind(ascendingButton)();
 }
 
 
@@ -231,7 +231,7 @@ function generateDisplaySelect(suppliedColumns = null) {
         // assign that select with its attributes
     let dropdownBtn = document.createElement("p");
     dropdownBtn.setAttribute("class", "displayDropbtn");
-    let text = document.createTextNode("Displayed Columns:");
+    let text = document.createTextNode("Displayed Columns");
     dropdownBtn.appendChild(text);
 
     let dropdownContent = document.createElement("div");
@@ -242,9 +242,10 @@ function generateDisplaySelect(suppliedColumns = null) {
     dropdown.appendChild(dropdownBtn);
     dropdown.appendChild(dropdownContent);
     div.appendChild(dropdown);
-    if (!document.getElementById('srtable')) {
-    document.getElementById('tableFunctions').appendChild(div);
-    };
+    
+    // if (document.getElementById('srtable')) {
+    //     document.getElementById('tableFunctions').appendChild(div).style.display = 'none';
+    // };
     
     // Creates a Select all option
         // set option text as the column names
@@ -294,7 +295,15 @@ function generateDisplaySelect(suppliedColumns = null) {
         option.appendChild(colName);
         option.style.position = 'relative';
         option.style.color = 'white';
-        dropdownContent.appendChild(option);
+
+        if (colName.innerText == 'Editing' || colName.innerText == 'Adding' || colName.innerText == 'Deleting' || colName.innerText == 'Undo Deletes' || colName.innerText == 'Auditing') {
+            // if the column is not displayed then append it to the select all option
+            // so that it is hidden until the select all is clicked
+            option.style.display = 'none';
+            optionSelect.appendChild(option);
+        } else {
+            dropdownContent.appendChild(option);
+        }
             // append the checkbox in the checkbox array
         window.displaySelectCheckboxes.push(text);
     }

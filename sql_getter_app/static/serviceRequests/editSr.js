@@ -3,19 +3,18 @@
     Functions for the 'edit' or 'new' service request feature
 */
   // these are declared var so they can be accessed outside of this file
-  // used to add items and notes to a new SR
+  // used to add parts and notes to a new SR
   var newSRNotes = [];
-  var newSRItems = [];
+  var newSRParts = [];
 
 // the onload function of the page to edit or create a new service request
 function EditSrInnit() {
 
   // these modals should be created first
-  createNewReqSupport();
-  addItemModal();
-  newItemModal();
+  addPartModal();
+  newPartModal();
   addNoteModal();
-  editItemModal();
+  editPartModal();
   editNoteModal();
 
   // the main form is created
@@ -29,47 +28,48 @@ function EditSrInnit() {
   }
   // presents the user with a message letting them know their changes have been saved
   if (message != null) {
-    let msgBox = document.createElement("div");
-    msgBox.id = "msgBox";
-    msgBox.classList = "msgBox";
-    let boxHolder = document.getElementsByClassName("page-content")[0];
-    boxHolder.appendChild(msgBox);
+    // let msgBox = document.createElement("div");
+    // msgBox.id = "msgBox";
+    // msgBox.classList = "msgBox";
+    // let boxHolder = document.getElementsByClassName("page-content")[0];
+    // boxHolder.appendChild(msgBox);
 
-    let msgElement = document.createElement("p");
-    msgElement.innerText = message;
-    msgBox.appendChild(msgElement);
-    msgElement.style.color = "black";     // Black text
-    msgElement.style.fontWeight = "bold"; // Bold text
-    msgElement.style.fontFamily = "'HCo Ringside Narrow SSm', Arial, sans-serif"; // BYU font
-    // msgbox styles
-    msgBox.style.position = "fixed";
-    msgBox.style.width = "50%";          // Spans the full width of the viewport
-    msgBox.style.height = "25px";         // Fixed height for the message box
-    msgBox.style.bottom = "10px";         // 10px from the bottom of the viewport
-    msgBox.style.left = "50%";
-    msgBox.style.transform = "translateX(-50%)";
-    msgBox.style.backgroundColor = "#ADEBB3"; // Light green background
-    msgBox.style.border = "1px solid #28a745"; // Green border
-    msgBox.style.color = "white";         // White text for contrast
-    msgBox.style.padding = "10px";        // Adds inner spacing
-    msgBox.style.borderRadius = "5px"; // Rounds top corners
-    msgBox.style.boxShadow = "0 -2px 4px rgba(0, 0, 0, 0.2)"; // Shadow above the box
-    msgBox.style.zIndex = "1000";         // Ensures it appears above other elements
-    msgBox.style.alignItems = "center";
-    msgBox.style.justifyContent = "center";
-    msgBox.style.display = "flex";
+    // let msgElement = document.createElement("p");
+    // msgElement.innerText = message;
+    // msgBox.appendChild(msgElement);
+    // msgElement.style.color = "black";     // Black text
+    // msgElement.style.fontWeight = "bold"; // Bold text
+    // msgElement.style.fontFamily = "'HCo Ringside Narrow SSm', Arial, sans-serif"; // BYU font
+    // // msgbox styles
+    // msgBox.style.position = "fixed";
+    // msgBox.style.width = "50%";          // Spans the full width of the viewport
+    // msgBox.style.height = "25px";         // Fixed height for the message box
+    // msgBox.style.bottom = "10px";         // 10px from the bottom of the viewport
+    // msgBox.style.left = "50%";
+    // msgBox.style.transform = "translateX(-50%)";
+    // msgBox.style.backgroundColor = "#ADEBB3"; // Light green background
+    // msgBox.style.border = "1px solid #28a745"; // Green border
+    // msgBox.style.color = "white";         // White text for contrast
+    // msgBox.style.padding = "10px";        // Adds inner spacing
+    // msgBox.style.borderRadius = "5px"; // Rounds top corners
+    // msgBox.style.boxShadow = "0 -2px 4px rgba(0, 0, 0, 0.2)"; // Shadow above the box
+    // msgBox.style.zIndex = "1000";         // Ensures it appears above other elements
+    // msgBox.style.alignParts = "center";
+    // msgBox.style.justifyContent = "center";
+    // msgBox.style.display = "flex";
     
     setTimeout(function() {
-      msgBox.style.display = "none";
-    }, 3000);
+      // msgBox.style.display = "none";
+      window.location.href = $SCRIPT_ROOT + "/ServiceRequest";
+    }, 0);
   }
-  // if there is an item description then we need it to populate the item field in the add item form
-  if (itemDesc != null) {
-    itempop.open();
+  // if there is an part description then we need it to populate the part field in the add part form
+  if (partDesc != null) {
+    partpop.open();
   }
   // SCROLL TO PREVIOUS SPOT ON RELOAD
-  // there will be a scroll position saved if the user is coming back from the notes or items modals
-  // this is so the user does not get reloaded to the top of the page for every note or item they add/delete/edit
+  // there will be a scroll position saved if the user is coming back from the notes or parts modals
+  // this is so the user does not get reloaded to the top of the page for every note or part they add/delete/edit
   if (localStorage.getItem("scrollPosition")){
     window.scrollTo(0, localStorage.getItem("scrollPosition"));
     localStorage.removeItem("scrollPosition");
@@ -79,9 +79,9 @@ function EditSrInnit() {
 // function for creating the form that edits or creates a New Service Request.
 function CreateForm() {
 
-  // resets temporary note and item counter to 1 for new service requests
+  // resets temporary note and part counter to 1 for new service requests
   window.newServiceRequestNoteCounter = 1;
-  window.newServiceRequestItemCounter = 1;
+  window.newServiceRequestPartCounter = 1;
 
   // create a form
   let editForm = document.createElement("form");
@@ -213,18 +213,16 @@ function CreateForm() {
   // line break for aesthetics
   editForm.appendChild(document.createElement("br"));
 
-  // create the Service Type label
-  createLabel("serviceType", "Service Type", editForm);
   
-  // create the Service Type part of the form
-  createDropdownElement("serviceType", "serviceType", editForm);
-  
-  // create the datalist for the Service Type dropdown. 'serviceTypes' is a dict from python with a list of the active service type values.
-  createDatalistElement("serviceType", serviceTypes, editForm);
-  
-  // line break for aesthetics
-  editForm.appendChild(document.createElement("br"));
-  
+  // create the department label
+  createLabel("department", "Department", editForm);
+
+  // create the department part of the form
+  createDropdownElement("department", "department", editForm);
+
+  // create the datalist for the department dropdown. 'departments' is a dict from python with a list of the active department values.
+  createDatalistElement("department", departments, editForm);
+
   // create the Assigned To label
   createLabel("assignedTo", "Assigned To", editForm);
   
@@ -259,10 +257,10 @@ function CreateForm() {
   createInputElement("datetime-local", "estimate", editForm);
 
   // create the Status label
-  createLabel("status", "Status", editForm);
+  createLabel("status", "Status", editForm, hidden = true);
 
   // create the Status part of the form
-  createDropdownElement("status", "status", editForm);
+  createDropdownElement("status", "status", editForm, hidden = true);
 
   // create the datalist for the Status dropdown. 'status' is a dict from python with a list of the active status values.
   createDatalistElement("status", status, editForm);
@@ -354,6 +352,9 @@ function CreateForm() {
   let nEdit = createTableHeader("Edit");
   notestheadrow.appendChild(nEdit);
   let noteIdHead = createTableHeader("Note ID");
+  if (!servReq) {
+    noteIdHead.style.display = "none"; // Hide the Note ID header if servReq is null
+  }
   notestheadrow.appendChild(noteIdHead);
   let noteTitle = createTableHeader("Note");
   notestheadrow.appendChild(noteTitle);
@@ -435,35 +436,38 @@ function CreateForm() {
   // line break for aesthetics
   editForm.appendChild(document.createElement("br"));
 
-  // Items table title
-  let itemsHeader = document.createElement("div");
-  itemsHeader.classList = "tableHeader";
-  itemsHeader.id = "itemsHeader";
-  let itemsTitle = document.createElement("h2");
-  itemsTitle.classList = "tableTitle"
-  itemsTitle.innerText = "Items";
-  itemsHeader.appendChild(itemsTitle);
-  editForm.appendChild(itemsHeader);
+  // Parts table title
+  let partsHeader = document.createElement("div");
+  partsHeader.classList = "tableHeader";
+  partsHeader.id = "partsHeader";
+  let partsTitle = document.createElement("h2");
+  partsTitle.classList = "tableTitle"
+  partsTitle.innerText = "Parts";
+  partsHeader.appendChild(partsTitle);
+  if (userRole !== "Admin" && userRole !== "Secretary" && userRole !== "Mechanic"){
+    partsHeader.style.display = "none"; // Hide the parts if user does not have high roles
+  }
+  editForm.appendChild(partsHeader);
 
-  // place for the items list to go
+  // place for the parts list to go
   let tableWrapper = document.createElement("div");
-  tableWrapper.classList = "tableWrapper itemsTableWrapper";
+  tableWrapper.classList = "tableWrapper partsTableWrapper";
   let table = document.createElement("table");
-  table.id = "itemsTable";
+  table.id = "partsTable";
   table.classList = "printThis noBorders";
   tableWrapper.appendChild(table);
   editForm.appendChild(tableWrapper);
 
   let tableHead = document.createElement("thead");
   tableHead.classList = "noBorders";
-  tableHead.id = "itemsTableHeader";
+  tableHead.id = "partsTableHeader";
   table.appendChild(tableHead);
 
   let theadrow = document.createElement("tr");
-  theadrow.id = "itemsTablehead";
-  // hide the table header row if there are no items in the SR
+  theadrow.id = "partsTablehead";
+  // hide the table header row if there are no parts in the SR
   if (servReq) {
-    if( Object.keys(servReq.items).length === 0){
+    if( Object.keys(servReq.parts).length === 0){
       theadrow.style.display = "none"
     }
   }
@@ -471,26 +475,26 @@ function CreateForm() {
   tableHead.appendChild(theadrow);
   let edit = createTableHeader("Edit");
   theadrow.appendChild(edit);
-  let itemsid = createTableHeader("Item ID");
-  theadrow.appendChild(itemsid);
-  let items = createTableHeader("Item");
-  theadrow.appendChild(items);
-  let itemsInputBy = createTableHeader("Input By");
-  theadrow.appendChild(itemsInputBy);
+  let partsid = createTableHeader("Part ID");
+  theadrow.appendChild(partsid);
+  let parts = createTableHeader("Part");
+  theadrow.appendChild(parts);
+  let partsInputBy = createTableHeader("Input By");
+  theadrow.appendChild(partsInputBy);
   let quan = createTableHeader("Quantity");
   theadrow.appendChild(quan);
-  let voids = createTableHeader("Void");
-  theadrow.appendChild(voids);
+  // let voids = createTableHeader("Void");
+  // theadrow.appendChild(voids);
 
   let tableBod = document.createElement("tbody");
   tableBod.id = "tableBody";
   table.appendChild(tableBod);
 
-  // create the rows of the items table in the edit SR view
+  // create the rows of the parts table in the edit SR view
   if (servReq) {
-    for (item in servReq["items"]) {
+    for (part in servReq["parts"]) {
       let tBodRow = document.createElement("tr");
-      tBodRow.id = servReq["items"][item]["reqItemId"];
+      tBodRow.id = servReq["parts"][part]["reqPartId"];
       tableBod.appendChild(tBodRow);
 
       let edit = document.createElement("td");
@@ -498,36 +502,36 @@ function CreateForm() {
       edit.innerHTML =
         '<svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512"><path d="M384 224v184a40 40 0 01-40 40H104a40 40 0 01-40-40V168a40 40 0 0140-40h167.48" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/><path d="M459.94 53.25a16.06 16.06 0 00-23.22-.56L424.35 65a8 8 0 000 11.31l11.34 11.32a8 8 0 0011.34 0l12.06-12c6.1-6.09 6.67-16.01.85-22.38zM399.34 90L218.82 270.2a9 9 0 00-2.31 3.93L208.16 299a3.91 3.91 0 004.86 4.86l24.85-8.35a9 9 0 003.93-2.31L422 112.66a9 9 0 000-12.66l-9.95-10a9 9 0 00-12.71 0z"/></svg>';
       edit.style = "cursor: pointer;";
-      edit.onclick = sendItemId.bind(tBodRow);
+      edit.onclick = sendPartId.bind(tBodRow);
       tBodRow.appendChild(edit);
-      let itemreqid = createTableCell(servReq["items"][item]["reqItemId"]);
-      tBodRow.appendChild(itemreqid);
-      let name = createTableCell(servReq["items"][item]["name"]);
+      let partreqid = createTableCell(servReq["parts"][part]["reqPartId"]);
+      tBodRow.appendChild(partreqid);
+      let name = createTableCell(servReq["parts"][part]["name"]);
       tBodRow.appendChild(name);
-      let itemInputBy = createTableCell(servReq["items"][item]["inputBy"]);
-      tBodRow.appendChild(itemInputBy);
-      let quantity = createTableCell(servReq["items"][item]["quantity"]);
+      let partInputBy = createTableCell(servReq["parts"][part]["inputBy"]);
+      tBodRow.appendChild(partInputBy);
+      let quantity = createTableCell(servReq["parts"][part]["quantity"]);
       tBodRow.appendChild(quantity);
-      let voidstatus = createTableCell(servReq["items"][item]["void"]);
-      tBodRow.appendChild(voidstatus);
+      // let voidstatus = createTableCell(servReq["parts"][part]["void"]);
+      // tBodRow.appendChild(voidstatus);
     }
   } else {
     tableHead.style.display = "none";
   };
 
-  // Add an Item
-  let additem = document.createElement("input");
-  additem.type = "button";
-  additem.value = "+ Item";
-  additem.classList = "BYUbutton";
-  additem.id = "add-item-btn";
-  additem.tabIndex = 14;
-  additem.onclick = function () {
-    itempop.open();
+  // Add an Part
+  let addpart = document.createElement("input");
+  addpart.type = "button";
+  addpart.value = "+ Part";
+  addpart.classList = "BYUbutton";
+  addpart.id = "add-part-btn";
+  addpart.tabIndex = 14;
+  addpart.onclick = function () {
+    partpop.open();
     document.body.style.overflow = "hidden";
-    document.getElementById("items").focus();
+    document.getElementById("parts").focus();
   };
-  itemsHeader.insertBefore(additem, itemsHeader.firstChild);
+  partsHeader.insertBefore(addpart, partsHeader.firstChild);
 
   // line break for aesthetics
   editForm.appendChild(document.createElement("br"));
@@ -551,8 +555,16 @@ function CreateForm() {
   submit.onclick = function () {
     // if there is a service request, then it is an edit
     // set the saved message box to hidden after 3 seconds
-    document.getElementById("msgBox").style.display = "flex"
-
+    if (document.getElementById("msgBox")) {
+      document.getElementById("msgBox").style.display = "flex"
+    }
+    // if (userRole === "Admin" || userRole === "Secretary" || userRole === "Mechanic"){
+    //   setTimeout(function() {
+    //     window.location.href = $SCRIPT_ROOT + "/ServiceRequest";
+    //   }, 0);
+    // } else {
+    //   window.location.href = $SCRIPT_ROOT + "/home";
+    // }
   }
   buttonContainer.appendChild(submit);
 
@@ -563,7 +575,11 @@ function CreateForm() {
   cancel.classList = "BYUbutton";
   cancel.tabIndex = 16;
   cancel.onclick = function () {
+    if (userRole === "Admin" || userRole === "Secretary" || userRole === "Mechanic"){
       window.location.href = $SCRIPT_ROOT + "/ServiceRequest";
+    } else {
+      window.location.href = $SCRIPT_ROOT + "/home";
+    }
   };
   buttonContainer.appendChild(cancel);
 
@@ -618,12 +634,12 @@ function CreateForm() {
       if (!servReq){
         event.preventDefault(); // Prevent the default form submission behavior
 
-        // Collect notes and items to submit with the service request
+        // Collect notes and parts to submit with the service request
         const formData = new FormData(event.target); // Extract form data
         console.log("Form data:", formData);
         formJSON = Object.fromEntries(formData)
         // Structure the data into a single json object
-        const requestData = {...formJSON, newSRNotes, newSRItems};
+        const requestData = {...formJSON, newSRNotes, newSRParts};
         console.log("Request data:", requestData);
         // API call
 
@@ -636,7 +652,11 @@ function CreateForm() {
         .catch(error => {
             console.error("Error:", error);
         });
-        window.location.href = $SCRIPT_ROOT + "/ServiceRequest";
+        if (userRole === "Admin" || userRole === "Secretary" || userRole === "Mechanic"){
+          window.location.href = $SCRIPT_ROOT + "/ServiceRequest";
+        } else {
+          window.location.href = $SCRIPT_ROOT + "/home";
+        }
       }
     });
   } else { // if the form is not found, log an error

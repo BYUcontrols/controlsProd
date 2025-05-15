@@ -43,7 +43,7 @@ function checkForParentWindows() {
     } else window.displaySelectButton = false;
 }
 
-/* a function called when a 'Select' button is pressed or a new item is created
+/* a function called when a 'Select' button is pressed or a new part is created
  *     It calls the onSelected function as defined by the parent window (if one exists)
  *
  * index - integer - the index of the row created/selected/edited

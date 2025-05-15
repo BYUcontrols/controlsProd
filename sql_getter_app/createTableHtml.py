@@ -55,14 +55,27 @@ class tableHtml(object):
                     if str(cell) == 'estimatedDueDate':
                         headersText += "<th>Estimate</th>"
                         self.columnArray.append('Estimate')
+                    elif str(cell) == 'requestNoteId':
+                        # Special case for 'requestNoteId' column
+                        headersText += "<th>Last Note</th>"
+                        self.columnArray.append('Last Note')
                     else:
                         # Convert cell name to title case and add it to headers
                         headersText += f"<th class='{cell}'>" + camel_to_title(str(cell)) + "</th>"
                         # Add the column name to columnArray for tracking purposes
                         self.columnArray.append(str(cell))
 
-        # Add an extra empty column for buttons in the table
-        headersText += "<th class='editTableColumn'>Edit</th>"
+        if self.dName == "ServiceRequest":
+            # Add a column for the requestor phone in the ServiceRequest table
+            headersText += "<th class='requestorPhone'>Requestor Phone</th>"
+            self.columnArray.append('requestorPhone')
+            # Add a column for the last note in the ServiceRequest table
+            headersText += "<th class='lastNote'>Last Note</th>"
+            self.columnArray.append('lastNote')
+
+        if "Audit" not in self.dName:
+            # Add an extra empty column for buttons in the table
+            headersText += "<th class='editTableColumn'>Edit</th>"
 
         # Determine whether to add a linked data tag in the header row
         if not linkedDataTag:
@@ -98,8 +111,8 @@ class tableHtml(object):
         from sql_getter_app.createTableHtmlSupport import makeRow
         # the table body tag
         self.html += "<tbody id='tableBody'>"
-        for row in table: makeRow(self, row, showDeleted)
-        # close the body
+        for row in table: 
+            makeRow(self, row, showDeleted, self.dName)
         self.html += "</tbody>"
 
     # puts a no data text message in the table

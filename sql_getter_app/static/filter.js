@@ -488,12 +488,12 @@ function filterReadableText(data = JSON.parse(decodeURIComponent(new URLSearchPa
 
     if (data[col].op == 'containsAnd') {
       out += 'Contains: ';
-      for (let item of data[col].list) out += '\''+replaceIfLinked(col, item)+'\' ' + 'AND ';
+      for (let part of data[col].list) out += '\''+replaceIfLinked(col, part)+'\' ' + 'AND ';
       out = out.slice(0, -4); // remove last 4 characters
     } 
     else if (data[col].op == 'containsOr') {
       out += 'Contains: ';
-      for (let item of data[col].list) out += '\''+replaceIfLinked(col, item)+'\' ' + 'OR ';
+      for (let part of data[col].list) out += '\''+replaceIfLinked(col, part)+'\' ' + 'OR ';
       out = out.slice(0, -3); // remove last 3 characters
     }
     else if (data[col].op == 'range') {
@@ -511,7 +511,7 @@ function filterReadableText(data = JSON.parse(decodeURIComponent(new URLSearchPa
     }
     else {
       out += data[col].op + ': ';
-      for (let item of data[col].list) out += '\''+replaceIfLinked(col, item)+'\' OR ';
+      for (let part of data[col].list) out += '\''+replaceIfLinked(col, part)+'\' OR ';
       out = out.slice(0, -3); // remove last 3 characters
     }
     out += ' ] ';

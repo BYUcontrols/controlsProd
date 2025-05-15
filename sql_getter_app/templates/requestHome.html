@@ -1,5 +1,9 @@
 {% extends "layout.html" %}
 
+{% block name %}
+    {{userN}}
+{% endblock %}
+
 {% block content %}
 <!-- Here we pass data to the javascript about the table by attaching them to the window object
 the curly brackets are places that the template will fill with the arguments of render_template() -->
@@ -9,15 +13,16 @@ the curly brackets are places that the template will fill with the arguments of 
     window.links = JSON.parse('{{linkedColData|tojson}}');
     window.uneditableColumns = JSON.parse('{{uneditableColumns|tojson}}');
     window.userIdNumber = JSON.parse('{{userId|tojson}}');
-    window.permissionsObject = JSON.parse('{{permissionsObject|tojson}}');      
-    window.linkedChildrenExist = JSON.parse('{{linkedChildrenExist|tojson}}');  
-    window.columnTypes = JSON.parse('{{columnTypes|tojson}}');                  
+    window.permissionsObject = JSON.parse('{{permissionsObject|tojson}}');
+    window.linkedChildrenExist = JSON.parse('{{linkedChildrenExist|tojson}}');
+    window.columnTypes = JSON.parse('{{columnTypes|tojson}}');          
     window.tableColumnArray = JSON.parse('{{columns|tojson}}');
     let primaryKey = JSON.parse('{{primaryKey|tojson}}');
     let userIsTech = JSON.parse('{{userIsTech|tojson}}');
     let urlPath = JSON.parse('{{urlPath|tojson}}');
     $SCRIPT_ROOT = JSON.parse('{{request.script_root|tojson}}');
-    let requests = JSON.parse('{{requests|tojson}}');         
+    let requests = JSON.parse('{{requests|tojson}}');
+    window.userRole = JSON.parse('{{role|tojson}}');
 </script>
 
 <h1 class ='title' id='title'>
@@ -26,7 +31,9 @@ the curly brackets are places that the template will fill with the arguments of 
     VS Code acts like there is a problem with the link, but the page loads
     and any other way I put it prevents the page from loading. -->
 </h1>
-
+<h2 id="printInstructionsMessage" class="tableMessage">When you want to print everybody's service requests, add these two things into the Sort By: </h2>
+<h2 id="printInstructionsMessage" class="tableMessage">1) Assigned To (with the arrow pointing down)</h2>
+<h2 id="printInstructionsMessage" class="tableMessage">2) ID (with the arrow pointing up)</h2>
 <div id='displayTable' class='tableContainer'>
     <div id='srTableFunctions' class="tableFunctions">
         <button id='showOpen' class='showOpen BYUbutton'></button>
@@ -47,4 +54,22 @@ the curly brackets are places that the template will fill with the arguments of 
 </div>
 
 <div id='inputNew' class='inputNew'></div>
+<script>
+    let statusTh = document.querySelector("th.statusId");
+    statusTh.style.display = "none";
+    let allTds = document.querySelectorAll("td");
+    for (let i = 0; i < allTds.length; i++) {
+        if (allTds[i].id.includes("statusId")) {
+            allTds[i].style.display = "none";
+            allTds[i].classList.add("statusTd")
+        }
+    }
+    if (window.userRole !== "Secretary") {
+        let messages = document.querySelectorAll(".tableMessage");
+        for (let i = 0; i < messages.length; i++) {
+            messages[i].style.display = "none";
+        }
+    }
+    
+</script>
 {% endblock %}

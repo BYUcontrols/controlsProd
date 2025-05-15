@@ -29,6 +29,8 @@ from sql_getter_app.collection import (login_manager, production, testEnv)
 from sql_getter_app.menuCreation import createMenus    # final description in case you don't understand: makes the createMenus function from the menuCreation.py module available in this module
 
 # set FLASK_ENV to 'production' in the .flaskenv file before deploying to production. set to development when in dev mode
+# import logging
+# logging.basicConfig(level=logging.DEBUG)
 
 
 def create_app(test_config = None):     #def keyword defines a function | def name(parameters): | inside function is indented. fun ends with return statement.
@@ -37,8 +39,8 @@ def create_app(test_config = None):     #def keyword defines a function | def na
     # when not running on APACHE (ie vsCode) then this redirects errors and messages from the terminal to a file
     # pass the location for the logging folder as a string, eg '/control-app/logs/'
     # startLogging('/control-app/logs/')
-
     # create and configure the app
+    
     app = Flask(__name__, instance_relative_config=True)    # this usually follows the 'from flask import Flask' statement. creates an instance of the Flask class
                                                             # If we set instance_relative_config=True when we create our app with the Flask() call, app.config.from_pyfile() will load the specified file from the instance/ directory.
     # choose the database to use based on the production variable in collection

@@ -4,7 +4,7 @@
 */
 
 // function that creates a label element
-function createLabel(forId, labelText, form) {
+function createLabel(forId, labelText, form, hidden = false) {
   // create the label
   let lab = document.createElement("label");
   //set what it is labeling
@@ -14,6 +14,11 @@ function createLabel(forId, labelText, form) {
   lab.innerText = labelText + ": ";
   //standardize font size for all labels
   lab.style.fontSize = "1rem";
+
+  if (hidden && !servReq) {
+    lab.style.display = "none";
+  }
+
   //insert the label
   form.appendChild(lab);
 }
@@ -48,12 +53,12 @@ function createInputElement(type, id, form) {
       input.value = sqlDateToUsableDate(servReq["completed"]);
     }
   } else if (id == "location") {
-    input.tabIndex = 4;
+    input.tabIndex = 8;
     if (servReq != null) {
       input.value = servReq["location"];
     }
   } else if (id == "estimate") {
-    input.tabIndex = 8;
+    input.tabIndex = 9;
     input.step = 1;
     if (servReq != null) {
       input.value = sqlDateToUsableDate(servReq["estimate"]);
@@ -91,8 +96,8 @@ function createInputElement(type, id, form) {
     if (servReq != null) {
       input.value = servReq["servReqId"];
     }
-  } else if (id == "itemvoid") {
-    input.required = false;
+  // } else if (id == "partvoid") {
+  //   input.required = false;
   } else if (id == "inputBy") {
     input.value = userName;
     input.readOnly = true;
@@ -114,9 +119,9 @@ function createInputElement(type, id, form) {
       document.getElementById("forpublic").style.display = "none";
     }
   } else if (
-    id == "requestItemId" ||
+    id == "requestPartId" ||
     id == "serviceRequestId" ||
-    id == "itemId" ||
+    id == "partId" ||
     id == "noteinputDate" ||
     id == "requestNoteId" ||
     id == "noteCreator" ||
@@ -128,8 +133,8 @@ function createInputElement(type, id, form) {
     input.style.height = "32px"
     input.required = false;
     input.readOnly = true;
-  } else if (id == "edititemvoid") {
-    input.required = false;
+  // } else if (id == "editpartvoid") {
+  //   input.required = false;
   } else if (id == "editpublic") {
     input.required = false;
     if (!userIsTech) {
@@ -149,19 +154,21 @@ function createDatalistElement(id, dictionary, form) {
   let list = document.createElement("datalist");
   // give it an id
   list.setAttribute("id", id + "-dropdown");
-  // loop through the dictionary and make every item an option for the dropdown
+  // loop through the dictionary and make every part an option for the dropdown
+
   for (key in dictionary) {
     let value = dictionary[key];
     let opt = document.createElement("option");
     opt.setAttribute("value", value);
     list.appendChild(opt);
   }
+  
   // put the list on the form
   form.appendChild(list);
 }
 
 // creates the dropdown element that displays the datalist
-function createDropdownElement(list, id, form) {
+function createDropdownElement(list, id, form, hidden = false) {
   // create the dropdown element
   let drop = document.createElement("input");
   // assign it a list of dropdown options
@@ -180,7 +187,7 @@ function createDropdownElement(list, id, form) {
     drop.onclick = function () {
       drop.value = "";
     };
-  } else if (id == "items") {
+  } else if (id == "parts") {
     drop.style.height = "32px";
     // clear the value in the dropdown when it is clicked on
     drop.onclick = function () {
@@ -195,62 +202,88 @@ function createDropdownElement(list, id, form) {
     drop.onclick = function () {
       drop.value = "";
     };
-  } else if (id == "serviceType") {
+  } else if (id == "department") {
     if (servReq != null) {
-      drop.value = servReq["serviceType"];
+      // console.log(servReq["department"]);
+      drop.value = servReq["department"];
     }
-    drop.tabIndex = 5;
+    drop.tabIndex = 4;
     // clear the value in the dropdown when it is clicked on
     drop.onclick = function () {
       drop.value = "";
     };
+    drop.addEventListener("change", function () {
+      if (id === "department") {
+      const department = drop.value;
+      const departmentUsers = userDict[departmentDict[department]];
+
+      const assignedToDropdown = document.getElementById("assignedTo-dropdown");
+      assignedToDropdown.innerHTML = ""; // Clear existing options
+
+      departmentUsers.forEach(user => {
+        const option = document.createElement("option");
+        option.value = user;
+        assignedToDropdown.appendChild(option);
+      });
+      }
+    });
   } else if (id == "assignedTo") {
-    if (servReq != null) {
+    if (userRole !== "Admin" && userRole !== "Secretary" && userRole !== "Mechanic") {
+      drop.readOnly = true;
+      drop.value = "Unassigned  ";
+    } else {
+      if (servReq != null) {
       drop.value = servReq["assignedTo"];
+      }
+      // clear the value in the dropdown when it is clicked on
+      drop.onclick = function () {
+        drop.value = "";
+      }
+      drop.tabIndex = 5;
+    };
+  } else if (id == "building") {
+    if (servReq != null) {
+      drop.value = servReq["building"];
     }
     drop.tabIndex = 6;
     // clear the value in the dropdown when it is clicked on
     drop.onclick = function () {
       drop.value = "";
     };
-  } else if (id == "building") {
-    if (servReq != null) {
-      drop.value = servReq["building"];
+  } else if (id == "status") {
+    if (!servReq) {
+      drop.readOnly = true;
+      drop.value = "Open";
+    } else {
+      if (servReq != null) {
+        drop.value = servReq["status"];
+      }
+      // clear the value in the dropdown when it is clicked on
+      drop.onclick = function () {
+        drop.value = "";
+      };
     }
     drop.tabIndex = 7;
-    // clear the value in the dropdown when it is clicked on
-    drop.onclick = function () {
-      drop.value = "";
-    };
-  } else if (id == "status") {
-    if (servReq != null) {
-      drop.value = servReq["status"];
-    }
-    drop.tabIndex = 9;
-    // clear the value in the dropdown when it is clicked on
-    drop.onclick = function () {
-      drop.value = "";
-    };
-  } else if (id == "items") {
-    if (itemDesc != null) {
-      drop.value = itemDesc;
+  } else if (id == "parts") {
+    if (partDesc != null) {
+      drop.value = partDesc;
     }
     // clear the value in the dropdown when it is clicked on
     drop.onclick = function () {
       drop.value = "";
     };
-  } else if (id == "itemStat") {
+  } else if (id == "partStat") {
     // clear the value in the dropdown when it is clicked on
     drop.onclick = function () {
       drop.value = "";
     };
     drop.style.height = "32px";
   } else if (
-    id == "itemStat" ||
-    id == "newitemVendor" ||
-    id == "newitemManu" ||
-    id == "newitemdeviceType" ||
-    id == "newitemdeviceSubType"
+    id == "partStat" ||
+    id == "newpartVendor" ||
+    id == "newpartManu" ||
+    id == "newpartdeviceType" ||
+    id == "newpartdeviceSubType"
   ) {
     // clear the value in the dropdown when it is clicked on
     drop.onclick = function () {
@@ -259,43 +292,42 @@ function createDropdownElement(list, id, form) {
     drop.style.height = "32px";
   }
 
-  // checks that it is a valid input when the focus moves off of the element
-  drop.addEventListener(
-    "blur",
-    (event) => {
-      let inputVal = event.target.value;
-      let inputId = event.target.id;
-      let dataList = document.getElementById(inputId + "-dropdown");
-      let valid = false;
-      var i;
-      for (i = 0; i < dataList.options.length; i++) {
-        let dataVal = dataList.options[i].value;
-        if (inputVal == dataVal) {
-          valid = true;
-        }
-      }
-      if (inputVal != "") {
-        if (valid == false) {
-          event.target.value = "";
-          alert("Enter valid input");
-          document.getElementById(inputId).focus();
-        } else if (inputVal == "New Requestor") {
-          createNewRequestor();
-          document.body.style.overflow = "hidden";
-        } else if (inputVal == "New Item") {
-          newitempop.open();
-        }
-      }
-    },
-    true
-  );
+  drop.addEventListener("blur", (event) => {
+    let inputVal = event.target.value;
+    let inputId = event.target.id;
+    let dataList = document.getElementById(inputId + "-dropdown");
+    let valid = Array.from(dataList.options).some(opt => opt.value === inputVal);
 
-  if (id == "requestor") {
-    if (newRequestor != null) {
-      drop.value = newRequestor;
+    if (inputVal !== "" && !valid) {
+      event.target.value = "";
+      alert("Enter valid input");
+      document.getElementById(inputId).focus();
     }
-  }
+  }, true);
+  
+    if (id === "requestor") {
+      if (newRequestor != null) drop.value = newRequestor;
+      drop.addEventListener("change", function () {
+        if (drop.value === "New Requestor") {
+          createTableModal("User", userName, { isServiceRequest: true });
+          drop.value = "";
+        }
+      });
+    }
 
+    else if (id === "parts") {
+      if (newRequestor != null) drop.value = newRequestor;
+      drop.addEventListener("change", function () {
+        if (drop.value === "New Part") {
+          createTableModal("Part", userName, { isServiceRequest: true });
+          drop.value = "";
+        }
+      });
+    }
+
+  if (hidden && !servReq) {
+    drop.style.display = "none";
+  }
   // put it on the form
   form.appendChild(drop);
 }

@@ -18,9 +18,21 @@ Main Page
 {% block content %}
 <!-- the raw block makes it so that no jinja template code will be executed -->
 {% raw %}
-
-<pre style='background-color: white; padding: 10px;'>
 <style>
+    a:hover {
+        opacity: 0.6;
+    }
+    body {
+        overflow-x: hidden; /* Disable horizontal scrolling */
+        word-wrap: break-word; /* Ensure text wraps within its container */
+    }
+    pre {
+        white-space: pre-wrap; /* Preserve formatting */
+    }
+    .page-content .doc-container * {
+        font-family: "HCo Ringside Narrow SSm", "Noto Sans", "Open Sans", Helvetica, Arial, sans-serif !important;
+    }
+
     li {
         display: inline;
     }
@@ -28,16 +40,11 @@ Main Page
         margin-top: 0;
         margin-bottom: 0;
     }
-    body {
-            overflow-x: hidden; /* Disable horizontal scrolling */
-            word-wrap: break-word; /* Ensure text wraps within its container */
-    }
-    pre {
-        white-space: pre-wrap; /* Preserve formatting */
-    }
 </style>
-
-
+<div class="doc-container">
+<a name="top"></a>
+<pre style='background-color: white; padding: 10px;'>
+<h1>AC Controls Application Documentation</h1>
 <!--START MY NOTES-->
 <h1>Notes for New People</h1>
 Last updated 4/18/22

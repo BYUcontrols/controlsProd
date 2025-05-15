@@ -22,10 +22,10 @@ class fakeRowProxy:
         self.second = second
         setattr(self, 'testPK', 'INDEX')  # so that we can access the primary key like row['testPK'])
 
-    def __getitem__(self, item):
-        return getattr(self, item)
+    def __getpart__(self, part):
+        return getattr(self, part)
 
-    def items(self):
+    def parts(self):
         return [('first', self.first), ('second', self.second)]
 
 def stubGetPermissionsObject(user, tableName):

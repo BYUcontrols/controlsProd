@@ -8,7 +8,7 @@
 /* class for each individual function (container for each function) */
 .tableFunction {
     margin-right: 15px; /* Give evything beathing room to the right */
-    position: relative; /* That way we can place items inside in a relitive way (the up/down arrow in Sort By for instance) */
+    position: relative; /* That way we can place parts inside in a relitive way (the up/down arrow in Sort By for instance) */
     display: inline-block; /* So that we can define the width and height of everything but also the containers line up and wrap like text */
     font-size: 16px;
     margin-bottom: 5px;
@@ -30,7 +30,7 @@
 }
 
 /* for the little arrow ↧ in Sort By: */
-.accendingButton {
+.ascendingButton {
     font-size: 24px;
     display: inline;
     position: absolute; /* So that we can position it absolutely */

@@ -29,7 +29,12 @@ Main Page
     pre {
         white-space: pre-wrap; /* Preserve formatting */
     }
+
+    .page-content .doc-container * {
+        font-family: "HCo Ringside Narrow SSm", "Noto Sans", "Open Sans", Helvetica, Arial, sans-serif !important;
+    }
 </style>
+<div class="doc-container">
 <a name="top"></a>
 <pre style='background-color: white; padding: 10px;'>
 <h1>AC Controls Application Documentation</h1>
@@ -58,7 +63,7 @@ Service Request portion updated by Ben Haggard: 11/2024</p>
 
 
 <a name='build'></a><a href='#top'>Top of Page</a>
-<h2>Build Pushing Procedure</h2> -##################################################################################################################################################################################
+<h3>Build Pushing Procedure</h3> 
 
     This is the process of how to fix bugs or add features to our application:
 
@@ -111,7 +116,7 @@ Service Request portion updated by Ben Haggard: 11/2024</p>
             - Paste the updated sql_getter_app folder in C:\control-app-prod.
             - Start the 'Services' windows application(the icon is the two gears), find the Apache2.4 service and restart it.
 <a name='localhost'></a><a href='#top'>Top of Page</a>
-<h2>
+<h3>Running Flask Locally</h3>
     1. use the .flaskenv file to set environment variables
         - should look like This
         FLASK_APP=sql_getter_app
@@ -121,10 +126,9 @@ Service Request portion updated by Ben Haggard: 11/2024</p>
     3. navigate to http://127.0.0.1/testLogin (only works when in development mode)
         - this will log you in as a test user and allow access to the site
         - your login info is saved in cookies and you wont have to login again until it times out
-</h2>
-<a name='addTable'></a><a href='#top'>Top of Page</a>
-<h2>Add a Table</h2> -##################################################################################################################################################################################
 
+<a name='addTable'></a><a href='#top'>Top of Page</a>
+<h3>Add a Table</h3> 
     1. Create the table in the SQL Server using SQL commands:
         - Matt Bollard can help with this, but if Matt isn't around anymore... then google and prayer should get the job done.
         - Make sure you add the following columns:
@@ -153,8 +157,7 @@ def ###a unique function name for the table (no spaces)###():
 
 
 <a name='addlink'></a><a href='#top'>Top of Page</a>
-<h2> Register a Linked Column in the Application</h2> -##################################################################################################################################################################################
-
+<h3> Register a Linked Column in the Application</h3> 
     1. Navigate to 'sql_getter_app/linkedData.py'.
     2. Add a line (with a comma) to the linkedColumns list in this format:
 
@@ -165,8 +168,7 @@ def ###a unique function name for the table (no spaces)###():
         with the keys for that object referring to specific tables you want to apply the filters to.
 
 <a name='setap'></a><a href='#top'>Top of Page</a>
-<h2>Setup Apache</h2> -##################################################################################################################################################################################
-
+<h3>Setup Apache</h3> 
     (Apache has already been downloaded as far as 28 Oct. 2022, but if you have questions, you can always ask Matt Bollard.)
 
     Here we will outline how to setup the Apache Server for this application on Windows:
@@ -258,8 +260,7 @@ def ###a unique function name for the table (no spaces)###():
 
 
 <a name='setpy'></a><a href='#top'>Top of Page</a>
-<h2>Setup Python</h2> -##################################################################################################################################################################################
-
+<h3>Setup Python</h3> 
     How to install and properly setup Python, the environment for our app, and other things needed for our app:
 
         1. Make sure you have the latest Python installed
@@ -299,8 +300,7 @@ def ###a unique function name for the table (no spaces)###():
             - Go to http://127.0.0.1:5000/
 
 <a name='testj'></a><a href='#top'>Top of Page</a>
-<h2>Test Javascript</h2> -##################################################################################################################################################################################
-
+<h3>Test Javascript</h3> 
     1. Login to the application on Chrome (it will probably work on other browsers but you're on your own).
     2. Go to the url ### whatever domain the app is located ###/test.
     3. Right click on the page and select 'Inspect'.
@@ -313,8 +313,7 @@ def ###a unique function name for the table (no spaces)###():
             3. If the test failed (red line) then what the actual value being tested was.
 
 <a name='testp'></a><a href='#top'>Top of Page</a>
-<h2>Test Python</h2> -##################################################################################################################################################################################
-
+<h3>Test Python</h3> 
     Some notes about Python testing:
      - The Python also tests the database layout.
      - These tests are run on the controlsTest database, so for the most up to date tests copy the production
@@ -324,8 +323,7 @@ def ###a unique function name for the table (no spaces)###():
     - 11/2024: Most of the tests do not work. I added several new tests for the service request portion of the app. (these work)
 
 <a name='viewl'></a><a href='#top'>Top of Page</a>
-<h2>View Logs</h2> -##################################################################################################################################################################################
-
+<h3>View Logs</h3> 
     - Logs are found at /controls_app/logs
     - There are two logs:
         - Activity.log logs all activity the server, requests, startup, errors etc.
@@ -334,18 +332,16 @@ def ###a unique function name for the table (no spaces)###():
     - If no logging is happening go to init.py and uncomment startLogging().
 
 <a name='newu'></a><a href='#top'>Top of Page</a>
-<h2>Add a New User</h2> -##################################################################################################################################################################################
-
+<h3>Add a New User</h3> 
     - Have the user create a BYU account (anybody can do this).
     - Open Microsoft SQL server management studio
     - Navigate to the 'Users' table. Path is SSVS470\Databases\Controls Test\Tables\dbo.User
-    - Click '+ Item'.
+    - Click '+ Part'.
     - Fill the info in for the new user making sure that the userName field is their byuId (case sensitive).
     - Click 'Save'.
 
 <a name='perm'></a><a href='#top'>Top of Page</a>
-<h2>Change Permissions for a Table</h2> -##################################################################################################################################################################################
-
+<h3>Change Permissions for a Table</h3> 
     - Navigate to the Table Permissions table
     - Find the row that represents your table (you can use crtl-f or the filter button)
         - if there isn't one and you want this table to have different permissions then the 'DEFAULT' row;
@@ -360,18 +356,16 @@ def ###a unique function name for the table (no spaces)###():
         every request to reduce database load.
 
 <a name='role'></a><a href='#top'>Top of Page</a>
-<h2>Add New User Role</h2> -##################################################################################################################################################################################
-
+<h3>Add New User Role</h3> 
     - Navigate to the 'Role' table.
     - Add a Role:
-        - Click '+item',
+        - Click '+part',
         - Create the Role,
         - Save.
 
 
 <a name='tabo'></a><a href='#top'>Top of Page</a>
-<h2>Edit the Tab Order for the Tables</h2> -##################################################################################################################################################################################
-
+<h3>Edit the Tab Order for the Tables</h3> 
     - Navigate to the 'Tab Order' table.
     - Use the filter button and filter add filter:
         tableName  equals  ### whatever table you want to change ###.
@@ -381,7 +375,7 @@ def ###a unique function name for the table (no spaces)###():
     - Save everything.
 
 <a name='siteStr'></a><a href='#top'>Top of Page</a>
-<h2>Rearrange Site Structure</h2> -##################################################################################################################################################################################
+<h3>Rearrange Site Structure</h3> 
     The menus in our site are defined by the sql_getter_app/menuCreation.py/rawMenu object. Rearranging here will rearrange everywhere.
 
     + Add a new menu tab (things on the navigation bar):
@@ -408,8 +402,7 @@ def ###a unique function name for the table (no spaces)###():
     -- 3. Restart the server for the changes to take place.
 
 <a name='modT'></a><a href='#top'>Top of Page</a>
-<h2>Modify a Table</h2> -##################################################################################################################################################################################
-
+<h3>Modify a Table</h3> 
     This really should not be done if at all possible. It could cause a lot of problems.
 
     There are several things that need to be updated when modifying a table structure.
@@ -417,8 +410,7 @@ def ###a unique function name for the table (no spaces)###():
     2. Update the Trigger Rules.
 
 <a name='certs'></a><a href='#top'>Top of Page</a>
-<h2>Renew Certificates (for SSL) </h2> -##################################################################################################################################################################################
-
+<h3>Renew Certificates (for SSL) </h3> 
     The SSL certificates for our site expires every 5 years or so and needs to be renewed.
 
     To renew the certificates:
@@ -434,14 +426,12 @@ def ###a unique function name for the table (no spaces)###():
     If you run into any trouble along the way ask Gary/OIT for help, they are going to know a lot more about Apache and certificates.
 
 <a name='rest'></a><a href='#top'>Top of Page</a> 
-<h2>Restart the Server </h2> -##################################################################################################################################################################################
-
+<h3>Restart the Server </h3> 
     When you make changes to the Python in the server or add a table, you will need to restart the server. This is done by finding
         the windows 'Services' tool and clicking 'Apache' and restarting/stopping/starting it. (You might not have permissions to do this)
 
 <a name='apacheDeb'></a><a href='#top'>Top of Page</a>
-<h2>Debugging the Apache Server</h2> -##################################################################################################################################################################################
-
+<h3>Debugging the Apache Server</h3> 
         If there is an Apache Server error (not a Python error) it can usually be found in Apache24/logs/error.log
             and scrolling to the bottom. If there is no log there but the server keeps crashing then:
         
@@ -451,5 +441,6 @@ def ###a unique function name for the table (no spaces)###():
         4. Take a look at your errors and problem solve from there.
 <br><br>
 </pre>
+</div>
 {% endraw %}
 {% endblock %}

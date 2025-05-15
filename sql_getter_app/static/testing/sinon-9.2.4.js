@@ -3816,7 +3816,7 @@ module.exports = function wrapMethod(object, property, method) {
         // this is the converse of the check in `.restore` below
         if (typeof method === "function" && object[property] !== method) {
             // correct any wrongdoings caused by the defineProperty call above,
-            // such as adding new items (if object was a Storage object)
+            // such as adding new parts (if object was a Storage object)
             delete object[property];
             simplePropertyAssignment();
         }
@@ -5937,7 +5937,7 @@ createMatcher.array = createMatcher.typeOf("array");
 
 createMatcher.array.deepEquals = function(expectation) {
     return createMatcher(function(actual) {
-        // Comparing lengths is the fastest way to spot a difference before iterating through every item
+        // Comparing lengths is the fastest way to spot a difference before iterating through every part
         var sameLength = actual.length === expectation.length;
         return (
             typeOf(actual) === "array" &&
@@ -5993,7 +5993,7 @@ createMatcher.map = createMatcher.typeOf("map");
 
 createMatcher.map.deepEquals = function mapDeepEquals(expectation) {
     return createMatcher(function(actual) {
-        // Comparing lengths is the fastest way to spot a difference before iterating through every item
+        // Comparing lengths is the fastest way to spot a difference before iterating through every part
         var sameLength = actual.size === expectation.size;
         return (
             typeOf(actual) === "map" &&
@@ -6020,7 +6020,7 @@ createMatcher.set = createMatcher.typeOf("set");
 
 createMatcher.set.deepEquals = function setDeepEquals(expectation) {
     return createMatcher(function(actual) {
-        // Comparing lengths is the fastest way to spot a difference before iterating through every item
+        // Comparing lengths is the fastest way to spot a difference before iterating through every part
         var sameLength = actual.size === expectation.size;
         return (
             typeOf(actual) === "set" &&
@@ -6934,14 +6934,14 @@ function genericIterableToString(iterable) {
 }
 
 /**
- * Creates a string representation of the passed `item`
+ * Creates a string representation of the passed `part`
  *
  * @private
- * @param  {object} item The item to stringify
- * @returns {string}      A string representation of `item`
+ * @param  {object} part The part to stringify
+ * @returns {string}      A string representation of `part`
  */
-function stringify(item) {
-    return typeof item === "string" ? "'" + item + "'" : valueToString(item);
+function stringify(part) {
+    return typeof part === "string" ? "'" + part + "'" : valueToString(part);
 }
 
 module.exports = iterableToString;
@@ -7243,11 +7243,11 @@ module.exports = {
 
   /**
    * @param {!Array.<*>} array The array to check.
-   * @param {*} item The item to look for in the array.
-   * @return {boolean} True if the item appears in the array.
+   * @param {*} part The part to look for in the array.
+   * @return {boolean} True if the part appears in the array.
    */
-  function includes(array, item) {
-    return array.indexOf(item) !== -1;
+  function includes(array, part) {
+    return array.indexOf(part) !== -1;
   }
 
   var floor = Math.floor;

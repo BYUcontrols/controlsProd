@@ -25,6 +25,7 @@ linkedColumns = {
     'vendorId':('Vendor', 'name', 'vendorId', 'Vendor'),
     'stateId':('State', 'state', 'stateId', 'State'),
     'countryId':('Country', 'code', 'countryId', 'Country'),
+    'departmentId':('Department', 'departmentName', 'departmentId', 'Department'),
     'viewingLevel':('Role', 'role', 'roleId', 'Viewing'), # sort the roles by hierarchy when in tablePermissions table
     'editingLevel':('Role', 'role', 'roleId', 'Editing'),
     'addingLevel':('Role', 'role', 'roleId', 'Adding'),
@@ -38,13 +39,12 @@ linkedColumns = {
         {
             'Device':'AND forDevices = \'true\'', 
             'ServiceRequest':'AND forServiceRequest = \'true\'', 
-            'RequestItem':'AND forItems = \'true\''
+            'RequestPart':'AND forItems = \'true\''
         }
         ),
     'manufacturerId':('Manufacturer', 'name', 'manufacturerId', 'Manufacturer'),
     'oitJackId':('OITJack', 'jackNumber', 'oitJackId', 'OIT Jack'),
     'userIdRequestor':('User', 'fullName', 'userId', 'Requestor'),
-    'serviceTypeId':('ServiceType', 'serviceType', 'serviceTypeId', 'Type'),
     'priorityId':('Priority', 'priority', 'priorityId', 'Priority'),
     'userIdTechnician':('User', 'fullName', 'userId', 'Assigned To', {'ServiceRequest':'AND technician = \'true\''}),
     'oitJackIdSource':('OITJack', 'jackNumber', 'oitJackId', 'OIT Jack Source'),
@@ -53,6 +53,6 @@ linkedColumns = {
     'failureTypeId':('FailureType', 'failureType', 'failureTypeId', 'Failure Type'),
     'userIdModified':('User', 'fullName', 'userId', 'Modified by'),
     'userId':('User', 'fullName', 'userId', 'User'),
-    'itemId':('Item', 'description', 'itemId', 'Item'),
-    'userIdCreator':('User', 'fullName', 'userId', 'User')
+    'partId':('Part', 'description', 'partId', 'Part')
+    # 'userIdCreator':('User', 'fullName', 'userId', 'User')
 }

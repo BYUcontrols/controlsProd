@@ -6,7 +6,7 @@
     Property of the BYU A/C Shop
 */
 
-/* generate the input fields and + item button
+/* generate the input fields and + part button
  * 
  */
 function generateInput() {
@@ -20,7 +20,7 @@ function generateInput() {
 }
 
 // Delete later
-// Function that hides the table div, reveals the inputNew div and calls the new item function
+// Function that hides the table div, reveals the inputNew div and calls the new part function
 function hideTable() {
     //     // Hide table
     // table = document.getElementById("displayTable");
@@ -28,7 +28,7 @@ function hideTable() {
     //     // Show input new
     // input = document.getElementById("inputNew");
     // input.hidden = false
-    //     // switch the + Item button to a Table button
+    //     // switch the + Part button to a Table button
     // let newBtn = document.getElementById("viewSwitchButton")
     // setTooltip(newBtn, 'Go back to the table');
     // newBtn.innerHTML = "Table";
@@ -44,10 +44,10 @@ function showTable() {
     //     // Hide input new
     // input = document.getElementById("inputNew");
     // input.hidden = true;
-    //     // switch the + Item button to a Table button
+    //     // switch the + Part button to a Table button
     // let newBtn = document.getElementById("viewSwitchButton")
     // setTooltip(newBtn, 'Create a new row');
-    // newBtn.innerHTML = "+ Item";
+    // newBtn.innerHTML = "+ Part";
     // newBtn.setAttribute("onClick", "hideTable()");
 }
 

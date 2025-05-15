@@ -17,8 +17,8 @@
 function viewLinked() {
     let container = createDisplayContainer()
         // send the request to the server
-    let request = post(null, "GET", `/viewLinked/${this.tableName}/${this.id}`, displayLinkedItems)
-        // pass the request data that displayLinkedItems will need
+    let request = post(null, "GET", `/viewLinked/${this.tableName}/${this.id}`, displayLinkedParts)
+        // pass the request data that displayLinkedParts will need
     request.container = container;
     request.id = this.id;
     request.rowEngine = this;
@@ -28,7 +28,7 @@ function viewLinked() {
  * 
  * It is passed the context of the request (The this. things)
  */
-function displayLinkedItems() {
+function displayLinkedParts() {
         // create the print button
         console.log(this)
         console.log(this.tableName)
@@ -37,7 +37,7 @@ function displayLinkedItems() {
     this.container.appendChild(createCloneOfRow(this.rowEngine).htmlRef);
         // a little title
     let title = document.createElement('h1');
-    title.textContent = 'Linked Items';
+    title.textContent = 'Linked Parts';
     this.container.appendChild(title);
         // creates a box that scrolls horizontally
     let auditTable = document.createElement('div');

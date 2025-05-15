@@ -29,7 +29,7 @@ production = os.environ.get('FLASK_ENV') == 'production'
 # set the version string, declaring this variable
 # This is important to change as it forces browsers to reload their cashed js and css files, removing compatability errors
 # You change this when you push to production. Same as the production variable above at about line 29
-versionString = '1.1.3'
+versionString = '1.2.1'
 
 
 # This is similar to production but is set automatically by __init__.py/createApp()

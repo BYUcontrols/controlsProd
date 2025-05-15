@@ -7,7 +7,7 @@
 The url_for with the option function endpoint argument gets the func attribute of the option object.  
 The option in the menuCreation rawMenu func leads to the python function that creates the menu. -->
 
-{% macro menuCreator(data, class='navbar-item', pre='', post='') -%}
+{% macro menuCreator(data, class='navbar-part', pre='', post='') -%}
     {% for option in data %} <!-- loop through the options -->
     {{ pre|safe }}<a href="{{ url_for(option.func) }}" class="{{ class }}" title="{% if option.sqlName %}{{option.sqlName | safe }}{% endif %}">{{ option.displayName | safe }}</a>{{ post|safe }}
     {% endfor %}
